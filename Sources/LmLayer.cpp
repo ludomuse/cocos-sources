@@ -15,10 +15,10 @@ LmLayer::~LmLayer()
 
 }
 
-LmLayer::LmLayer(std::string l_sImageURL,std::string l_sSoundURL,const char* l_pText)
+LmLayer::LmLayer(const char* l_pImageURL,const char* l_pSoundURL,const char* l_pText)
 {
-	m_sImageURL = l_sImageURL;
-	m_sSoundURL = l_sSoundURL;
+	m_pImageURL = l_pImageURL;
+	m_pSoundURL = l_pSoundURL;
 	m_pText = l_pText;
 }
 
@@ -29,14 +29,27 @@ bool LmLayer::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
-    //we add the background sprite
-	auto l_oSprite = Sprite::create(m_sImageURL);
+    //we add the background sprite to the center of the screen
+	auto l_oSprite = Sprite::create(m_pImageURL);
 	l_oSprite->setPosition(origin.x+visibleSize.width/2,origin.y+visibleSize.height/2);
-	addChild(l_oSprite);
+	addChild(l_oSprite,0);
 
+	//we preload the sound
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(m_pSoundURL);
+    //play sound
+    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(m_pSoundURL,false);
+
+    //we add text to the center of the screen
+    auto l_oLabel = Label::createWithTTF(m_pText, "fonts/Marker Felt.ttf",getSizeLabel());
+    l_oLabel->setPosition(origin.x+visibleSize.width/2,origin.y+visibleSize.height/2);
+    addChild(l_oLabel,1);
 
 	return true;
 }
 
+int LmLayer::getSizeLabel()
+{
+	return 50;
+}
 
 

@@ -6,6 +6,8 @@
 #define LMLAYER_H
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
+
 
 
 class LmLayer : public cocos2d::Layer
@@ -14,16 +16,19 @@ class LmLayer : public cocos2d::Layer
 private:
 
 	//url of the img
-	std::string m_sImageURL;
-	std::string m_sSoundURL;
+	const char* m_pImageURL;
+	const char* m_pSoundURL;
 	const char* m_pText;
+
+	//method to scale the text size to the screen
+	int getSizeLabel();
 
 
 public:
 
 	LmLayer();
 	//use to init img, sound, text
-	LmLayer(std::string,std::string,const char*);
+	LmLayer(const char*,const char*,const char*);
 	~LmLayer();
 
 	bool init();

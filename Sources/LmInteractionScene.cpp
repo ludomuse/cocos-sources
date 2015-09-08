@@ -34,14 +34,13 @@ bool LmInteractionScene::onTouchBegan(cocos2d::Touch* touch,cocos2d::Event* even
 bool LmInteractionScene::init()
 {
 
-	if(!m_pLmIntroduction->init())
+	if(!m_pLmIntroduction->init(this))
 	{
 		CCLOG("LmIntroduction init failed");
 		return false;
 	}
 
-	//we add the first layer of the introduction to this scene
-	addChild(m_pLmIntroduction->getLayer(0));
+
 
 
 	//test
