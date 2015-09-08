@@ -14,10 +14,10 @@
 class LmIntroductionScene;
 
 //Different resolution
-static cocos2d::Size s_DesignResolutionSize = cocos2d::Size(426, 320);
-static cocos2d::Size s_SmallResolutionSize = cocos2d::Size(426, 320);
-static cocos2d::Size s_MediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size s_LargeResolutionSize = cocos2d::Size(2048, 1536);
+static cocos2d::Size s_DesignResolutionSize = cocos2d::Size(480, 300);
+static cocos2d::Size s_SmallResolutionSize = cocos2d::Size(480, 300);
+static cocos2d::Size s_MediumResolutionSize = cocos2d::Size(1280, 800);
+static cocos2d::Size s_LargeResolutionSize = cocos2d::Size(1900, 1200);
 
 class LmGameManager
 {

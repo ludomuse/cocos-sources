@@ -18,6 +18,7 @@ private:
 public:
 
 	LmIntroduction();
+	LmIntroduction(std::vector<std::string>,std::vector<std::string>,std::vector<const char*>);
 	~LmIntroduction();
 
 	bool init();

@@ -27,7 +27,6 @@ bool LmIntroduction::init()
 	//init each layer
 	for (std::vector<LmLayer*>::iterator it = m_pLayers.begin(); it != m_pLayers.end(); ++it)
 	{
-		CCLOG("for");
 		if(!(*it)->init())
 		{
 			CCLOG("LmLayer init failed");

@@ -28,7 +28,7 @@ protected:
 	//autorelease object it's the first layer of the scene
 	cocos2d::Layer* m_pLayerGame;
 
-	//an introduction to the game
+	//an introduction to the InteractionScene
 	LmIntroduction* m_pLmIntroduction;
 
 };
