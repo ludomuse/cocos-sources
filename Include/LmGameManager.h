@@ -10,9 +10,6 @@
 //Differents Scene of the application
 #include "LmInteractionScene.h"
 
-
-class LmIntroductionScene;
-
 //Different resolution
 static cocos2d::Size s_DesignResolutionSize = cocos2d::Size(480, 300);
 static cocos2d::Size s_SmallResolutionSize = cocos2d::Size(480, 300);

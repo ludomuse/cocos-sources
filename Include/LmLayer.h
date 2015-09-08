@@ -32,6 +32,8 @@ public:
 	~LmLayer();
 
 	bool init();
+	void playSound();
+	void pauseSound();
 
 
 };

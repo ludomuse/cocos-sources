@@ -9,6 +9,8 @@
 #include "LmLayer.h"
 
 
+static float s_fTimeBetweenLmLayer = 1.0f;
+
 class LmIntroduction
 {
 
@@ -27,6 +29,24 @@ private:
 
 	//scene pointer of his interaction so it can handle the transition
 	cocos2d::Scene* m_pInteractionScene;
+
+	//to know on what LmLayer m_pCurrentLayer point and to handle border
+	int m_iIndex;
+	int m_iSize;
+
+	//our actions to move LmLayer to make it smooth and callback function to make it sync
+	cocos2d::FiniteTimeAction* m_pMoveLeft;
+	cocos2d::FiniteTimeAction* m_pMoveLeftDone;
+	cocos2d::FiniteTimeAction* m_pMoveRight;
+	cocos2d::FiniteTimeAction* m_pMoveRightDone;
+
+	//callback function signature important
+	void moveLeftDone();
+	void moveRightDone();
+
+	//bool to sync
+	bool m_bActionDone;
+
 
 
 public:
