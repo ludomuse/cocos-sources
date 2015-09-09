@@ -6,6 +6,7 @@
 
 #include "cocos2d.h"
 #include "LmGameManager.h"
+#include "LmMenu.h"
 
 /**
 @brief    The cocos2d Application.
@@ -44,6 +45,14 @@ private:
 
 	//our gameManager which handle the good behavior of the game
 	LmGameManager* m_pLmGameManager;
+
+	//this object handle log of user & wifi direct & get info to set after gameanager
+	LmMenu* m_pLmMenu;
+
+	//init paths so the app find good ressources
+	void initPathsForResolution();
+
+	bool init();
 
 
 };

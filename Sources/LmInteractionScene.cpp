@@ -10,9 +10,6 @@ LmInteractionScene::LmInteractionScene()
 	//create the introduction
 	m_pLmIntroduction = new LmIntroduction;
 
-	//create the Layer of the game
-	m_pLayerGame=Layer::create();
-
 }
 
 LmInteractionScene::~LmInteractionScene()

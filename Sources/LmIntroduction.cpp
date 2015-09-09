@@ -18,7 +18,7 @@ LmIntroduction::~LmIntroduction()
 		delete (*it);
 	}
 
-	//release action
+	//release action because they have been retain() in init function
 	m_pMoveLeft->release();
 	m_pMoveLeftDone->release();
 	m_pMoveRight->release();
@@ -65,7 +65,7 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 
 	//test they are going to be create by the LmFactory while reading the json file
 	//add two LmLayer to test
-	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3","bonjour ce jeu déchire"));
+	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3","hello"));
 	m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3","suivez moi les enfants"));
 	m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3","recompense"));
 
@@ -111,9 +111,9 @@ bool LmIntroduction::nextLayer()
 		{
 			//the current layer and the one after move to the left
 			Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-		    Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+			Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
-		    //add the the newt layer
+			//add the the newt layer
 			m_pLayerTransition->addChild(m_aLayers.at(m_iIndex+1));
 
 			//init the next one
@@ -148,9 +148,9 @@ bool LmIntroduction::previousLayer()
 		{
 			//the current layer and the one after move to the left
 			Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-		    Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+			Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
-		    //add the the previous layer
+			//add the the previous layer
 			m_pLayerTransition->addChild(m_aLayers.at(m_iIndex-1));
 
 			//init the previous one
@@ -196,6 +196,7 @@ void LmIntroduction::moveRightDone()
 	m_pLayerTransition->removeChild(m_pCurrentLayer);
 	m_iIndex--;
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
+	m_pCurrentLayer->playSound();
 
 	//set the new position of the layer transition  and of the current layer
 	m_pLayerTransition->setPosition(Point(0,0));
@@ -212,6 +213,7 @@ void LmIntroduction::moveLeftDone()
 	m_pLayerTransition->removeChild(m_pCurrentLayer);
 	m_iIndex++;
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
+	m_pCurrentLayer->playSound();
 
 	//set the new position of the layer transition  and of the current layer
 	m_pLayerTransition->setPosition(Point(0,0));

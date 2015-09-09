@@ -27,7 +27,6 @@ private:
 
 	//call server manager and init m_vectorSceneOfTheGame
 	bool init();
-	void initPathsForResolution();
 
 public:
 

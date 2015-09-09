@@ -13,7 +13,7 @@
 using namespace std;
 using namespace cocos2d;
 
-LmJsonParser::LmJsonParser() : m_iIndexDocument(0)
+LmJsonParser::LmJsonParser() : m_iIndexDocument(0), m_iIdInteractionScene(0)
 {
 
 }

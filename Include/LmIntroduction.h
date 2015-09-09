@@ -19,7 +19,7 @@ private:
 	std::vector<LmLayer*> m_aLayers;
 	LmLayer* m_pCurrentLayer;
 
-	//use to make transition beteen layer
+	//use to make transition between Lmlayer
 	cocos2d::Layer* m_pLayerTransition;
 
 	//buttons next and previous
