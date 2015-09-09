@@ -65,12 +65,9 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 
 	//test they are going to be create by the LmFactory while reading the json file
 	//add two LmLayer to test
-	m_aLayers.push_back(new LmLayer("background.png","audio/son.mp3","1st LmLayer"));
-	m_aLayers.push_back(new LmLayer("2emeimg.png","audio/son.mp3","bla bla bla"));
-	m_aLayers.push_back(new LmLayer("2emeimg.png","audio/son.mp3","3 eme layer lala"));
-	m_aLayers.push_back(new LmLayer("background.png","audio/son.mp3","encore une"));
-	m_aLayers.push_back(new LmLayer("2emeimg.png","audio/son.mp3","sa change"));
-	m_aLayers.push_back(new LmLayer("background.png","audio/son.mp3","dernbiere"));
+	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3","bonjour ce jeu déchire"));
+	m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3","suivez moi les enfants"));
+	m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3","recompense"));
 
 	//we begin by the first one of the vector
 	m_iIndex = 0;
@@ -83,10 +80,14 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 		return false;
 	}
 
+	//init layer transition
+	m_pLayerTransition = Layer::create();
+	m_pInteractionScene->addChild(m_pLayerTransition);
+
 	//init m_pCurrentLayer
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
 	m_pCurrentLayer->init();
-	m_pInteractionScene->addChild(m_pCurrentLayer,0);
+	m_pLayerTransition->addChild(m_pCurrentLayer,0);
 	m_pCurrentLayer->playSound();
 
 
@@ -112,14 +113,17 @@ bool LmIntroduction::nextLayer()
 			Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 		    Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
-			//init the after one
+		    //add the the newt layer
+			m_pLayerTransition->addChild(m_aLayers.at(m_iIndex+1));
+
+			//init the next one
 			m_aLayers.at(m_iIndex+1)->init();
+
 			//set position to the right out of screen
-			m_aLayers.at(m_iIndex+1)->setPosition((3/2)*l_oVisibleSize.width+l_oOrigin.x,l_oOrigin.y);
-			//add
-			m_pInteractionScene->addChild(m_aLayers.at(m_iIndex+1),0);
+			m_aLayers.at(m_iIndex+1)->setPosition((3/2)*l_oVisibleSize.width+l_oOrigin.x,0);
+
 			//run the sequence so we know when its finished then callback function
-			m_aLayers.at(m_iIndex+1)->runAction(Sequence::create(m_pMoveLeft,m_pMoveLeftDone,NULL));
+			m_pLayerTransition->runAction(Sequence::create(m_pMoveLeft,m_pMoveLeftDone,NULL));
 
 			return true;
 		}
@@ -142,18 +146,21 @@ bool LmIntroduction::previousLayer()
 		}
 		else
 		{
-			//the current layer and the one before move to the right
+			//the current layer and the one after move to the left
 			Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 		    Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
+		    //add the the previous layer
+			m_pLayerTransition->addChild(m_aLayers.at(m_iIndex-1));
+
 			//init the previous one
 			m_aLayers.at(m_iIndex-1)->init();
+
 			//set position to the left out of screen
-			m_aLayers.at(m_iIndex-1)->setPosition((-3/2)*l_oVisibleSize.width+l_oOrigin.x,l_oOrigin.y);
-			//add
-			m_pInteractionScene->addChild(m_aLayers.at(m_iIndex-1),0);
+			m_aLayers.at(m_iIndex-1)->setPosition((-3/2)*l_oVisibleSize.width+l_oOrigin.x,0);
+
 			//run the sequence so we know when its finished then callback function
-			m_aLayers.at(m_iIndex-1)->runAction(Sequence::create(m_pMoveRight,m_pMoveRightDone,NULL));
+			m_pLayerTransition->runAction(Sequence::create(m_pMoveRight,m_pMoveRightDone,NULL));
 
 			return true;
 		}
@@ -185,9 +192,15 @@ cocos2d::Vect LmIntroduction::getPreviousButtonPosition(cocos2d::ui::Button* l_p
 
 void LmIntroduction::moveRightDone()
 {
-	m_pInteractionScene->removeChild(m_pCurrentLayer);
+	//we remove the current to put the next one as current
+	m_pLayerTransition->removeChild(m_pCurrentLayer);
 	m_iIndex--;
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
+
+	//set the new position of the layer transition  and of the current layer
+	m_pLayerTransition->setPosition(Point(0,0));
+	m_pCurrentLayer->setPosition(Point(0,0));
+
 	//possible to perform another action
 	m_bActionDone = true;
 
@@ -195,9 +208,15 @@ void LmIntroduction::moveRightDone()
 
 void LmIntroduction::moveLeftDone()
 {
-	m_pInteractionScene->removeChild(m_pCurrentLayer);
+	//we remove the current to put the next one as current
+	m_pLayerTransition->removeChild(m_pCurrentLayer);
 	m_iIndex++;
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
+
+	//set the new position of the layer transition  and of the current layer
+	m_pLayerTransition->setPosition(Point(0,0));
+	m_pCurrentLayer->setPosition(Point(0,0));
+
 	//possible to perform another action
 	m_bActionDone = true;
 }

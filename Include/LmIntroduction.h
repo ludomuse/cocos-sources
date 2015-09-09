@@ -9,7 +9,7 @@
 #include "LmLayer.h"
 
 
-static float s_fTimeBetweenLmLayer = 1.0f;
+static float s_fTimeBetweenLmLayer = 0.5f;
 
 class LmIntroduction
 {
@@ -18,6 +18,9 @@ private:
 
 	std::vector<LmLayer*> m_aLayers;
 	LmLayer* m_pCurrentLayer;
+
+	//use to make transition beteen layer
+	cocos2d::Layer* m_pLayerTransition;
 
 	//buttons next and previous
 	cocos2d::ui::Button* m_pNextButton;
