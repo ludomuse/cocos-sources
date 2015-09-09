@@ -6,6 +6,7 @@
 
 #include "cocos2d.h"
 #include "LmServerManager.h"
+#include "LmUser.h"
 
 //Differents Scene of the application
 #include "LmInteractionScene.h"
@@ -28,6 +29,10 @@ private:
 	//call server manager and init m_vectorSceneOfTheGame
 	bool init();
 
+	//both users (1=local & 2=2nd user) get via LmMenu
+	LmUser* m_pUser1;
+	LmUser* m_pUser2;
+
 public:
 
 	LmGameManager();
@@ -35,6 +40,14 @@ public:
 
 	//call different method of gamemanager, init launch scene and handle layers of interactions
 	void runGame();
+
+	void setPUser1( LmUser* pUser1) {
+		m_pUser1 = pUser1;
+	}
+
+	void setPUser2( LmUser* pUser2) {
+		m_pUser2 = pUser2;
+	}
 };
 
 #endif // LMGAMEMANAGER_H

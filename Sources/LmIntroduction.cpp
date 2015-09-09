@@ -166,6 +166,7 @@ bool LmIntroduction::previousLayer()
 		}
 
 	}
+
 }
 
 cocos2d::Vect LmIntroduction::getNextButtonPosition(cocos2d::ui::Button* l_pButton)const

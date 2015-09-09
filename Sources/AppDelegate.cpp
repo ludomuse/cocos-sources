@@ -42,8 +42,8 @@ bool AppDelegate::applicationDidFinishLaunching()
 {
 	init();
 
-	//display a log screen then a wifidirect screen and get info
-	m_pLmMenu->initGame();
+	//display a splashscreen then a log screen then a wifidirect screen and get info
+	m_pLmMenu->splashScreen();
 
 	return true;
 }
@@ -131,6 +131,8 @@ bool AppDelegate::init()
 	//init callback method of the custom event (use to know when LmMenu finished )
 	auto MenuFinished = [=](EventCustom * event)
 						{
+		m_pLmGameManager->setPUser1(m_pLmMenu->getPUser1());
+		m_pLmGameManager->setPUser2(m_pLmMenu->getPUser2());
 		m_pLmGameManager->runGame();
 						};
 

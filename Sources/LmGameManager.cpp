@@ -55,8 +55,6 @@ bool LmGameManager::init()
 	Director::getInstance()->getEventDispatcher()->addCustomEventListener("NextScene",NextScene);
 
 	return true;
-
-
 }
 
 void LmGameManager::runGame()

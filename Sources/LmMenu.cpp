@@ -11,24 +11,25 @@
 #include "../Include/LmMenu.h"
 
 USING_NS_CC;
+using namespace cocos2d::ui;
 
 LmMenu::LmMenu()
 {
-
+	m_pUser1 = new LmUser;
+	m_pUser2 = new LmUser;
 }
 
 LmMenu::~LmMenu()
 {
-
+	delete m_pUser1;
+	delete m_pUser2;
 }
 
-bool LmMenu::initGame()
+void LmMenu::splashScreen()
 {
-
-
 	//use to place elements
-    Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-    Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
 	//init scene
 	m_pLmMenuScene = Scene::create();
@@ -42,34 +43,106 @@ bool LmMenu::initGame()
 	//firstable we add the log layer
 	m_pLmMenuScene->addChild(m_pLogLayer);
 
-	//add a background img
+	//init splash screen and display it for a while
+	m_pSpriteSplashScreen = Sprite::create("ing.png");
+	m_pSpriteSplashScreen->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
+	m_pLogLayer->addChild(m_pSpriteSplashScreen);
+
+	//wait a while
+	auto delay = DelayTime::create(s_fSplashScreenDuration);
+	m_pLogLayer -> runAction( Sequence::create(delay, CallFunc::create( std::bind(&LmMenu::logScreen,this) ), NULL));
+
+}
+
+bool LmMenu::logScreen()
+{
+
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+
+	//remove the splash screen
+	m_pLogLayer->removeChild(m_pSpriteSplashScreen);
+
+	//add a background img for the log layer
 	m_pSpriteLogBackground = Sprite::create("titre.png");
 	m_pSpriteLogBackground->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
 	m_pLogLayer->addChild(m_pSpriteLogBackground);
 
-	//test button
-	//next button
-	auto m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
-	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width/2+l_oOrigin.x,l_oOrigin.y));
-	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmMenu::log, this));
-	m_pLogLayer->addChild(m_pNextButton,0);
+	//log button
+	auto l_oLogButton = Button::create("nextButtonNormal.png","nextButtonPressed.png");
+	l_oLogButton->setTouchEnabled(true);
+	l_oLogButton -> setPosition(Vect(l_oVisibleSize.width/2+l_oOrigin.x,l_oOrigin.y));
+	l_oLogButton->addTouchEventListener(CC_CALLBACK_0(LmMenu::log, this));
+	m_pLogLayer->addChild(l_oLogButton);
 
-	//user loging
-	m_pLogTextfield = ui::TextField::create();
-	m_pLogTextfield->setTouchEnabled(true);
-	m_pLogTextfield->setPlaceHolder("User name");
-	m_pLogTextfield->setPosition(Vect(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y));
-	m_pLogLayer->addChild(m_pLogTextfield,1);
-
-
-
+	// Create the textfield
+	m_pLogEditBox = EditBox::create(Size(300,50),Scale9Sprite::create("nextButtonNormal.png"));
+	m_pLogEditBox->setPosition(Point(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y));
+	m_pLogEditBox->setPlaceHolder("Name");
+	m_pLogEditBox->setFontSize(25);
+	m_pLogEditBox->setMaxLength(12);
+	m_pLogEditBox->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
+	m_pLogLayer->addChild(m_pLogEditBox);
 
 	return true;
 }
 
 bool LmMenu::log()
 {
+	//check if the user enter smthg
+	if(!strcmp(m_pLogEditBox->getText(),""))
+	{
+		CCLOG("user doenst enter smthg");
+		return false;
+	}
+	else
+	{
+
+		//use to place elements
+		Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+		Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+
+		//remove the log layer
+		m_pLmMenuScene->removeChild(m_pLogLayer);
+
+		//create wifi layer
+		m_pWifiLayer = Layer::create();
+
+		//add the wifilayer
+		m_pLmMenuScene->addChild(m_pWifiLayer);
+
+		//add a background img for the wifi layer
+		m_pSpriteWifiBackground = Sprite::create("titre.png");
+		m_pSpriteWifiBackground->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
+		m_pWifiLayer->addChild(m_pSpriteWifiBackground);
+
+		//TODO find peers and set attributes and instanciate socket
+
+		//tablet are connected create both user
+		m_pUser1->setPScore(0);
+		m_pUser1->setPUserName(m_pLogEditBox->getText());
+		m_pUser1->setPUserTabletName("tablet1_name");
+
+		m_pUser2->setPScore(20);
+		m_pUser2->setPUserName("2nd user");
+		m_pUser2->setPUserTabletName("tablet2_name");
+
+
+		//Play button
+		auto l_oPlayButton = Button::create("nextButtonNormal.png","nextButtonPressed.png");
+		l_oPlayButton->setTouchEnabled(true);
+		l_oPlayButton -> setPosition(Vect(l_oVisibleSize.width/2+l_oOrigin.x,l_oOrigin.y));
+		l_oPlayButton->addTouchEventListener(CC_CALLBACK_0(LmMenu::menuIsFinished, this));
+		m_pLogLayer->addChild(l_oPlayButton);
+
+		return true;
+
+	}
+}
+
+void LmMenu::menuIsFinished()
+{
 	Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("MenuFinished");
-	return true;
+
 }
