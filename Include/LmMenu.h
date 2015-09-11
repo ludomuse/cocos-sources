@@ -14,10 +14,13 @@
 #include "ui/CocosGUI.h"
 #include "LmUser.h"
 
-static float s_fSplashScreenDuration = 3.0f;
+static const float s_fSplashScreenDuration = 3.0f;
 
 class LmMenu
 {
+
+	static const int s_iMaxLenghtUserName = 10;
+
 
 private:
 
@@ -37,7 +40,7 @@ private:
 	cocos2d::ui::EditBox* m_pLogEditBox;
 
 	//callback button methods
-	bool log();
+	bool wifiDirectScreen();
 	void menuIsFinished();
 
 	//callback method of splashscreen
@@ -46,6 +49,9 @@ private:
 	//both users (1=local & 2=2nd user)
 	LmUser* m_pUser1;
 	LmUser* m_pUser2;
+
+	//bool de to be sure to click one time the play button
+	bool m_bPlayButtonClicked;
 
 public:
 

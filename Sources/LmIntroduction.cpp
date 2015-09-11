@@ -52,22 +52,22 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	//next button
 	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(getNextButtonPosition(m_pNextButton));
+	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getSize().width/2,m_pNextButton->getSize().height/2));
 	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::nextLayer, this));
 	m_pInteractionScene->addChild(m_pNextButton,1);
 
 	//previous button
 	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
 	m_pPreviousButton->setTouchEnabled(true);
-	m_pPreviousButton -> setPosition(getPreviousButtonPosition(m_pPreviousButton));
+	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getSize().width/2,m_pPreviousButton->getSize().height/2));
 	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::previousLayer, this));
 	m_pInteractionScene->addChild(m_pPreviousButton,1);
 
 	//test they are going to be create by the LmFactory while reading the json file
 	//add two LmLayer to test
-	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3","hello"));
-	m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3","suivez moi les enfants"));
-	m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3","recompense"));
+	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3",""));
+	m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3",""));
+	m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3",""));
 
 	//we begin by the first one of the vector
 	m_iIndex = 0;
@@ -167,28 +167,6 @@ bool LmIntroduction::previousLayer()
 
 	}
 
-}
-
-cocos2d::Vect LmIntroduction::getNextButtonPosition(cocos2d::ui::Button* l_pButton)const
-{
-	Size l_oSizeOfButton = l_pButton->getSize();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	float l_iXButton = visibleSize.width-l_oSizeOfButton.width/2;
-	float l_iYButton = l_oSizeOfButton.height/2;
-
-	return Vect(l_iXButton,l_iYButton);
-}
-
-cocos2d::Vect LmIntroduction::getPreviousButtonPosition(cocos2d::ui::Button* l_pButton)const
-{
-	Size l_oSizeOfButton = l_pButton->getSize();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	float l_iXButton = l_oSizeOfButton.width/2;
-	float l_iYButton = l_oSizeOfButton.height/2;
-
-	return Vect(l_iXButton,l_iYButton);
 }
 
 void LmIntroduction::moveRightDone()

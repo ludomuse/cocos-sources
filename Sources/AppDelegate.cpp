@@ -130,11 +130,13 @@ bool AppDelegate::init()
 
 	//init callback method of the custom event (use to know when LmMenu finished )
 	auto MenuFinished = [=](EventCustom * event)
-						{
+								{
+		//LmGameManager get users from the LmMenu
 		m_pLmGameManager->setPUser1(m_pLmMenu->getPUser1());
+		CCLOG("nom user %s %s",m_pLmMenu->getPUser2()->getPUserName(),"test");
 		m_pLmGameManager->setPUser2(m_pLmMenu->getPUser2());
 		m_pLmGameManager->runGame();
-						};
+								};
 
 	//add the custom event to the event dispatcher
 	Director::getInstance()->getEventDispatcher()->addCustomEventListener("MenuFinished",MenuFinished);

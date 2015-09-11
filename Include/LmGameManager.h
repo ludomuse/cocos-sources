@@ -33,6 +33,15 @@ private:
 	LmUser* m_pUser1;
 	LmUser* m_pUser2;
 
+	//scene of the dashboard
+	cocos2d::Scene* m_pDashboardScene;
+
+	//layer of user profile
+	cocos2d::Layer* m_pUserLayer;
+
+	//init the dashboard
+	bool initDashboard();
+
 public:
 
 	LmGameManager();

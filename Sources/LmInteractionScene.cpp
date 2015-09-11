@@ -38,8 +38,6 @@ bool LmInteractionScene::init()
 	}
 
 
-
-
 	//test
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);

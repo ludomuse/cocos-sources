@@ -10,8 +10,10 @@
 #ifndef CLASSES_SOURCES_LMUSER_H_
 #define CLASSES_SOURCES_LMUSER_H_
 
+
 class LmUser
 {
+
 private:
 
 	const char* m_pUserName;

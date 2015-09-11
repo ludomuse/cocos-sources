@@ -26,10 +26,6 @@ private:
 	cocos2d::ui::Button* m_pNextButton;
 	cocos2d::ui::Button* m_pPreviousButton;
 
-	//get the position of next and previous buttons
-	cocos2d::Vect getNextButtonPosition(cocos2d::ui::Button*)const;
-	cocos2d::Vect getPreviousButtonPosition(cocos2d::ui::Button*)const;
-
 	//scene pointer of his interaction so it can handle the transition
 	cocos2d::Scene* m_pInteractionScene;
 
