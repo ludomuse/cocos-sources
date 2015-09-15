@@ -11,10 +11,17 @@ class LmPuzzleScene : public LmInteractionScene
 {
 private:
 
+	void runGame();
+
+	void end();
+
+	int test;
+	bool sync;
+
 
 public:
 
-	LmPuzzleScene();
+	LmPuzzleScene(int);
 	~LmPuzzleScene();
 
 

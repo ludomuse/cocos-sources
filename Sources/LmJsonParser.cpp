@@ -68,3 +68,19 @@ void LmJsonParser::moveToTheNextScene()
 	m_iIndexDocument++;
 }
 
+const char* LmJsonParser::getSTitleApplication()
+{
+	if(m_sTitleApplication==NULL)
+	{
+		CCLOG("init the string");
+		//init the string
+		assert(m_oDocument["Ludomuse"]["Configuration"].IsObject());
+		assert(m_oDocument["Ludomuse"]["Configuration"]["title"].IsString());
+		m_sTitleApplication = m_oDocument["Ludomuse"]["Configuration"]["title"].GetString();
+
+	}
+
+	return m_sTitleApplication;
+}
+
+

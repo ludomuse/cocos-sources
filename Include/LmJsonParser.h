@@ -42,6 +42,9 @@ public:
 	//put the index to the next scene
 	void moveToTheNextScene();
 
+	//init and return the title of the app
+	const char* getSTitleApplication();
+
 private:
 
 	//Where we parse the json file
@@ -52,6 +55,10 @@ private:
 
 	//id of the interaction scene where index is pointing
 	int m_iIdInteractionScene;
+
+	//title of the application
+	const char* m_sTitleApplication;
+
 
 
 };

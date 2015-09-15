@@ -29,6 +29,8 @@ private:
 	//our vector of Scene
 	std::vector<LmInteractionScene*> m_aInteractionSceneOfTheGame;
 
+
+
 public:
 
 	LmServerManager();
@@ -40,6 +42,8 @@ public:
 	//init
 	bool init();
 
+	//init with json and return the title
+	const char* getSTitleApplication();
 };
 
 

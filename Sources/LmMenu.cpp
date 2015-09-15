@@ -75,31 +75,35 @@ bool LmMenu::logScreen()
 	m_pLogLayer->addChild(m_pSpriteLogBackground);
 
 	//log button
-	auto l_oLogButton = Button::create("logNormal.png","logPressed.png");
-	l_oLogButton->setTouchEnabled(true);
+	auto l_oLogButton = MenuItemImage::create("logNormal.png","logPressed.png",CC_CALLBACK_1(LmMenu::wifiDirectScreen, this));
 	l_oLogButton->setAnchorPoint(Point(0.5, 0));
 	l_oLogButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.2f));
-	l_oLogButton->addTouchEventListener(CC_CALLBACK_0(LmMenu::wifiDirectScreen, this));
-	m_pLogLayer->addChild(l_oLogButton);
 
 	// Create the textfield
 	m_pLogEditBox = EditBox::create(Size(300,50),Scale9Sprite::create("textfieldBackground.png"));
 	m_pLogEditBox->setPosition(Point(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.5f));
-	m_pLogEditBox->setPlaceHolder("Name");
-	m_pLogEditBox->setFontSize(25);
+	m_pLogEditBox->setPlaceHolder(" Name");
+	m_pLogEditBox->setFontSize(20);
+	m_pLogEditBox->setFontName("fonts/JosefinSans-Regular.ttf");
+	m_pLogEditBox->setFontColor(Color3B::BLACK);
 	m_pLogEditBox->setMaxLength(s_iMaxLenghtUserName);
 	m_pLogEditBox->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
-	m_pLogLayer->addChild(m_pLogEditBox);
+	m_pLogLayer->addChild(m_pLogEditBox,1);
 
 	//the string which contain the user name is contain is an autorelease object editbox and will disapear when use in the gamemanager
 	//we retain it here to release it in the destructor
 	m_pLogEditBox->retain();
 
+	// create menu, it's an autorelease object
+	auto l_oMenu = Menu::create(l_oLogButton, NULL);
+	l_oMenu->setPosition(Vec2::ZERO);
+	m_pLogLayer->addChild(l_oMenu, 1);
+
 
 	return true;
 }
 
-bool LmMenu::wifiDirectScreen()
+bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 {
 	//check if the user enter smthg
 	if(!strcmp(m_pLogEditBox->getText(),""))
@@ -127,6 +131,16 @@ bool LmMenu::wifiDirectScreen()
 		m_pSpriteWifiBackground->setPosition(l_oVisibleSize.width/2,l_oVisibleSize.height/2+l_oOrigin.y);
 		m_pWifiLayer->addChild(m_pSpriteWifiBackground);
 
+		//Play button
+		auto l_oPlayButton = MenuItemImage::create("playNormal.png","playPressed.png",CC_CALLBACK_1(LmMenu::menuIsFinished, this));
+		l_oPlayButton->setAnchorPoint(Point(0.5, 0));
+		l_oPlayButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.2f));
+
+		// create menu, it's an autorelease object
+		auto l_oMenu = Menu::create(l_oPlayButton, NULL);
+		l_oMenu->setPosition(Vec2::ZERO);
+		m_pWifiLayer->addChild(l_oMenu, 1);
+
 		//TODO find peers and set attributes and instanciate socket
 
 		//tablet are connected create both user
@@ -139,20 +153,14 @@ bool LmMenu::wifiDirectScreen()
 		m_pUser2->setPUserTabletName("tablet2_name");
 
 
-		//Play button
-		auto l_oPlayButton = Button::create("playNormal.png","playPressed.png");
-		l_oPlayButton->setTouchEnabled(true);
-		l_oPlayButton->setAnchorPoint(Point(0.5, 0));
-		l_oPlayButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.2f));
-		l_oPlayButton->addTouchEventListener(CC_CALLBACK_0(LmMenu::menuIsFinished, this));
-		m_pLogLayer->addChild(l_oPlayButton);
+
 
 		return true;
 
 	}
 }
 
-void LmMenu::menuIsFinished()
+bool LmMenu::menuIsFinished(cocos2d::Ref* l_oSender)
 {
 	if(!m_bPlayButtonClicked)
 	{

@@ -19,9 +19,10 @@ public:
 	//init
 	bool init();
 
-	//test
-    bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event* event);
 
+	bool isDone() const {
+		return m_bDone;
+	}
 
 protected:
 
@@ -30,6 +31,11 @@ protected:
 
 	//an introduction to the InteractionScene
 	LmIntroduction* m_pLmIntroduction;
+
+	bool m_bDone;
+
+	//interface for all games
+	virtual void runGame()=0;
 
 };
 

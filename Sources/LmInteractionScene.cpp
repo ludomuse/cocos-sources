@@ -10,23 +10,21 @@ LmInteractionScene::LmInteractionScene()
 	//create the introduction
 	m_pLmIntroduction = new LmIntroduction;
 
+	m_bDone=false;
+
 }
 
 LmInteractionScene::~LmInteractionScene()
 {
-	//layers is autorelease object
 
 	delete m_pLmIntroduction;
 
-	//declare a member variable
-	//Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
+	//remove the custom event
+	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners("IntroductionFinished");
+
 }
 
-bool LmInteractionScene::onTouchBegan(cocos2d::Touch* touch,cocos2d::Event* event)
-{
-	CCLOG("screen touched");
-    return true;
-}
+
 
 bool LmInteractionScene::init()
 {
@@ -37,17 +35,15 @@ bool LmInteractionScene::init()
 		return false;
 	}
 
+	//init callback method of the custom event (use to know when an interactionScene want to communicate with this)
+	auto IntroductionFinished = [=](EventCustom * event)
+			{
+				runGame();
+			};
 
-	//test
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->setSwallowTouches(true);
-    listener->onTouchBegan = CC_CALLBACK_2(LmInteractionScene::onTouchBegan, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener,this);
+	//add the custom event to the event dispatcher
+	Director::getInstance()->getEventDispatcher()->addCustomEventListener("IntroductionFinished",IntroductionFinished);
+
 
 	return true;
 }
-
-
-
-
-

@@ -52,14 +52,14 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	//next button
 	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getSize().width/2,m_pNextButton->getSize().height/2));
+	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width/2,m_pNextButton->getContentSize().height/2));
 	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::nextLayer, this));
 	m_pInteractionScene->addChild(m_pNextButton,1);
 
 	//previous button
 	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
 	m_pPreviousButton->setTouchEnabled(true);
-	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getSize().width/2,m_pPreviousButton->getSize().height/2));
+	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width/2,m_pPreviousButton->getContentSize().height/2));
 	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::previousLayer, this));
 	m_pInteractionScene->addChild(m_pPreviousButton,1);
 
@@ -88,8 +88,6 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
 	m_pCurrentLayer->init();
 	m_pLayerTransition->addChild(m_pCurrentLayer,0);
-	m_pCurrentLayer->playSound();
-
 
 	return true;
 }
@@ -101,10 +99,15 @@ bool LmIntroduction::nextLayer()
 	{
 		m_bActionDone=false;
 
-		//we were pointing the 1st LmLayer
 		if(m_iIndex>=m_iSize-1)
 		{
 			m_bActionDone=true;
+
+			//we indicate to the inyeractionscene that introduction is over
+			m_pInteractionScene->removeChild(m_pCurrentLayer);
+			m_pInteractionScene->removeChild(m_pNextButton);
+			m_pInteractionScene->removeChild(m_pPreviousButton);
+			Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("IntroductionFinished");
 			return false;
 		}
 		else
@@ -138,10 +141,10 @@ bool LmIntroduction::previousLayer()
 	{
 		m_bActionDone=false;
 
-		//we were pointing the 1st LmLayer
 		if(m_iIndex<=0)
 		{
 			m_bActionDone=true;
+
 			return false;
 		}
 		else

@@ -44,7 +44,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
 	//display a splashscreen then a log screen then a wifidirect screen and get info
 	m_pLmMenu->splashScreen();
-
+	//m_pLmGameManager->runGame();
 	return true;
 }
 
@@ -133,7 +133,6 @@ bool AppDelegate::init()
 								{
 		//LmGameManager get users from the LmMenu
 		m_pLmGameManager->setPUser1(m_pLmMenu->getPUser1());
-		CCLOG("nom user %s %s",m_pLmMenu->getPUser2()->getPUserName(),"test");
 		m_pLmGameManager->setPUser2(m_pLmMenu->getPUser2());
 		m_pLmGameManager->runGame();
 								};

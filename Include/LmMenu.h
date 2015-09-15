@@ -40,8 +40,10 @@ private:
 	cocos2d::ui::EditBox* m_pLogEditBox;
 
 	//callback button methods
-	bool wifiDirectScreen();
-	void menuIsFinished();
+	bool wifiDirectScreen(cocos2d::Ref*);
+
+	//function to end menu by sending a custom event
+	bool menuIsFinished(cocos2d::Ref*);
 
 	//callback method of splashscreen
 	bool logScreen();
