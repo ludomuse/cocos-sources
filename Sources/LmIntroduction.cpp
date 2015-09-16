@@ -52,14 +52,14 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	//next button
 	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width*0.8,m_pNextButton->getContentSize().height*0.5));
+	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width*0.8,m_pNextButton->getContentSize().height*0.7));
 	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::nextLayer, this));
 	m_pInteractionScene->addChild(m_pNextButton,1);
 
 	//previous button
 	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
 	m_pPreviousButton->setTouchEnabled(true);
-	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.5));
+	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.7));
 	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::previousLayer, this));
 	m_pInteractionScene->addChild(m_pPreviousButton,1);
 

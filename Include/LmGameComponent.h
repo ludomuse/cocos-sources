@@ -1,7 +1,7 @@
 /*
  * LmGameComponent.h
  *
- * Object which compose our games
+ * Object which compose our games extend cocos2d::node
  *
  *  Created on: 2 sept. 2015
  *      Author: IHMTEKDev4
@@ -19,13 +19,10 @@ public:
 	LmGameComponent();
 	~LmGameComponent();
 
+	//init the sprite component with a filename then add it to this
 	void initSpriteComponent(std::string);
 
-	cocos2d::Size getSpriteContentSize()const;
-
-	void setPosition(float,float);
-
-	void setAnchorPoint(float,float);
+	cocos2d::Size getSpriteSize()const;
 
 
 private:

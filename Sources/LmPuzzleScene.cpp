@@ -23,7 +23,7 @@ void LmPuzzleScene::runGame()
 	this->addChild(m_pLayerGame);
 
 	//test
-	auto background = Sprite::create("game.png");
+	auto background = Sprite::create("log.png");
 	background->setPosition(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.5f);
 	m_pLayerGame->addChild(background);
 
