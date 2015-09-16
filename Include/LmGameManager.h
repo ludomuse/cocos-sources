@@ -8,8 +8,6 @@
 #include "ui/CocosGUI.h"
 #include "LmServerManager.h"
 #include "LmUser.h"
-
-//Differents Scene of the application
 #include "LmInteractionScene.h"
 
 //Different resolution
@@ -20,7 +18,7 @@ static const cocos2d::Size s_LargeResolutionSize = cocos2d::Size(1900, 1200);
 
 static const float s_fMagingOfSpriteBackgroundUser2Profile = 0.4f;
 static const float s_fTimeCompareAction = 0.5f;
-static const float s_fMarginBetweenInteraction = 50.0f; //50px between interaction
+static const float s_fMarginBetweenInteraction = 100.0f; //50px between interaction
 
 class LmGameManager
 {
@@ -61,7 +59,7 @@ private:
 	cocos2d::Label* m_pLabelScore;
 	cocos2d::Label* m_pLabelInteractionDone;
 	cocos2d::Label* m_pLabelTitleApplication;
-	char* m_sTitleApplication;
+	std::string m_sTitleApplication;
 
 	cocos2d::ui::Button* m_pCompareButton;
 	cocos2d::Label* m_pLabelCompareButton;
@@ -93,14 +91,17 @@ private:
 	//to know how many interaction have been played
 	int m_iIndexInteractionScene;
 
-	//sync bool
-	bool m_bNextInteractionScenePressed;
-
 	//to know how many inetraction done
 	int m_iInteractionDone;
 
 	//update dashboard after each interactionscene
 	void updateDashboard();
+
+	//to know if it's a back to the dashboard or its interactionscenefinished
+	bool m_bBackToDashboard;
+
+	//remove listeners avoid conflict between scene true = remove false = add
+	void removeListeners(bool);
 
 
 
@@ -121,9 +122,7 @@ public:
 		m_pUser2 = pUser2;
 	}
 
-	void setBNextInteractionScenePressed(bool bNextInteractionScenePressed) {
-		m_bNextInteractionScenePressed = bNextInteractionScenePressed;
-	}
+
 };
 
 #endif // LMGAMEMANAGER_H

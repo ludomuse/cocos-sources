@@ -18,6 +18,8 @@ private:
 	int test;
 	bool sync;
 
+	cocos2d::Label* label;
+
 
 public:
 

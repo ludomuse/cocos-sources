@@ -11,10 +11,32 @@ USING_NS_CC;
 
 LmGameComponent::LmGameComponent()
 {
-	m_pSpriteComponent = Sprite::create("background");
+
 }
 
-void LmGameComponent::addTo(Layer* l_Layer,int l_iOrder)
+LmGameComponent::~LmGameComponent()
 {
-	m_pSpriteComponent->addChild(l_Layer,l_iOrder);
+
 }
+
+void LmGameComponent::initSpriteComponent(std::string l_sFilename)
+{
+	m_pSpriteComponent = Sprite::create(l_sFilename);
+	this->addChild(m_pSpriteComponent);
+}
+
+cocos2d::Size LmGameComponent::getSpriteContentSize()const
+{
+	return m_pSpriteComponent->getContentSize();
+}
+
+void LmGameComponent::setPosition(float x,float y)
+{
+	m_pSpriteComponent->setPosition(Vec2(x,y));
+}
+
+void LmGameComponent::setAnchorPoint(float x,float y)
+{
+	m_pSpriteComponent->setAnchorPoint(Vec2(x,y));
+}
+

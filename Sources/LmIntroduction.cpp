@@ -52,16 +52,17 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	//next button
 	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width/2,m_pNextButton->getContentSize().height/2));
+	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width*0.8,m_pNextButton->getContentSize().height*0.5));
 	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::nextLayer, this));
 	m_pInteractionScene->addChild(m_pNextButton,1);
 
 	//previous button
 	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
 	m_pPreviousButton->setTouchEnabled(true);
-	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width/2,m_pPreviousButton->getContentSize().height/2));
+	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.5));
 	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::previousLayer, this));
 	m_pInteractionScene->addChild(m_pPreviousButton,1);
+
 
 	//test they are going to be create by the LmFactory while reading the json file
 	//add two LmLayer to test
@@ -104,6 +105,7 @@ bool LmIntroduction::nextLayer()
 			m_bActionDone=true;
 
 			//we indicate to the inyeractionscene that introduction is over
+			m_pInteractionScene->removeChild(m_pLayerTransition);
 			m_pInteractionScene->removeChild(m_pCurrentLayer);
 			m_pInteractionScene->removeChild(m_pNextButton);
 			m_pInteractionScene->removeChild(m_pPreviousButton);

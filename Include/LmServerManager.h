@@ -12,6 +12,7 @@
 //Differents Scene of the application
 #include "LmInteractionScene.h"
 #include "LmPuzzleScene.h"
+#include "LmRightSpotScene.h"
 
 
 
@@ -43,7 +44,7 @@ public:
 	bool init();
 
 	//init with json and return the title
-	const char* getSTitleApplication();
+	std::string getSTitleApplication();
 };
 
 

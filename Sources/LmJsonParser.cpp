@@ -15,12 +15,11 @@ using namespace cocos2d;
 
 LmJsonParser::LmJsonParser() : m_iIndexDocument(0), m_iIdInteractionScene(0)
 {
-
+	m_sTitleApplication="";
 }
 
 LmJsonParser::~LmJsonParser()
 {
-
 }
 
 
@@ -68,15 +67,17 @@ void LmJsonParser::moveToTheNextScene()
 	m_iIndexDocument++;
 }
 
-const char* LmJsonParser::getSTitleApplication()
+std::string LmJsonParser::getSTitleApplication()
 {
-	if(m_sTitleApplication==NULL)
+	if(m_sTitleApplication=="")
 	{
-		CCLOG("init the string");
 		//init the string
 		assert(m_oDocument["Ludomuse"]["Configuration"].IsObject());
 		assert(m_oDocument["Ludomuse"]["Configuration"]["title"].IsString());
-		m_sTitleApplication = m_oDocument["Ludomuse"]["Configuration"]["title"].GetString();
+
+		string l_sBuffer = m_oDocument["Ludomuse"]["Configuration"]["title"].GetString();
+
+		m_sTitleApplication = l_sBuffer.c_str();
 
 	}
 

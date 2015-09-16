@@ -125,6 +125,9 @@ void AppDelegate::initPathsForResolution()
 bool AppDelegate::init()
 {
 
+	//purge fileutils
+	FileUtils::getInstance()->purgeCachedEntries();
+
 	//init resolution
 	initPathsForResolution();
 

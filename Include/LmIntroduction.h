@@ -66,6 +66,9 @@ public:
 	//return true if there is a previous layer
 	bool previousLayer();
 
+	bool isBActionDone() const {
+		return m_bActionDone;
+	}
 };
 
 #endif // LMINTRODUCTION_H

@@ -12,22 +12,25 @@
 
 #include "cocos2d.h"
 
-class LmGameComponent
+class LmGameComponent : public cocos2d::Node
 {
 public:
 
 	LmGameComponent();
 	~LmGameComponent();
 
-	//add this gameobject to this layer and specify the z-order
-	void addTo(cocos2d::Layer*, int);
+	void initSpriteComponent(std::string);
 
+	cocos2d::Size getSpriteContentSize()const;
+
+	void setPosition(float,float);
+
+	void setAnchorPoint(float,float);
 
 
 private:
 
 	cocos2d::Sprite* m_pSpriteComponent;
-
 
 };
 

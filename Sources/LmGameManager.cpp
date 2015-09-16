@@ -13,7 +13,9 @@ LmGameManager::LmGameManager()
 
 	m_iInteractionDone=0;
 
-	m_bNextInteractionScenePressed=false;
+	//it's not a back to dashboard
+	m_bBackToDashboard=false;
+
 }
 
 LmGameManager::~LmGameManager()
@@ -40,6 +42,7 @@ LmGameManager::~LmGameManager()
 
 	//remove the custom event
 	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners("InteractionSceneFinished");
+	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners("BackToDashboard");
 
 
 }
@@ -83,7 +86,7 @@ bool LmGameManager::initDashboard()
 	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelUser1Name,1);
 
 	//label score
-	char l_aScoreString[10];
+	char l_aScoreString[20];
 	sprintf(l_aScoreString,"%d pts",m_pUser1->getPScore());
 	m_pLabelScore = Label::createWithTTF(l_aScoreString, "fonts/JosefinSans-Regular.ttf",20);
 	m_pLabelScore->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
@@ -91,7 +94,7 @@ bool LmGameManager::initDashboard()
 	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelScore,1);
 
 	//how manny interaction done label
-	char l_aInteractionDoneString[10];
+	char l_aInteractionDoneString[20];
 	sprintf(l_aInteractionDoneString,"%d/%d",m_iInteractionDone,m_aInteractionSceneOfTheGame.size());
 	m_pLabelInteractionDone = Label::createWithTTF(l_aInteractionDoneString, "fonts/JosefinSans-Regular.ttf",20);
 	m_pLabelInteractionDone->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
@@ -142,8 +145,9 @@ bool LmGameManager::initDashboard()
 	m_pBlueLayer->addChild(m_pSpriteBandTop);
 	m_pSpriteBandTop->retain();
 
-	//title label app TODO
-	m_pLabelTitleApplication = Label::createWithTTF("titre en dur", "fonts/JosefinSans-Regular.ttf",20);
+	//title label app
+	m_sTitleApplication=m_pLmServerManager->getSTitleApplication();
+	m_pLabelTitleApplication = Label::createWithTTF(m_sTitleApplication, "fonts/JosefinSans-Regular.ttf",20);
 	m_pLabelTitleApplication->setAnchorPoint(Vec2(0,0.5));
 	m_pLabelTitleApplication->setPosition(Vec2(m_pSpriteBackgroundBlueProfile->getContentSize().width*1.2f
 			,m_pSpriteBandTop->getContentSize().height*0.5f));
@@ -177,6 +181,8 @@ bool LmGameManager::init()
 	//get the vector of scene through the serverManager
 	m_aInteractionSceneOfTheGame = m_pLmServerManager->getInteractionSceneOfTheGame();
 
+
+
 	if(!initDashboard())
 	{
 		CCLOG("Init DashBoard failed");
@@ -186,7 +192,8 @@ bool LmGameManager::init()
 
 	//init callback method of the custom event (use to know when an interactionScene want to communicate with this)
 	auto InteractionSceneFinished = [=](EventCustom * event)
-					{
+													{
+
 		//TODO
 		//check if t's done and win etc and update sprite (for now its everytime done)
 		m_aSpritesInteractions.at(m_iIndexInteractionScene)->setTexture("interactionDone.png");
@@ -198,16 +205,28 @@ bool LmGameManager::init()
 		//update label of dashboard
 		updateDashboard();
 
-		//allow to press again the nextinteraction button
-		m_bNextInteractionScenePressed=false;
+		//it's not a back to dashboard
+		m_bBackToDashboard=false;
 
-		//when an interaction is finished we pop the current interaction
-		Director::getInstance()->popScene();
+		//reset touch enable
+		removeListeners(false);
 
-					};
+													};
+
+	auto BackToDashboard = [=](EventCustom * event)
+													{
+
+		m_bBackToDashboard=true;
+
+		//reset touch enable
+		removeListeners(false);
+
+													};
 
 	//add the custom event to the event dispatcher
 	Director::getInstance()->getEventDispatcher()->addCustomEventListener("InteractionSceneFinished",InteractionSceneFinished);
+	Director::getInstance()->getEventDispatcher()->addCustomEventListener("BackToDashboard",BackToDashboard);
+
 
 	return true;
 }
@@ -218,7 +237,7 @@ void LmGameManager::runGame()
 	init();
 
 	//replace the menu scene with the first one of the game
-	Director::getInstance()->replaceScene(m_pDashboardScene);
+	Director::getInstance()->replaceScene(TransitionFade::create(s_fTimeBetweenLmLayer,m_pDashboardScene));
 
 }
 
@@ -282,7 +301,6 @@ void LmGameManager::initDashboardInteraction()
 		l_pSpriteBuffer->setPosition(Vec2((l_iIndex)*s_fMarginBetweenInteraction,0));
 		l_iIndex++;
 		m_aSpritesInteractions.push_back(l_pSpriteBuffer);
-		CCLOG("interaction add to vector");
 	}
 
 	//init the scroll view
@@ -292,7 +310,18 @@ void LmGameManager::initDashboardInteraction()
 	m_pScrollView->setAnchorPoint(Vec2(0,0));
 	m_pScrollView->setPosition(Vec2(0,0));
 	m_pScrollView->setDirection(cocos2d::ui::ScrollView::Direction::HORIZONTAL);
-	auto l_oContainerSize = Size(l_iIndex*s_fMarginBetweenInteraction, l_oScrollFrameSize.height);
+
+	//if there is no enough interaction to fill the frame size
+	Size l_oContainerSize;
+	if((l_iIndex)*(s_fMarginBetweenInteraction)<=m_pSpriteBandMid->getContentSize().width)
+	{
+		l_oContainerSize = Size(m_pSpriteBandMid->getContentSize().width,m_pSpriteBandMid->getContentSize().height+l_pSpriteBuffer->getContentSize().height);
+	}
+	else
+	{
+		l_oContainerSize = Size((l_iIndex)*(s_fMarginBetweenInteraction),m_pSpriteBandMid->getContentSize().height+l_pSpriteBuffer->getContentSize().height);
+	}
+
 	m_pScrollView->setInnerContainerSize(l_oContainerSize);
 
 	for (std::vector<Sprite*>::iterator it = m_aSpritesInteractions.begin(); it != m_aSpritesInteractions.end(); ++it)
@@ -310,24 +339,36 @@ void LmGameManager::initDashboardInteraction()
 void LmGameManager::runNextInteraction()
 {
 
-	if(!m_bNextInteractionScenePressed)
+
+
+
+
+	//if its the last interactionscene the app finished
+	if(m_iIndexInteractionScene>=m_aInteractionSceneOfTheGame.size())
 	{
-		m_bNextInteractionScenePressed=true;
-
-		//if its the last interactionscene the app finished
-		if(m_iIndexInteractionScene>=m_aInteractionSceneOfTheGame.size())
-		{
-			CCLOG("END");
-			Director::getInstance()->end();
-		}
-		else
-		{
-			m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)->init();
-
-			Director::getInstance()->pushScene(TransitionFlipX::create(s_fTimeBetweenLmLayer,m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)));
-
-		}
+		CCLOG("END");
+		Director::getInstance()->end();
 	}
+	else
+	{
+
+		//if yes we need to init the scene
+		if(!m_bBackToDashboard)
+		{
+			//we pass the local user
+			m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)->init(m_pUser1);
+		}
+
+		//enable the back button of the interaction because it was disable befoire the back action
+		m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)->setBBackPressed(false);
+
+		CCLOG("pushscene");
+		removeListeners(true);
+		Director::getInstance()->pushScene(TransitionFade::create(s_fTimeBetweenLmLayer,m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)));
+
+
+	}
+
 
 }
 
@@ -339,6 +380,13 @@ void LmGameManager::updateDashboard()
 	//slow but we are using it just at the end of an interaction TODO
 	m_pLabelInteractionDone->setString(l_aInteractionDoneString);
 
+}
+
+void LmGameManager::removeListeners(bool l_bTrue)
+{
+	m_pBackButton->setTouchEnabled(!l_bTrue);
+	m_pCompareButton->setTouchEnabled(!l_bTrue);
+	m_pPlayNextInteractionButton->setTouchEnabled(!l_bTrue);
 }
 
 

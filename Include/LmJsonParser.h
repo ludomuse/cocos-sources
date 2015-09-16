@@ -43,7 +43,7 @@ public:
 	void moveToTheNextScene();
 
 	//init and return the title of the app
-	const char* getSTitleApplication();
+	std::string getSTitleApplication();
 
 private:
 
@@ -57,7 +57,7 @@ private:
 	int m_iIdInteractionScene;
 
 	//title of the application
-	const char* m_sTitleApplication;
+	std::string m_sTitleApplication;
 
 
 

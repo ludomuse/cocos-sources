@@ -10,7 +10,6 @@ LmPuzzleScene::LmPuzzleScene(int number)
 
 LmPuzzleScene::~LmPuzzleScene()
 {
-
 }
 
 void LmPuzzleScene::runGame()
@@ -36,7 +35,7 @@ void LmPuzzleScene::runGame()
 
 	char l_aScoreString[10];
 	sprintf(l_aScoreString,"number = %d",test);
-	auto label = Label::createWithTTF(l_aScoreString, "fonts/JosefinSans-Regular.ttf",20);
+	label = Label::createWithTTF(l_aScoreString, "fonts/JosefinSans-Regular.ttf",20);
 	label->setPosition(Vect(l_oVisibleSize.width*0.4f,l_oVisibleSize.height*0.4f));
 	m_pLayerGame->addChild(label,1);
 }
@@ -48,6 +47,8 @@ void LmPuzzleScene::end()
 		sync=false;
 		m_bDone=true;
 		removeChild(m_pLayerGame);
+		CCLOG("popscene");
+		Director::getInstance()->popScene();
 		Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("InteractionSceneFinished");
 	}
 

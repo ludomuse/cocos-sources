@@ -46,20 +46,18 @@ std::vector<LmInteractionScene*> LmServerManager::getInteractionSceneOfTheGame()
 	}
 
 	//test
+	m_aInteractionSceneOfTheGame.push_back(new LmRightSpotScene());
 	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(1));
-	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(2));
-	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(3));
-	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(4));
-	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(5));
-	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(6));
-	m_aInteractionSceneOfTheGame.push_back(new LmPuzzleScene(7));
+	m_aInteractionSceneOfTheGame.push_back(new LmRightSpotScene());
+
+
 
 
 
 	return m_aInteractionSceneOfTheGame;
 }
 
-const char* LmServerManager::getSTitleApplication()
+std::string LmServerManager::getSTitleApplication()
 {
 	return m_pLmJsonparser->getSTitleApplication();
 }
