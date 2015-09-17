@@ -67,8 +67,8 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	//test they are going to be create by the LmFactory while reading the json file
 	//add two LmLayer to test
 	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3",""));
-	m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3",""));
-	m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3",""));
+	//m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3",""));
+	//m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3",""));
 
 	//we begin by the first one of the vector
 	m_iIndex = 0;

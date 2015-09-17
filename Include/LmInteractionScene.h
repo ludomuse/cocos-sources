@@ -10,8 +10,11 @@
 #include "LmIntroduction.h"
 #include "LmUser.h"
 
+typedef std::map<int,LmGameComponent*>::iterator it_type;
+
 static const float s_fDashboardRatioHidden = 0.95f;
 static const float s_fTimeMovingDashboard = 0.5f;
+static const float s_fMarginLeft = 30.0f;
 
 
 class LmInteractionScene : public cocos2d::Scene
@@ -76,6 +79,8 @@ protected:
 	bool m_bBackPressed;
 
 	bool m_bActionRunning;
+
+	std::map<int,LmGameComponent*> m_aIdTable;
 
 
 

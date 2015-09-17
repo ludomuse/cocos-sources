@@ -14,7 +14,7 @@
 #include "ui/CocosGUI.h"
 #include "LmUser.h"
 
-static const float s_fSplashScreenDuration = 3.0f;
+static const float s_fSplashScreenDuration = 0.5f;
 
 class LmMenu
 {

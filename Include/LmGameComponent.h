@@ -21,13 +21,22 @@ public:
 
 	//init the sprite component with a filename then add it to this
 	void initSpriteComponent(std::string);
+	void initSpriteComponent(std::string,const cocos2d::Rect&);
 
 	cocos2d::Size getSpriteSize()const;
+
+	int getIId() const {
+		return m_iId;
+	}
+
+	static int s_iNumberOfGameComponent;
 
 
 private:
 
 	cocos2d::Sprite* m_pSpriteComponent;
+
+	int m_iId;
 
 };
 
