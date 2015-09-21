@@ -12,7 +12,7 @@
 
 #include "cocos2d.h"
 
-class LmGameComponent : public cocos2d::Node
+class LmGameComponent
 {
 public:
 
@@ -23,13 +23,35 @@ public:
 	void initSpriteComponent(std::string);
 	void initSpriteComponent(std::string,const cocos2d::Rect&);
 
-	cocos2d::Size getSpriteSize()const;
+	cocos2d::Size getContentSize()const;
 
 	int getIId() const {
 		return m_iId;
 	}
 
+	cocos2d::Sprite* getPSpriteComponent() const {
+		return m_pSpriteComponent;
+	}
+
 	static int s_iNumberOfGameComponent;
+
+
+	void addTo(cocos2d::Layer*);
+	void addTo(cocos2d::Layer*,int);
+	void removeFrom(cocos2d::Layer*);
+	void setPosition(cocos2d::Vec2);
+	void setAnchorPoint(cocos2d::Vec2);
+	void setTexture(std::string);
+
+	bool m_bSpriteIsInit;
+
+	//return the bounding in the UIWindow space
+	cocos2d::Rect getBoundingBoxInWorldSpace(cocos2d::Node*);
+
+	cocos2d::Size m_oSize;
+
+	void setVisible(bool);
+
 
 
 private:
