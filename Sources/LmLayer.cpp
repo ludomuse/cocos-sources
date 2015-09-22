@@ -7,6 +7,10 @@ USING_NS_CC;
 
 LmLayer::LmLayer()
 {
+	//pointer
+	m_pImageURL=nullptr;
+	m_pSoundURL=nullptr;
+	m_pText=nullptr;
 
 }
 

@@ -15,11 +15,21 @@ using namespace cocos2d::ui;
 
 LmMenu::LmMenu()
 {
-	m_pUser1 = new LmUser;
-	m_pUser2 = new LmUser;
+	//object
+	m_pUser1 = new LmUser;//delete in LmGameManager
+	m_pUser2 = new LmUser;//delete in LmGameManager
 
-	//the play has not been clicked yet
-	m_bPlayButtonClicked = false;
+	//pointer
+	m_pLmMenuScene=nullptr;
+	m_pLogEditBox=nullptr;
+	m_pLogLayer=nullptr;
+	m_pSpriteLogBackground=nullptr;
+	m_pSpriteSplashScreen=nullptr;
+	m_pSpriteWifiBackground=nullptr;
+	m_pWifiLayer=nullptr;
+
+	//primitive type
+	m_bPlayButtonClicked = false;//the play has not been clicked yet
 }
 
 LmMenu::~LmMenu()
@@ -55,7 +65,7 @@ void LmMenu::splashScreen()
 
 	//wait a while
 	auto delay = DelayTime::create(s_fSplashScreenDuration);
-	m_pLogLayer -> runAction( Sequence::create(delay, CallFunc::create( std::bind(&LmMenu::logScreen,this) ), NULL));
+	m_pLogLayer -> runAction( Sequence::create(delay, CallFunc::create( std::bind(&LmMenu::logScreen,this) ), nullptr));
 
 }
 
@@ -95,7 +105,7 @@ bool LmMenu::logScreen()
 	m_pLogEditBox->retain();
 
 	// create menu, it's an autorelease object
-	auto l_oMenu = Menu::create(l_oLogButton, NULL);
+	auto l_oMenu = Menu::create(l_oLogButton, nullptr);
 	l_oMenu->setPosition(Vec2::ZERO);
 	m_pLogLayer->addChild(l_oMenu, 1);
 
@@ -137,7 +147,7 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 		l_oPlayButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.2f));
 
 		// create menu, it's an autorelease object
-		auto l_oMenu = Menu::create(l_oPlayButton, NULL);
+		auto l_oMenu = Menu::create(l_oPlayButton, nullptr);
 		l_oMenu->setPosition(Vec2::ZERO);
 		m_pWifiLayer->addChild(l_oMenu, 1);
 

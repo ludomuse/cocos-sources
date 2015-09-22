@@ -7,8 +7,16 @@
 
 #include "../Include/LmUser.h"
 
+
 LmUser::LmUser()
 {
+
+	//primitive type
+	m_iScore=0;
+
+	//pointer
+	m_pUserName=nullptr;
+	m_pUserTabletName=nullptr;
 
 }
 

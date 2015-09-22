@@ -11,33 +11,51 @@
 
 using namespace cocos2d;
 
-LmRightSpotScene::LmRightSpotScene()
+LmRightSpotScene::LmRightSpotScene(
+		std::string l_sFilenameSpriteBackground,
+		std::string l_sFilenameSpriteCollideZone,
+		std::vector<std::string> l_aFilenamesWrongImmages,
+		std::string l_sFilenameRightImage,
+		int l_iHoleOnX,
+		int l_iHoleOnY,
+		std::vector<std::pair<int,int>> l_aLocationOfHole)
 {
-	//json
-	m_sFilenameSpriteBackground="log.png";
-	m_sFilenameSpriteCollideZone="sendingArea.png";
-	m_aFilenamesWrongImmages.push_back("wrongImgRightSpotScene1.jpg");
-	m_aFilenamesWrongImmages.push_back("wrongImgRightSpotScene2.jpg");
-	m_aFilenamesWrongImmages.push_back("wrongImgRightSpotScene3.jpg");
-	m_sFilenameRightImage = "imgRightSpotScene.jpg";
-	m_iHoleOnX=4;
-	m_iHoleOnY=5;
-	m_aLocationOfHole.push_back({1,1});
-	m_aLocationOfHole.push_back({3,1});
-	m_aLocationOfHole.push_back({0,1});
-	m_aLocationOfHole.push_back({2,0});
-	m_aLocationOfHole.push_back({3,4});
 
+	//json parameters
+	m_sFilenameSpriteBackground=l_sFilenameSpriteBackground;
+	m_sFilenameSpriteCollideZone=l_sFilenameSpriteCollideZone;
+	m_aFilenamesWrongImmages = l_aFilenamesWrongImmages;
+	m_sFilenameRightImage = l_sFilenameRightImage;
+	m_iHoleOnX=l_iHoleOnX;
+	m_iHoleOnY=l_iHoleOnY;
+	m_aLocationOfHole = l_aLocationOfHole;
 
-
-
-	//other
+	//primitive type
 	m_bFinishButtonSync=true;
 	m_iBufferId=-1;
 	m_bSameGameComponent=false;
 	m_bSpriteSelected=false;
 
-
+	//pointer
+	m_pBackDashboardButton=nullptr;
+	m_pBufferSprite=nullptr;
+	m_pDashboardBandLayer=nullptr;
+	m_pFinishButton=nullptr;
+	m_pGuiElementsLayer=nullptr;
+	m_pLabelScore=nullptr;
+	m_pLabelUserName=nullptr;
+	m_pLayerGame=nullptr;
+	m_pLayerScrollView=nullptr;
+	m_pLayerUserChild=nullptr;
+	m_pLayerUserParent=nullptr;
+	m_pListener=nullptr;
+	m_pLmIntroduction=nullptr;
+	m_pMoveLayerButton=nullptr;
+	m_pScrollView=nullptr;
+	m_pSendingArea=nullptr;
+	m_pSpriteBackground=nullptr;
+	m_pSpriteDashboardBand=nullptr;
+	m_pUser=nullptr;
 }
 
 LmRightSpotScene::~LmRightSpotScene()
@@ -55,6 +73,18 @@ LmRightSpotScene::~LmRightSpotScene()
 	{
 		//destroy the pointer on the LmGameComponent
 		delete it->second;
+	}
+
+	for(std::vector<LmGameComponent*>::iterator it=m_aHolesRightImage.begin();it!=m_aHolesRightImage.end();++it)
+	{
+		//destroy holes of the right image
+		delete (*it);
+	}
+
+	for(std::vector<LmGameComponent*>::iterator it=m_aHolesScrollView.begin();it!=m_aHolesScrollView.end();++it)
+	{
+		//destroy holes in scroll view
+		delete (*it);
 	}
 
 	Director::getInstance()->getEventDispatcher()->removeEventListener(m_pListener);
@@ -109,10 +139,10 @@ bool LmRightSpotScene::init()
 
 	//we get dimension of the right image ( /!\ guessing that all ressources are making same resolution /!\ )
 	auto l_oSpriteRightImgSpot = Sprite::create(m_sFilenameRightImage);
-	float l_fWidthImage = l_oSpriteRightImgSpot->getContentSize().width;
-	float l_fHeightImage = l_oSpriteRightImgSpot->getContentSize().height;
-	float l_fWidthRect = l_fWidthImage/m_iHoleOnX;
-	float l_fHeightRect = l_fHeightImage/m_iHoleOnY;
+	float l_fWidthRightImage = l_oSpriteRightImgSpot->getContentSize().width;
+	float l_fHeightRightImage = l_oSpriteRightImgSpot->getContentSize().height;
+	float l_fWidthRect = l_fWidthRightImage/m_iHoleOnX;
+	float l_fHeightRect = l_fHeightRightImage/m_iHoleOnY;
 
 	//for each wrong image
 	int l_iIndex=0;
@@ -145,7 +175,7 @@ bool LmRightSpotScene::init()
 	l_iIndex=0;
 
 	//init vector of the right image
-	Point l_oPointToPlaceRightImage = Point(l_oMiddleOfPlayableArea.x-l_fWidthImage*0.5,l_oMiddleOfPlayableArea.y-l_fHeightImage*0.5);
+	Point l_oPointToPlaceRightImage = Point(l_oMiddleOfPlayableArea.x-l_fWidthRightImage*0.5,l_oMiddleOfPlayableArea.y-l_fHeightRightImage*0.5);
 
 	for(int i=0;i<m_iHoleOnX;i++)
 	{
@@ -169,9 +199,9 @@ bool LmRightSpotScene::init()
 				m_aRightImage.at(l_iIndex)->setAnchorPoint(Vec2(0,0));
 
 				//we add an hole
-				m_aHoles.push_back(new LmGameComponent);
+				m_aHolesRightImage.push_back(new LmGameComponent);
 				//we get the element just pushed
-				auto l_oHole = m_aHoles.at(m_aHoles.size()-1);
+				auto l_oHole = m_aHolesRightImage.at(m_aHolesRightImage.size()-1);
 				l_oHole->initSpriteComponent("transparency.png");
 				l_oHole->setAnchorPoint(Vec2(0,0));
 				l_oHole->setPosition(l_oVectorPosition);
@@ -189,7 +219,6 @@ bool LmRightSpotScene::init()
 
 			//register it into the id table
 			m_aIdTable.insert(std::pair<int,LmGameComponent*>(m_aRightImage.at(l_iIndex)->getIId(),m_aRightImage.at(l_iIndex)));
-			CCLOG("%d",m_aRightImage.at(l_iIndex)->getIId());
 			l_iIndex++;
 		}
 	}
@@ -198,14 +227,10 @@ bool LmRightSpotScene::init()
 
 	//test set one layer first
 	m_bChildSet=m_pUser->isBParent();
-	/*auto sprite  = Sprite::create("interactionDone.png");
-	sprite->setAnchorPoint(Vec2(0.5,0.5));
-	sprite->setPosition(Vec2(l_oMiddleOfPlayableArea.x,l_oMiddleOfPlayableArea.y));
-	m_pLayerUserChild->addChild(sprite);*/
 
 
 	//we check what type of user is playing to display good stuff
-	if(m_pUser->isBParent())
+	if(!m_bChildSet)
 	{
 		//parent view
 
@@ -287,6 +312,12 @@ bool LmRightSpotScene::init()
 	else
 	{
 
+		//init listener
+		m_pListener = EventListenerTouchOneByOne::create();
+		m_pListener->onTouchBegan = CC_CALLBACK_2(LmRightSpotScene::onTouchBeganChild, this);
+		m_pListener->onTouchMoved = CC_CALLBACK_2(LmRightSpotScene::onTouchMovedChild, this);
+		m_pListener->onTouchEnded = CC_CALLBACK_2(LmRightSpotScene::onTouchEndedChild, this);
+		Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(m_pListener,m_pLayerUserChild);
 
 		m_pLayerGame->addChild(m_pLayerUserChild);
 	}
@@ -326,7 +357,7 @@ bool LmRightSpotScene::onTouchBeganParent(Touch* touch,Event* event)
 {
 	//get the id of the gameobject touched or -1 otherwise
 	m_iBufferId=idLmGameComponentTouched(touch,event);
-	CCLOG("buffer = %d",m_iBufferId);
+	//CCLOG("buffer = %d",m_iBufferId);
 
 	//if something is touched
 	if(m_iBufferId>=0)
@@ -335,7 +366,7 @@ bool LmRightSpotScene::onTouchBeganParent(Touch* touch,Event* event)
 		m_bSameGameComponent=true;
 		//begin a click
 		auto delay = DelayTime::create(s_fLongClickDuration);
-		m_pLayerScrollView -> runAction( Sequence::create(delay, CallFunc::create( std::bind(&LmRightSpotScene::checkLongClick,this) ), NULL));
+		m_pLayerScrollView -> runAction( Sequence::create(delay, CallFunc::create( std::bind(&LmRightSpotScene::checkLongClick,this) ), nullptr));
 	}
 	else
 	{
@@ -367,10 +398,8 @@ void LmRightSpotScene::onTouchMovedParent(Touch* touch,Event* event)
 		{
 			//we send the id to the other tablet
 			CCLOG("we send the %d gamecomponent",m_aIdTable.find(m_iBufferId)->first);
-			m_aIdTable.find(m_iBufferId)->second->addTo(m_pLayerUserChild);
 			m_bSpriteSelected=false;
 			m_pScrollView->setTouchEnabled(true);
-
 			//remove the buffer sprite froim the layer
 			m_pLayerUserParent->removeChild(m_pBufferSprite);
 			//we put the gamecomponent visible again
@@ -404,7 +433,6 @@ void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
 
 }
 
-
 int LmRightSpotScene::idLmGameComponentTouched(Touch* touch,Event* event)
 {
 	auto l_oTouchLocation = touch->getLocation();
@@ -424,7 +452,7 @@ void LmRightSpotScene::checkLongClick()
 {
 	if(m_bSameGameComponent)
 	{
-		//with the buffer id we know what game compoennt is selected
+		//with the buffer id we know which game component is selected
 		CCLOG("lond click on %d",m_aIdTable.find(m_iBufferId)->first);
 
 		//the sprite is selected
@@ -445,3 +473,19 @@ bool LmRightSpotScene::bufferCollideSendingArea()
 {
 	return m_pBufferSprite->getBoundingBox().intersectsRect(m_pSendingArea->getPSpriteComponent()->getBoundingBox());
 }
+
+bool LmRightSpotScene::onTouchBeganChild(Touch* touch,Event* event)
+{
+	return true;
+}
+
+void LmRightSpotScene::onTouchMovedChild(Touch* touch,Event* event)
+{
+
+}
+
+void LmRightSpotScene::onTouchEndedChild(Touch* touch,Event* event)
+{
+
+}
+

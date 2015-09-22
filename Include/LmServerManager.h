@@ -24,9 +24,6 @@ private:
 	//JsonParser to read our Json File couple with a factory to instanciate InteractionScene and GameComponent
 	LmJsonParser* m_pLmJsonparser;
 
-	//our factory to create InteractionScene and GameComponent
-	LmFactory* m_pLmFactory;
-
 	//our vector of Scene
 	std::vector<LmInteractionScene*> m_aInteractionSceneOfTheGame;
 

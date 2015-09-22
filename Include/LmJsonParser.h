@@ -45,6 +45,7 @@ public:
 	//init and return the title of the app
 	std::string getSTitleApplication();
 
+
 private:
 
 	//Where we parse the json file

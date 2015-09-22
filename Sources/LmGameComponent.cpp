@@ -16,9 +16,13 @@ int LmGameComponent::s_iNumberOfGameComponent=0;
 
 LmGameComponent::LmGameComponent()
 {
+	//primitive type
 	s_iNumberOfGameComponent++;
 	m_iId=s_iNumberOfGameComponent;
 	m_bSpriteIsInit=false;
+
+	//pointer
+	m_pSpriteComponent=nullptr;
 }
 
 LmGameComponent::~LmGameComponent()

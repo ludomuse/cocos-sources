@@ -7,6 +7,21 @@ USING_NS_CC;
 
 LmIntroduction::LmIntroduction()
 {
+	//primitive type
+	m_iIndex=0;
+	m_iSize=0;
+	m_bActionDone = true;
+
+	//pointer
+	m_pCurrentLayer=nullptr;
+	m_pInteractionScene=nullptr;
+	m_pLayerTransition=nullptr;
+	m_pMoveLeft=nullptr;
+	m_pMoveLeftDone=nullptr;
+	m_pMoveRight=nullptr;
+	m_pMoveRightDone=nullptr;
+	m_pNextButton=nullptr;
+	m_pPreviousButton=nullptr;
 
 }
 
@@ -44,9 +59,6 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	m_pMoveRight->retain();
 	m_pMoveRightDone->retain();
 
-	//init bool to sync actions
-	m_bActionDone = true;
-
 	//init buttons
 
 	//next button
@@ -70,8 +82,6 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	//m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3",""));
 	//m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3",""));
 
-	//we begin by the first one of the vector
-	m_iIndex = 0;
 	m_iSize = m_aLayers.size();
 
 	//check if not empty
@@ -128,7 +138,7 @@ bool LmIntroduction::nextLayer()
 			m_aLayers.at(m_iIndex+1)->setPosition((3/2)*l_oVisibleSize.width+l_oOrigin.x,0);
 
 			//run the sequence so we know when its finished then callback function
-			m_pLayerTransition->runAction(Sequence::create(m_pMoveLeft,m_pMoveLeftDone,NULL));
+			m_pLayerTransition->runAction(Sequence::create(m_pMoveLeft,m_pMoveLeftDone,nullptr));
 
 			return true;
 		}
@@ -165,7 +175,7 @@ bool LmIntroduction::previousLayer()
 			m_aLayers.at(m_iIndex-1)->setPosition((-3/2)*l_oVisibleSize.width+l_oOrigin.x,0);
 
 			//run the sequence so we know when its finished then callback function
-			m_pLayerTransition->runAction(Sequence::create(m_pMoveRight,m_pMoveRightDone,NULL));
+			m_pLayerTransition->runAction(Sequence::create(m_pMoveRight,m_pMoveRightDone,nullptr));
 
 			return true;
 		}

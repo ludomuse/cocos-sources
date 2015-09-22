@@ -18,7 +18,7 @@ private:
 
 	const char* m_pUserName;
 	const char* m_pUserTabletName;
-	int m_pScore;
+	int m_iScore;
 	bool m_bParent;
 
 public:
@@ -45,11 +45,11 @@ public:
 	}
 
 	int getPScore() const {
-		return m_pScore;
+		return m_iScore;
 	}
 
 	void setPScore(int pScore) {
-		m_pScore = pScore;
+		m_iScore = pScore;
 	}
 
 	bool isBParent() const {

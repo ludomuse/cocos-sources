@@ -18,19 +18,18 @@ static const cocos2d::Size s_LargeResolutionSize = cocos2d::Size(1900, 1200);
 
 static const float s_fMagingOfSpriteBackgroundUser2Profile = 0.4f;
 static const float s_fTimeCompareAction = 0.5f;
-static const float s_fMarginBetweenInteraction = 100.0f; //50px between interaction
+static const float s_fMarginBetweenInteraction = 100.0f;
 
 class LmGameManager
 {
 private:
 
+	//ATTRIBUTES
+
 	std::vector<LmInteractionScene*> m_aInteractionSceneOfTheGame;
 
 	//use to get the vector of interactionScene
 	LmServerManager* m_pLmServerManager;
-
-	//call server manager and init m_vectorSceneOfTheGame
-	bool init();
 
 	//both users (1=local & 2=2nd user) get via LmMenu
 	LmUser* m_pUser1;
@@ -66,10 +65,22 @@ private:
 	cocos2d::ui::Button* m_pBackButton;
 	cocos2d::ui::Button* m_pPlayNextInteractionButton;
 
-
-	//vector interaction
+	//vector interaction sprite
 	std::vector<cocos2d::Sprite*> m_aSpritesInteractions;
 
+	//to know how many interaction have been played
+	int m_iIndexInteractionScene;
+
+	//to know how many inetraction done
+	int m_iInteractionDone;
+
+	//to know if it's a back to the dashboard or its interactionscenefinished
+	bool m_bBackToDashboard;
+
+	//METHODS
+
+	//call server manager and init m_vectorSceneOfTheGame
+	bool init();
 
 	//callback methods
 	void compare();
@@ -88,17 +99,8 @@ private:
 	//put interaction sprite on the dashboard
 	void initDashboardInteraction();
 
-	//to know how many interaction have been played
-	int m_iIndexInteractionScene;
-
-	//to know how many inetraction done
-	int m_iInteractionDone;
-
 	//update dashboard after each interactionscene
 	void updateDashboard();
-
-	//to know if it's a back to the dashboard or its interactionscenefinished
-	bool m_bBackToDashboard;
 
 	//remove listeners avoid conflict between scene true = remove false = add
 	void removeListeners(bool);
@@ -114,13 +116,9 @@ public:
 	//call different method of gamemanager, init launch scene and handle layers of interactions
 	void runGame();
 
-	void setPUser1( LmUser* pUser1) {
-		m_pUser1 = pUser1;
-	}
+	void setPUser1( LmUser* pUser1) {m_pUser1 = pUser1;}
 
-	void setPUser2( LmUser* pUser2) {
-		m_pUser2 = pUser2;
-	}
+	void setPUser2( LmUser* pUser2) {m_pUser2 = pUser2;}
 
 
 };

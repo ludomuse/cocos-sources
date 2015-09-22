@@ -1,5 +1,6 @@
 /*************************************************************************
                            AppDelegate  -  Main of the application
+                           Handle LmMenu and LmGamemanager
  *************************************************************************/
 #ifndef  _APP_DELEGATE_H_
 #define  _APP_DELEGATE_H_

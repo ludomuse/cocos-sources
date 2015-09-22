@@ -19,45 +19,56 @@ public:
 	LmGameComponent();
 	~LmGameComponent();
 
-	//init the sprite component with a filename then add it to this
+	//use to give id to all the gamecomponent
+	static int s_iNumberOfGameComponent;
+
+	//init the sprite component with a filename (and a stencil)
 	void initSpriteComponent(std::string);
 	void initSpriteComponent(std::string,const cocos2d::Rect&);
 
+	//return the size of the sprite component
 	cocos2d::Size getContentSize()const;
 
-	int getIId() const {
-		return m_iId;
-	}
+	//return the id of this gamecomponent
+	int getIId() const {return m_iId;}
 
-	cocos2d::Sprite* getPSpriteComponent() const {
-		return m_pSpriteComponent;
-	}
+	//return the sprite component
+	cocos2d::Sprite* getPSpriteComponent() const {return m_pSpriteComponent;}
 
-	static int s_iNumberOfGameComponent;
-
-
+	//to handle add/remove of a layer
 	void addTo(cocos2d::Layer*);
 	void addTo(cocos2d::Layer*,int);
 	void removeFrom(cocos2d::Layer*);
+
+	//handle position
 	void setPosition(cocos2d::Vec2);
 	void setAnchorPoint(cocos2d::Vec2);
-	void setTexture(std::string);
 
-	bool m_bSpriteIsInit;
+	//change the texture of the sprite component
+	void setTexture(std::string);
 
 	//return the bounding in the UIWindow space
 	cocos2d::Rect getBoundingBoxInWorldSpace(cocos2d::Node*);
 
-	cocos2d::Size m_oSize;
-
+	//visible or not on the screen
 	void setVisible(bool);
 
 
 
 private:
 
+	//ATTRIBUTES
+
+	//sprite component
 	cocos2d::Sprite* m_pSpriteComponent;
 
+	//to know if the sprite exist or not
+	bool m_bSpriteIsInit;
+
+	//size of the sprite
+	cocos2d::Size m_oSize;
+
+	//unique id
 	int m_iId;
 
 };

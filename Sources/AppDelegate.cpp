@@ -7,8 +7,9 @@ USING_NS_CC;
 
 AppDelegate::AppDelegate()
 {
-	m_pLmGameManager = new LmGameManager;
-	m_pLmMenu = new LmMenu;
+	//object
+	m_pLmGameManager = new LmGameManager;//need to be delete
+	m_pLmMenu = new LmMenu;//need to be delete
 }
 
 AppDelegate::~AppDelegate()
@@ -44,6 +45,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
 	//display a splashscreen then a log screen then a wifidirect screen and get info
 	m_pLmMenu->splashScreen();
+
 	return true;
 }
 

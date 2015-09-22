@@ -7,14 +7,38 @@ USING_NS_CC;
 
 LmGameManager::LmGameManager()
 {
-	m_pLmServerManager = new LmServerManager;
+	//object
+	m_pLmServerManager = new LmServerManager;//need to be delete
 
+	//primitive type
 	m_iIndexInteractionScene=0;
-
 	m_iInteractionDone=0;
-
-	//it's not a back to dashboard
 	m_bBackToDashboard=false;
+	m_bActionIsDone=true;
+
+	//pointer
+	m_pLabelInteractionDone=nullptr;
+	m_pSpriteBackgroundBlue=nullptr;
+	m_pSpriteBackgroundBlueProfile=nullptr;
+	m_pSpriteBackgroundPink=nullptr;
+	m_pSpriteBackgroundPinkProfile=nullptr;
+	m_pSpriteBandTop=nullptr;
+	m_pDashboardScene=nullptr;
+	m_pBackButton=nullptr;
+	m_pBlueLayer=nullptr;
+	m_pCompareButton==nullptr;
+	m_pLabelCompareButton=nullptr;
+	m_pLabelScore=nullptr;
+	m_pLabelTitleApplication=nullptr;
+	m_pLabelUser1Name=nullptr;
+	m_pUser1=nullptr;//need to be delete
+	m_pUser2=nullptr;//need to be delete
+	m_pCompareButton=nullptr;
+	m_pScrollView=nullptr;
+	m_pPlayNextInteractionButton=nullptr;
+	m_pPinkLayer=nullptr;
+	m_pSpriteBandMid=nullptr;
+
 
 }
 
@@ -24,12 +48,11 @@ LmGameManager::~LmGameManager()
 	delete m_pUser1;
 	delete m_pUser2;
 
-	//we retain our button
+	//we release our button
 	m_pCompareButton->release();
 	m_pLabelCompareButton->release();
 	m_pBackButton->release();
 	m_pSpriteBandTop->release();
-
 
 	//destroy the ServerManager
 	delete m_pLmServerManager;
@@ -135,9 +158,6 @@ bool LmGameManager::initDashboard()
 	m_pBackButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::back, this));
 	m_pBackButton->retain();
 
-	//we can hit the compare button
-	m_bActionIsDone=true;
-
 	//put the top band
 	m_pSpriteBandTop = Sprite::create("bandTop.png");
 	m_pSpriteBandTop->setAnchorPoint(Vec2(0,1));
@@ -185,7 +205,7 @@ bool LmGameManager::init()
 
 	if(!initDashboard())
 	{
-		CCLOG("Init DashBoard failed");
+		CCLOG("Initialization DashBoard failed");
 		return false;
 	}
 
@@ -248,7 +268,7 @@ void LmGameManager::compare()
 		m_bActionIsDone=false;
 		auto l_oCompareAction = MoveBy::create(s_fTimeCompareAction,Vect(0,(m_pSpriteBackgroundPink->getContentSize().height)*0.5f-s_fMagingOfSpriteBackgroundUser2Profile));
 		auto l_oCompareActionIsDone = CallFunc::create( std::bind(&LmGameManager::compareDone,this) );
-		m_pPinkLayer->runAction(Sequence::create(l_oCompareAction,l_oCompareActionIsDone,NULL));
+		m_pPinkLayer->runAction(Sequence::create(l_oCompareAction,l_oCompareActionIsDone,nullptr));
 
 	}
 }
@@ -269,7 +289,7 @@ void LmGameManager::back()
 		m_bActionIsDone=false;
 		auto l_oBackAction = MoveBy::create(s_fTimeCompareAction,Vect(0,-(m_pSpriteBackgroundPink->getContentSize().height)*0.5f-s_fMagingOfSpriteBackgroundUser2Profile));
 		auto l_oBackActionIsDone = CallFunc::create( std::bind(&LmGameManager::backDone,this) );
-		m_pPinkLayer->runAction(Sequence::create(l_oBackAction,l_oBackActionIsDone,NULL));
+		m_pPinkLayer->runAction(Sequence::create(l_oBackAction,l_oBackActionIsDone,nullptr));
 
 	}
 }
@@ -339,10 +359,6 @@ void LmGameManager::initDashboardInteraction()
 void LmGameManager::runNextInteraction()
 {
 
-
-
-
-
 	//if its the last interactionscene the app finished
 	if(m_iIndexInteractionScene>=m_aInteractionSceneOfTheGame.size())
 	{
@@ -359,7 +375,7 @@ void LmGameManager::runNextInteraction()
 			m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)->init(m_pUser1);
 		}
 
-		//enable the back button of the interaction because it was disable befoire the back action
+		//enable the back button of the interaction because it was disable before the back action (LmInteractionScene::backToDashboard)
 		m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)->setBBackPressed(false);
 
 		CCLOG("pushscene");

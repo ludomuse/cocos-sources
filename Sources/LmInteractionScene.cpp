@@ -7,12 +7,28 @@ USING_NS_CC;
 
 LmInteractionScene::LmInteractionScene()
 {
-	//create the introduction
-	m_pLmIntroduction = new LmIntroduction;
+	//object
+	m_pLmIntroduction = new LmIntroduction;//need to be delete
 
+	//primitive type
 	m_bDone=false;
-
 	m_bActionRunning=false;
+	m_bDashboardIsHidden=true;
+	m_bMoveDone=true;
+	m_bBackPressed=false;
+
+	//pointer
+	m_pBackDashboardButton=nullptr;
+	m_pUser=nullptr;
+	m_pDashboardBandLayer=nullptr;
+	m_pMoveLayerButton=nullptr;
+	m_pLayerGame=nullptr;
+	m_pLabelScore=nullptr;
+	m_pLayerUserChild=nullptr;
+	m_pLabelUserName=nullptr;
+	m_pGuiElementsLayer=nullptr;
+	m_pLayerUserParent=nullptr;
+	m_pSpriteDashboardBand=nullptr;
 
 }
 
@@ -78,9 +94,6 @@ void LmInteractionScene::initDashboardLayer()
 	m_pMoveLayerButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::moveDashboardLayer, this));
 	m_pDashboardBandLayer->addChild(m_pMoveLayerButton,0);
 
-	m_bMoveDone=true;
-	m_bDashboardIsHidden=true;
-
 	//gui elements
 	m_pGuiElementsLayer = Layer::create();
 
@@ -104,7 +117,6 @@ void LmInteractionScene::initDashboardLayer()
 			,m_pSpriteDashboardBand->getContentSize().height*0.3f));
 	m_pBackDashboardButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::backToDashboard, this));
 	m_pGuiElementsLayer->addChild(m_pBackDashboardButton);
-	m_bBackPressed=false;
 
 
 	m_pDashboardBandLayer->addChild(m_pGuiElementsLayer,1);
@@ -124,13 +136,13 @@ void LmInteractionScene::moveDashboardLayer()
 		{
 			auto l_oMoveRightAction = MoveBy::create(s_fTimeMovingDashboard,Vect(s_fDashboardRatioHidden*m_pSpriteDashboardBand->getContentSize().width,0));
 			auto l_oMoveRightActionDone = CallFunc::create( std::bind(&LmInteractionScene::moveRightDone,this) );
-			m_pDashboardBandLayer->runAction(Sequence::create(l_oMoveRightAction,l_oMoveRightActionDone,NULL));
+			m_pDashboardBandLayer->runAction(Sequence::create(l_oMoveRightAction,l_oMoveRightActionDone,nullptr));
 		}
 		else
 		{
 			auto l_oMoveLeftAction = MoveBy::create(s_fTimeMovingDashboard,Vect((-1)*s_fDashboardRatioHidden*m_pSpriteDashboardBand->getContentSize().width,0));
 			auto l_oMoveLeftActionDone = CallFunc::create( std::bind(&LmInteractionScene::moveLeftDone,this) );
-			m_pDashboardBandLayer->runAction(Sequence::create(l_oMoveLeftAction,l_oMoveLeftActionDone,NULL));
+			m_pDashboardBandLayer->runAction(Sequence::create(l_oMoveLeftAction,l_oMoveLeftActionDone,nullptr));
 		}
 
 	}
