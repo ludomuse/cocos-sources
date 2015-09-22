@@ -4,7 +4,6 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
 This repertory only provide sources (.cpp and .h). To get your application running you need to up to date your Ressources repertory in your cocos project as well as your Android.mk file.
 * Version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
