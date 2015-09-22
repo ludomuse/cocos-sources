@@ -19,8 +19,7 @@
 #include <iostream>
 #include <tuple>
 
-//id of this scene
-static const int s_iId = 0;
+
 //margiin between image in the scrollview
 static const float s_fMarginBetweenImage = 10.0f;
 //the time of a long click to select image in the scrollview
@@ -43,11 +42,17 @@ private:
 	int m_iHoleOnY;
 	std::vector<std::pair<int,int>> m_aLocationOfHole;
 
-	//where we stock img sprite
+	//different vector of gamecomponent
+	//scrollview images
 	std::vector<LmGameComponent*> m_aScrollViewImages;
+	//the right images complete
 	std::vector<LmGameComponent*> m_aRightImage;
+	//holes in right image
 	std::vector<LmGameComponent*> m_aHolesRightImage;
+	//hole in scroll view still unused
 	std::vector<LmGameComponent*> m_aHolesScrollView;
+	//elements in sending area
+	std::vector<LmGameComponent*> m_aSendingAreaElements;
 
 	//attributes gui
 	cocos2d::Sprite* m_pSpriteBackground;
@@ -55,7 +60,7 @@ private:
 	cocos2d::ui::Button* m_pFinishButton;
 	bool m_bFinishButtonSync;
 
-	//collide zone
+	//sending area
 	LmGameComponent* m_pSendingArea;
 
 	//scrollview
@@ -77,7 +82,7 @@ private:
 
 	//inherit method main of the scene
 	void runGame();
-	bool init();
+	bool initGame();
 
 	//call to finished this interaction
 	void endGame();
@@ -92,7 +97,12 @@ private:
 	void onTouchEndedChild(cocos2d::Touch*, cocos2d::Event*);
 
 	//return the id of the gameobject touched -1 otherwise
-	int idLmGameComponentTouched(cocos2d::Touch* touch,cocos2d::Event* event);
+	int idLmGameComponentTouchedInScrollView(cocos2d::Touch*);
+	int idLmGameComponentTouchedInSendingArea(cocos2d::Touch*);
+
+	//move pieces received in child layer
+	void movePieceReceived(cocos2d::Touch*,int);
+
 
 	//use for long click
 	void checkLongClick();
@@ -106,6 +116,9 @@ private:
 
 public:
 
+	//id of this scene
+	static const int s_iId = 0;
+
 	/*6 parameters =>
 	 *  FilenameSpriteBackground
 	 *  FilenameSpriteCollideZone
@@ -116,6 +129,9 @@ public:
 	 *  LocationOfHole*/
 	LmRightSpotScene(std::string,std::string,std::vector<std::string>,std::string,int,int,std::vector<std::pair<int,int>>);
 	~LmRightSpotScene();
+
+	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
+	void layerChildReceive(int);
 
 };
 

@@ -33,12 +33,6 @@ private:
 	int m_iIndex;
 	int m_iSize;
 
-	//our actions to move LmLayer to make it smooth and callback function to make it sync
-	cocos2d::FiniteTimeAction* m_pMoveLeft;
-	cocos2d::FiniteTimeAction* m_pMoveLeftDone;
-	cocos2d::FiniteTimeAction* m_pMoveRight;
-	cocos2d::FiniteTimeAction* m_pMoveRightDone;
-
 	//callback function signature important
 	void moveLeftDone();
 	void moveRightDone();
@@ -46,6 +40,13 @@ private:
 	//bool to sync
 	bool m_bActionDone;
 
+	//callback method of next button
+	//return true if there is a next layer
+	bool nextLayer();
+
+	//callback method of  button
+	//return true if there is a previous layer
+	bool previousLayer();
 
 
 public:
@@ -56,15 +57,7 @@ public:
 
 	bool init(cocos2d::Scene*);
 
-	LmLayer* getCurrentLayer()const{return m_pCurrentLayer;}
-
-	//callback method of next button
-	//return true if there is a next layer
-	bool nextLayer();
-
-	//callback method of  button
-	//return true if there is a previous layer
-	bool previousLayer();
+	void add(LmLayer*);
 
 	bool isBActionDone() const {
 		return m_bActionDone;

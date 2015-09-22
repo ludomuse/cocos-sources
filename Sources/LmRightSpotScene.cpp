@@ -49,7 +49,6 @@ LmRightSpotScene::LmRightSpotScene(
 	m_pLayerUserChild=nullptr;
 	m_pLayerUserParent=nullptr;
 	m_pListener=nullptr;
-	m_pLmIntroduction=nullptr;
 	m_pMoveLayerButton=nullptr;
 	m_pScrollView=nullptr;
 	m_pSendingArea=nullptr;
@@ -89,15 +88,14 @@ LmRightSpotScene::~LmRightSpotScene()
 
 	Director::getInstance()->getEventDispatcher()->removeEventListener(m_pListener);
 
-
 }
 
 void LmRightSpotScene::runGame()
 {
-	init();
+	initGame();
 }
 
-bool LmRightSpotScene::init()
+bool LmRightSpotScene::initGame()
 {
 	//use to place elements
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
@@ -205,13 +203,14 @@ bool LmRightSpotScene::init()
 				l_oHole->initSpriteComponent("transparency.png");
 				l_oHole->setAnchorPoint(Vec2(0,0));
 				l_oHole->setPosition(l_oVectorPosition);
+				//so the bounding box will the same as an image
+				l_oHole->setSize(Size(l_fWidthRect,l_fHeightRect));
 				l_oHole->addTo(m_pLayerUserChild);
 
 			}
 			else
 			{
 				//no we set position and add it to layer child
-				CCLOG("we add to child no hole");
 				m_aRightImage.at(l_iIndex)->setAnchorPoint(Vec2(0,0));
 				m_aRightImage.at(l_iIndex)->setPosition(l_oVectorPosition);
 				m_aRightImage.at(l_iIndex)->addTo(m_pLayerUserChild);
@@ -265,7 +264,6 @@ bool LmRightSpotScene::init()
 		//shuffle the vector of scrollimages
 		std::random_device rd;
 		std::mt19937 g(rd());
-
 		std::shuffle(m_aScrollViewImages.begin(), m_aScrollViewImages.end(), g);
 
 		l_iIndex=0;
@@ -356,8 +354,7 @@ void LmRightSpotScene::endGame()
 bool LmRightSpotScene::onTouchBeganParent(Touch* touch,Event* event)
 {
 	//get the id of the gameobject touched or -1 otherwise
-	m_iBufferId=idLmGameComponentTouched(touch,event);
-	//CCLOG("buffer = %d",m_iBufferId);
+	m_iBufferId=idLmGameComponentTouchedInScrollView(touch);
 
 	//if something is touched
 	if(m_iBufferId>=0)
@@ -378,7 +375,7 @@ bool LmRightSpotScene::onTouchBeganParent(Touch* touch,Event* event)
 
 void LmRightSpotScene::onTouchMovedParent(Touch* touch,Event* event)
 {
-	if(m_iBufferId==idLmGameComponentTouched(touch,event) && m_bSameGameComponent)
+	if(m_iBufferId==idLmGameComponentTouchedInScrollView(touch) && m_bSameGameComponent)
 	{
 		//we are on the same object
 		m_bSameGameComponent=true;
@@ -396,14 +393,25 @@ void LmRightSpotScene::onTouchMovedParent(Touch* touch,Event* event)
 
 		if(bufferCollideSendingArea())
 		{
-			//we send the id to the other tablet
+			//we send the id to the other tablet test
 			CCLOG("we send the %d gamecomponent",m_aIdTable.find(m_iBufferId)->first);
+
 			m_bSpriteSelected=false;
 			m_pScrollView->setTouchEnabled(true);
-			//remove the buffer sprite froim the layer
+			//remove the buffer sprite from the layer
 			m_pLayerUserParent->removeChild(m_pBufferSprite);
-			//we put the gamecomponent visible again
+
+			//we put the gamecomponent visible again (local)
 			m_aIdTable.find(m_iBufferId)->second->setVisible(true);
+
+			//remove the element of the scrollview vector
+			m_aScrollViewImages.erase(std::remove(m_aScrollViewImages.begin(),m_aScrollViewImages.end(),m_aIdTable.find(m_iBufferId)->second), m_aScrollViewImages.end());
+
+			//test remove it from this layer
+			m_aIdTable.find(m_iBufferId)->second->removeFrom(m_pLayerUserParent);
+
+			layerChildReceive(m_iBufferId);
+
 
 		}
 	}
@@ -433,7 +441,7 @@ void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
 
 }
 
-int LmRightSpotScene::idLmGameComponentTouched(Touch* touch,Event* event)
+int LmRightSpotScene::idLmGameComponentTouchedInScrollView(Touch* touch)
 {
 	auto l_oTouchLocation = touch->getLocation();
 
@@ -460,7 +468,7 @@ void LmRightSpotScene::checkLongClick()
 		m_pScrollView->setTouchEnabled(false);
 		//the gamecomponent selected is copy in the buffer
 		m_pBufferSprite = Sprite::createWithSpriteFrame(m_aIdTable.find(m_iBufferId)->second->getPSpriteComponent()->getSpriteFrame());
-		m_pBufferSprite->setPosition(m_aIdTable.find(m_iBufferId)->second->getPSpriteComponent()->getPosition());
+		m_pBufferSprite->setPosition(m_aIdTable.find(m_iBufferId)->second->getPositionInWorldSpace(m_pLayerScrollView));
 		m_pBufferSprite->setAnchorPoint(Vec2(0,0));
 		//then gameobject is invisible and we add the buffer
 		m_aIdTable.find(m_iBufferId)->second->setVisible(false);
@@ -476,12 +484,15 @@ bool LmRightSpotScene::bufferCollideSendingArea()
 
 bool LmRightSpotScene::onTouchBeganChild(Touch* touch,Event* event)
 {
+	m_iBufferId = idLmGameComponentTouchedInSendingArea(touch);
+
+	movePieceReceived(touch,m_iBufferId);
 	return true;
 }
 
 void LmRightSpotScene::onTouchMovedChild(Touch* touch,Event* event)
 {
-
+	movePieceReceived(touch,m_iBufferId);
 }
 
 void LmRightSpotScene::onTouchEndedChild(Touch* touch,Event* event)
@@ -489,3 +500,41 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch,Event* event)
 
 }
 
+void LmRightSpotScene::layerChildReceive(int l_iIdLmGameComponent)
+{
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+
+	//we get the gamecomponent with id
+	auto l_pGameComponentReceived = m_aIdTable.find(l_iIdLmGameComponent)->second;
+
+	//put it approximatly in the sending area
+	l_pGameComponentReceived->setPosition(Vec2(l_oVisibleSize.width*0.9,l_oVisibleSize.height*0.5));
+	l_pGameComponentReceived->setAnchorPoint(Vec2(0,0));
+	m_aSendingAreaElements.push_back(l_pGameComponentReceived);
+	l_pGameComponentReceived->addTo(m_pLayerUserChild);
+
+}
+
+int LmRightSpotScene::idLmGameComponentTouchedInSendingArea(Touch* touch)
+{
+	auto l_oTouchLocation = touch->getLocation();
+
+	for (std::vector<LmGameComponent*>::iterator it = m_aSendingAreaElements.begin(); it != m_aSendingAreaElements.end(); ++it)
+	{
+		if((*it)->getBoundingBoxInWorldSpace(m_pLayerUserChild).containsPoint(l_oTouchLocation))
+		{
+			return (*it)->getIId();
+		}
+	}
+	return -1;
+}
+
+void LmRightSpotScene::movePieceReceived(Touch* touch,int id)
+{
+	auto l_oTouchLocation = touch->getLocation();
+	m_aIdTable.find(id)->second->setPosition(Vec2(l_oTouchLocation.x,l_oTouchLocation.y));
+	m_aIdTable.find(id)->second->setAnchorPoint(Vec2(0.5,0.5));
+
+}

@@ -19,7 +19,6 @@ LmGameComponent::LmGameComponent()
 	//primitive type
 	s_iNumberOfGameComponent++;
 	m_iId=s_iNumberOfGameComponent;
-	m_bSpriteIsInit=false;
 
 	//pointer
 	m_pSpriteComponent=nullptr;
@@ -33,20 +32,18 @@ LmGameComponent::~LmGameComponent()
 void LmGameComponent::initSpriteComponent(std::string l_sFilename)
 {
 	m_pSpriteComponent = Sprite::create(l_sFilename);
-	m_bSpriteIsInit=true;
 	m_oSize = m_pSpriteComponent->getContentSize();
 }
 
 void LmGameComponent::initSpriteComponent(std::string l_sFilename,const Rect& rect)
 {
 	m_pSpriteComponent = Sprite::create(l_sFilename,rect);
-	m_bSpriteIsInit=true;
 	m_oSize = m_pSpriteComponent->getContentSize();
 }
 
 Size LmGameComponent::getContentSize()const
 {
-	if(	m_bSpriteIsInit)
+	if(	m_pSpriteComponent)
 	{
 		return m_oSize;
 	}
@@ -59,7 +56,7 @@ Size LmGameComponent::getContentSize()const
 
 void LmGameComponent::addTo(cocos2d::Layer* layer)
 {
-	if(m_bSpriteIsInit)
+	if(m_pSpriteComponent)
 	{
 		layer->addChild(m_pSpriteComponent);
 	}
@@ -71,7 +68,7 @@ void LmGameComponent::addTo(cocos2d::Layer* layer)
 
 void LmGameComponent::addTo(cocos2d::Layer* layer,int zOrder)
 {
-	if(m_bSpriteIsInit)
+	if(m_pSpriteComponent)
 	{
 		layer->addChild(m_pSpriteComponent, zOrder);
 	}
@@ -84,7 +81,7 @@ void LmGameComponent::addTo(cocos2d::Layer* layer,int zOrder)
 
 void  LmGameComponent::removeFrom(Layer* layer)
 {
-	if(m_bSpriteIsInit)
+	if(m_pSpriteComponent)
 	{
 		layer->removeChild(m_pSpriteComponent);
 	}
@@ -97,7 +94,7 @@ void  LmGameComponent::removeFrom(Layer* layer)
 
 void LmGameComponent::setPosition(cocos2d::Vec2 vector)
 {
-	if(m_bSpriteIsInit)
+	if(m_pSpriteComponent)
 	{
 		m_pSpriteComponent->setPosition(vector);
 	}
@@ -110,7 +107,7 @@ void LmGameComponent::setPosition(cocos2d::Vec2 vector)
 
 void LmGameComponent::setAnchorPoint(cocos2d::Vec2 vector)
 {
-	if(m_bSpriteIsInit)
+	if(m_pSpriteComponent)
 	{
 		m_pSpriteComponent->setAnchorPoint(vector);
 	}
@@ -127,6 +124,12 @@ cocos2d::Rect LmGameComponent::getBoundingBoxInWorldSpace(Node* parent)
 	//CCLOG("point bounding = %f,%f",l_oPointInWindowSpace.x,l_oPointInWindowSpace.y);
 
 	return Rect(l_oPointInWindowSpace.x,l_oPointInWindowSpace.y,m_oSize.width,m_oSize.height);
+}
+
+cocos2d::Vec2 LmGameComponent::getPositionInWorldSpace(Node* parent)const
+{
+	Point l_oPointInWindowSpace = parent->convertToWorldSpace( m_pSpriteComponent->getPosition());
+	return Vec2(l_oPointInWindowSpace.x,l_oPointInWindowSpace.y);
 }
 
 void LmGameComponent::setTexture(std::string filename)

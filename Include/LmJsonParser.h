@@ -21,6 +21,14 @@
 #include <fstream>
 #include "cocos2d.h"
 
+//use to make introduction of each scene
+#include "LmIntroduction.h"
+
+//Differents Scene of the application
+#include "LmInteractionScene.h"
+#include "LmPuzzleScene.h"
+#include "LmRightSpotScene.h"
+
 
 class LmJsonParser
 {
@@ -33,35 +41,34 @@ public:
 	//return true if json file open correctly and has a member Ludomuse
 	bool initJsonDocument(std::string);
 
-	////return true if there is another scene to instanciate in the json file and init idInteractionscene
-	bool thereIsAnotherInteractionScene();
-
-	//get the id of the scene i
-	int getIdInteractionScene()const{return m_iIdInteractionScene;}
-
-	//put the index to the next scene
-	void moveToTheNextScene();
-
 	//init and return the title of the app
 	std::string getSTitleApplication();
 
+	const std::vector<LmInteractionScene*>& getAInteractionSceneOfTheGame();
 
 private:
+
+	//ATTRIBUTES
 
 	//Where we parse the json file
 	rapidjson::Document m_oDocument;
 
-	//index to know where we are in the Document
-	int m_iIndexDocument;
-
-	//id of the interaction scene where index is pointing
-	int m_iIdInteractionScene;
-
 	//title of the application
 	std::string m_sTitleApplication;
 
+	//our vector of Scene
+	std::vector<LmInteractionScene*> m_aInteractionSceneOfTheGame;
 
+	//METHODS
 
+	//init
+	void initInteractionSceneOfTheGame();
+
+	//generic method to make all the introduction
+	LmIntroduction* getLmIntroduction(const rapidjson::Value&);
+
+	//our function which make scene
+	void makeLmRightSpotScene(const rapidjson::Value&);
 };
 
 

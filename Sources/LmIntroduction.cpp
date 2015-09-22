@@ -16,10 +16,6 @@ LmIntroduction::LmIntroduction()
 	m_pCurrentLayer=nullptr;
 	m_pInteractionScene=nullptr;
 	m_pLayerTransition=nullptr;
-	m_pMoveLeft=nullptr;
-	m_pMoveLeftDone=nullptr;
-	m_pMoveRight=nullptr;
-	m_pMoveRightDone=nullptr;
 	m_pNextButton=nullptr;
 	m_pPreviousButton=nullptr;
 
@@ -33,31 +29,16 @@ LmIntroduction::~LmIntroduction()
 		delete (*it);
 	}
 
-	//release action because they have been retain() in init function
-	m_pMoveLeft->release();
-	m_pMoveLeftDone->release();
-	m_pMoveRight->release();
-	m_pMoveRightDone->release();
 }
 
 bool LmIntroduction::init(Scene* l_pInteractionScene)
 {
+
 	//init scene pass by LmInteractionScene
 	m_pInteractionScene = l_pInteractionScene;
 
 	//init action
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-	m_pMoveRight = MoveBy::create(s_fTimeBetweenLmLayer,Vect(l_oVisibleSize.width,0));
-	m_pMoveLeft = MoveBy::create(s_fTimeBetweenLmLayer,Vect(-l_oVisibleSize.width,0));
-	//callback function
-	m_pMoveLeftDone = CallFunc::create( std::bind(&LmIntroduction::moveLeftDone,this) );
-	m_pMoveRightDone = CallFunc::create( std::bind(&LmIntroduction::moveRightDone,this) );
-
-	//we have to retain these action because they are going to be call in callback method of button
-	m_pMoveLeft->retain();
-	m_pMoveLeftDone->retain();
-	m_pMoveRight->retain();
-	m_pMoveRightDone->retain();
 
 	//init buttons
 
@@ -74,13 +55,6 @@ bool LmIntroduction::init(Scene* l_pInteractionScene)
 	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.7));
 	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::previousLayer, this));
 	m_pInteractionScene->addChild(m_pPreviousButton,1);
-
-
-	//test they are going to be create by the LmFactory while reading the json file
-	//add two LmLayer to test
-	m_aLayers.push_back(new LmLayer("titre.png","audio/son.mp3",""));
-	//m_aLayers.push_back(new LmLayer("perso.png","audio/son.mp3",""));
-	//m_aLayers.push_back(new LmLayer("ing.png","audio/son.mp3",""));
 
 	m_iSize = m_aLayers.size();
 
@@ -137,8 +111,12 @@ bool LmIntroduction::nextLayer()
 			//set position to the right out of screen
 			m_aLayers.at(m_iIndex+1)->setPosition((3/2)*l_oVisibleSize.width+l_oOrigin.x,0);
 
+			auto l_pMoveLeft = MoveBy::create(s_fTimeBetweenLmLayer,Vect(-l_oVisibleSize.width,0));
+			//callback function
+			auto l_pMoveLeftDone = CallFunc::create( std::bind(&LmIntroduction::moveLeftDone,this) );
+
 			//run the sequence so we know when its finished then callback function
-			m_pLayerTransition->runAction(Sequence::create(m_pMoveLeft,m_pMoveLeftDone,nullptr));
+			m_pLayerTransition->runAction(Sequence::create(l_pMoveLeft,l_pMoveLeftDone,nullptr));
 
 			return true;
 		}
@@ -174,8 +152,12 @@ bool LmIntroduction::previousLayer()
 			//set position to the left out of screen
 			m_aLayers.at(m_iIndex-1)->setPosition((-3/2)*l_oVisibleSize.width+l_oOrigin.x,0);
 
+			auto l_pMoveRight = MoveBy::create(s_fTimeBetweenLmLayer,Vect(l_oVisibleSize.width,0));
+			//callback function
+			auto l_pMoveRightDone = CallFunc::create( std::bind(&LmIntroduction::moveRightDone,this) );
+
 			//run the sequence so we know when its finished then callback function
-			m_pLayerTransition->runAction(Sequence::create(m_pMoveRight,m_pMoveRightDone,nullptr));
+			m_pLayerTransition->runAction(Sequence::create(l_pMoveRight,l_pMoveRightDone,nullptr));
 
 			return true;
 		}
@@ -215,6 +197,11 @@ void LmIntroduction::moveLeftDone()
 
 	//possible to perform another action
 	m_bActionDone = true;
+}
+
+void LmIntroduction::add(LmLayer* layer)
+{
+	m_aLayers.push_back(layer);
 }
 
 

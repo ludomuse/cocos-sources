@@ -5,25 +5,16 @@
 
 USING_NS_CC;
 
-LmLayer::LmLayer()
-{
-	//pointer
-	m_pImageURL=nullptr;
-	m_pSoundURL=nullptr;
-	m_pText=nullptr;
-
-}
-
 LmLayer::~LmLayer()
 {
 
 }
 
-LmLayer::LmLayer(const char* l_pImageURL,const char* l_pSoundURL,const char* l_pText)
+LmLayer::LmLayer(std::string l_pImageURL,std::string l_pSoundURL,std::string l_pText)
 {
-	m_pImageURL = l_pImageURL;
-	m_pSoundURL = l_pSoundURL;
-	m_pText = l_pText;
+	m_sImageURL = l_pImageURL;
+	m_sSoundURL = l_pSoundURL;
+	m_sText = l_pText;
 }
 
 bool LmLayer::init()
@@ -34,15 +25,15 @@ bool LmLayer::init()
     Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
     //we add the background sprite to the center of the screen
-	auto l_oSprite = Sprite::create(m_pImageURL);
+	auto l_oSprite = Sprite::create(m_sImageURL);
 	l_oSprite->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
 	addChild(l_oSprite,0);
 
 	//we preload the sound
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(m_pSoundURL);
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(m_sSoundURL.c_str());
 
     //we add text to the center of the screen
-    auto l_oLabel = Label::createWithTTF(m_pText, "fonts/JosefinSans-Regular.ttf",getSizeLabel());
+    auto l_oLabel = Label::createWithTTF(m_sText, "fonts/JosefinSans-Regular.ttf",50);
     l_oLabel->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
     addChild(l_oLabel,1);
 
@@ -52,7 +43,7 @@ bool LmLayer::init()
 void LmLayer::playSound()
 {
     //play sound
-    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(m_pSoundURL,false);
+    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(m_sSoundURL.c_str(),false);
 }
 
 void LmLayer::pauseSound()
@@ -61,10 +52,6 @@ void LmLayer::pauseSound()
     CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
-int LmLayer::getSizeLabel()
-{
-	return 50;
-}
 
 
 

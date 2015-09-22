@@ -16,19 +16,15 @@ class LmLayer : public cocos2d::Layer
 private:
 
 	//url of the img
-	const char* m_pImageURL;
-	const char* m_pSoundURL;
-	const char* m_pText;
-
-	//method to scale the text size to the screen
-	int getSizeLabel();
+	std::string m_sImageURL;
+	std::string m_sSoundURL;
+	std::string m_sText;
 
 
 public:
 
-	LmLayer();
 	//use to init img, sound, text
-	LmLayer(const char*,const char*,const char*);
+	LmLayer(std::string,std::string,std::string);
 	~LmLayer();
 
 	bool init();

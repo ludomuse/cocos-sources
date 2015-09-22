@@ -51,7 +51,6 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pUser = l_pUser;
 
 	initDashboardLayer();
-
 	if(!m_pLmIntroduction->init(this))//will be init with parameters from json TODO
 	{
 		CCLOG("LmIntroduction init failed");

@@ -31,6 +31,8 @@ public:
 
 	void setBBackPressed(bool bBackPressed) {m_bBackPressed = bBackPressed;}
 
+	void setPLmIntroduction(LmIntroduction* pLmIntroduction) {m_pLmIntroduction = pLmIntroduction;}
+
 protected:
 
 	//ATTRIBUTES

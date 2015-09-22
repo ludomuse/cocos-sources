@@ -53,7 +53,9 @@ public:
 	//visible or not on the screen
 	void setVisible(bool);
 
+	void setSize(const cocos2d::Size& oSize) {	m_oSize = oSize;}
 
+	cocos2d::Vec2 getPositionInWorldSpace(cocos2d::Node*)const;
 
 private:
 
@@ -61,9 +63,6 @@ private:
 
 	//sprite component
 	cocos2d::Sprite* m_pSpriteComponent;
-
-	//to know if the sprite exist or not
-	bool m_bSpriteIsInit;
 
 	//size of the sprite
 	cocos2d::Size m_oSize;
