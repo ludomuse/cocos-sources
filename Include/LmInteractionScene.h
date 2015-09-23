@@ -37,6 +37,9 @@ protected:
 
 	//ATTRIBUTES
 
+	//sending area
+	LmGameComponent* m_pSendingArea;
+
 	//autorelease object it's the first layer of the scene
 	cocos2d::Layer* m_pLayerGame;
 
@@ -51,6 +54,16 @@ protected:
 
 	//user which play the scene to know if it's 1 or 2 init dashbord layer and modify his score
 	LmUser* m_pUser;
+
+	//introduction gui element
+	//buttons next and previous
+	cocos2d::ui::Button* m_pNextButton;
+	cocos2d::ui::Button* m_pPreviousButton;
+
+	//callback
+	void previousLayer();
+	void nextLayer();
+
 
 	//gui elements
 	cocos2d::Sprite* m_pSpriteDashboardBand;
@@ -70,6 +83,8 @@ protected:
 
 	std::map<int,LmGameComponent*> m_aIdTable;
 
+	int m_iNumberOfGameComponent;
+
 	//METHODS
 
 	//interface for all games where we init our games and so on
@@ -84,6 +99,9 @@ protected:
 	void moveLeftDone();
 
 	void backToDashboard();
+
+	//set an id to the gamecomponent and return a pointer to it
+	LmGameComponent* makeGameComponent();
 
 };
 

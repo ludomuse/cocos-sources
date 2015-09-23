@@ -16,11 +16,9 @@ class LmGameComponent
 {
 public:
 
-	LmGameComponent();
+	LmGameComponent(int);
 	~LmGameComponent();
 
-	//use to give id to all the gamecomponent
-	static int s_iNumberOfGameComponent;
 
 	//init the sprite component with a filename (and a stencil)
 	void initSpriteComponent(std::string);
@@ -56,6 +54,8 @@ public:
 	void setSize(const cocos2d::Size& oSize) {	m_oSize = oSize;}
 
 	cocos2d::Vec2 getPositionInWorldSpace(cocos2d::Node*)const;
+	cocos2d::Vec2 getPosition()const;
+	void setTexture(cocos2d::Texture2D*);
 
 private:
 

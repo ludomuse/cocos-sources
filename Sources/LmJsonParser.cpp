@@ -79,6 +79,7 @@ void LmJsonParser::initInteractionSceneOfTheGame()
 
 	for (int i=0;i<l_aSceneArray.Size();i++)
 	{
+
 		assert(l_aSceneArray[i].IsObject());
 		assert(l_aSceneArray[i]["Id"].IsInt());
 		l_iIdScene = l_aSceneArray[i]["Id"].GetInt();
@@ -88,6 +89,7 @@ void LmJsonParser::initInteractionSceneOfTheGame()
 
 		case LmRightSpotScene::s_iId:
 			makeLmRightSpotScene(l_aSceneArray[i]);
+			break;
 		default:
 			CCLOG("default switch @ LmJsonParser::initInteractionSceneOfTheGame");
 		}
@@ -144,28 +146,21 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	int l_iHoleOnYBuffer;
 	std::vector<std::pair<int,int>> l_aLocationOfHoleBuffer;
 
-	//init buffers
-	std::string l_sBuffer;//use to parse to c string to make a deep copy
-
 	assert(l_oScene["FilenameSpriteBackground"].IsString());
-	l_sBuffer = l_oScene["FilenameSpriteBackground"].GetString();
-	l_sFilenameSpriteBackgroundBuffer = l_sBuffer.c_str();
+	l_sFilenameSpriteBackgroundBuffer = l_oScene["FilenameSpriteBackground"].GetString();
 
 	assert(l_oScene["FilenameSpriteCollideZone"].IsString());
-	l_sBuffer = l_oScene["FilenameSpriteCollideZone"].GetString();
-	l_sFilenameSpriteCollideZoneBuffer = l_sBuffer.c_str();
+	l_sFilenameSpriteCollideZoneBuffer = l_oScene["FilenameSpriteCollideZone"].GetString();
 
 	assert(l_oScene["FilenamesWrongImages"].IsArray());
 	for(int i=0;i<l_oScene["FilenamesWrongImages"].Size();i++)
 	{
 		assert(l_oScene["FilenamesWrongImages"][i].IsString());
-		l_sBuffer = l_oScene["FilenamesWrongImages"][i].GetString();
-		l_aFilenamesWrongImagesBuffer.push_back(l_sBuffer.c_str());
+		l_aFilenamesWrongImagesBuffer.push_back(l_oScene["FilenamesWrongImages"][i].GetString());
 	}
 
 	assert(l_oScene["FilenameRightImage"].IsString());
-	l_sBuffer = l_oScene["FilenameRightImage"].GetString();
-	l_sFilenameRightImageBuffer = l_sBuffer.c_str();
+	l_sFilenameRightImageBuffer = l_oScene["FilenameRightImage"].GetString();
 
 	assert(l_oScene["HoleOnX"].IsInt());
 	l_iHoleOnXBuffer = l_oScene["HoleOnX"].GetInt();
@@ -187,8 +182,6 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 
 		l_aLocationOfHoleBuffer.push_back({x,y});
 	}
-
-
 
 	//create the scene delete in the game manager
 	m_aInteractionSceneOfTheGame.push_back(new LmRightSpotScene(

@@ -33,6 +33,7 @@ private:
 
 	//ATTRIBUTES
 
+
 	//what we need to get from the json file
 	std::string m_sFilenameSpriteBackground;
 	std::string m_sFilenameSpriteCollideZone;
@@ -48,20 +49,25 @@ private:
 	//the right images complete
 	std::vector<LmGameComponent*> m_aRightImage;
 	//holes in right image
-	std::vector<LmGameComponent*> m_aHolesRightImage;
+	std::vector<cocos2d::Rect> m_aHolesRightImage;
 	//hole in scroll view still unused
-	std::vector<LmGameComponent*> m_aHolesScrollView;
+	std::vector<cocos2d::Rect> m_aHolesScrollView;
 	//elements in sending area
 	std::vector<LmGameComponent*> m_aSendingAreaElements;
+	//elements filling hole in right image
+	std::vector<LmGameComponent*> m_aFillingHoleInRightImage;
+
+	//good id sequence of the right image to know when it's win
+	std::vector<int> m_aIdSequenceWin;
+
+	float m_fHeightRect;
+	float m_fWidthRect;
 
 	//attributes gui
 	cocos2d::Sprite* m_pSpriteBackground;
 
 	cocos2d::ui::Button* m_pFinishButton;
 	bool m_bFinishButtonSync;
-
-	//sending area
-	LmGameComponent* m_pSendingArea;
 
 	//scrollview
 	cocos2d::ui::ScrollView* m_pScrollView;
@@ -72,11 +78,18 @@ private:
 
 	//use for long click
 	int m_iBufferId;
+	int m_iHoleTouchedIndex;
 	bool m_bSameGameComponent;
 
 	//where we stock the sprite while moving with listener
 	cocos2d::Sprite* m_pBufferSprite;
 	bool m_bSpriteSelected;
+	//to avoid to set every frame on the touchmovedparent
+	bool m_bBufferSpriteVisible;
+	//to know if the buffer fill an hole
+	bool m_bBufferSpriteFillHole;
+	//to know when we deplace a piece from the right image to generate the hole again
+	bool m_bGameComponentAlreadyInRightImage;
 
 	//METHODS
 
@@ -99,9 +112,10 @@ private:
 	//return the id of the gameobject touched -1 otherwise
 	int idLmGameComponentTouchedInScrollView(cocos2d::Touch*);
 	int idLmGameComponentTouchedInSendingArea(cocos2d::Touch*);
+	int idLmGameComponentTouchedInFillingHoleInRightImage(cocos2d::Touch*);
 
 	//move pieces received in child layer
-	void movePieceReceived(cocos2d::Touch*,int);
+	void moveBufferSprite(cocos2d::Touch*);
 
 
 	//use for long click
@@ -110,8 +124,17 @@ private:
 	//to know if the sprite that we are moving collide sending area
 	bool bufferCollideSendingArea();
 
+	//init texture and position of the buffer and set to invisible the gamecomponent touched /!\ change the anchor point of the buffer sprite
+	void initBufferSprite(int,cocos2d::Node*);
+
+	//use to know what hole need to be fill with the buffer img
+	int touchCollideHoleInRightImage(cocos2d::Touch*);
+
+	//check if the right image is complete
+	bool endOfGame();
+
+
 	//test
-	void test();
 	bool m_bChildSet;
 
 public:

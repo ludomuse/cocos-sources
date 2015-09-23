@@ -159,12 +159,22 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 		m_pUser1->setPUserTabletName("tablet1_name");
 
 		//to know what part of the game he is going to play
-		m_pUser1->setBParent(true);
+
+		//test if P alors we play parent role
+		if(strcmp(m_pLogEditBox->getText(),"P"))
+		{
+			m_pUser1->setBParent(true);
+			m_pUser2->setBParent(false);
+		}
+		else
+		{
+			m_pUser1->setBParent(false);
+			m_pUser2->setBParent(true);
+		}
 
 		m_pUser2->setPScore(20);
 		m_pUser2->setPUserName("2nd user");
 		m_pUser2->setPUserTabletName("tablet2_name");
-		m_pUser1->setBParent(false);
 
 		return true;
 

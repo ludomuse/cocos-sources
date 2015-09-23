@@ -14,10 +14,8 @@ LmIntroduction::LmIntroduction()
 
 	//pointer
 	m_pCurrentLayer=nullptr;
-	m_pInteractionScene=nullptr;
 	m_pLayerTransition=nullptr;
-	m_pNextButton=nullptr;
-	m_pPreviousButton=nullptr;
+	m_pInteractionScene=nullptr;
 
 }
 
@@ -31,30 +29,13 @@ LmIntroduction::~LmIntroduction()
 
 }
 
-bool LmIntroduction::init(Scene* l_pInteractionScene)
+bool LmIntroduction::init(cocos2d::Scene* l_pInteractionScene)
 {
 
-	//init scene pass by LmInteractionScene
 	m_pInteractionScene = l_pInteractionScene;
 
-	//init action
+	//use to place elements
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-
-	//init buttons
-
-	//next button
-	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
-	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width*0.8,m_pNextButton->getContentSize().height*0.7));
-	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::nextLayer, this));
-	m_pInteractionScene->addChild(m_pNextButton,1);
-
-	//previous button
-	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
-	m_pPreviousButton->setTouchEnabled(true);
-	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.7));
-	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmIntroduction::previousLayer, this));
-	m_pInteractionScene->addChild(m_pPreviousButton,1);
 
 	m_iSize = m_aLayers.size();
 
@@ -91,9 +72,6 @@ bool LmIntroduction::nextLayer()
 			//we indicate to the inyeractionscene that introduction is over
 			m_pInteractionScene->removeChild(m_pLayerTransition);
 			m_pInteractionScene->removeChild(m_pCurrentLayer);
-			m_pInteractionScene->removeChild(m_pNextButton);
-			m_pInteractionScene->removeChild(m_pPreviousButton);
-			Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("IntroductionFinished");
 			return false;
 		}
 		else

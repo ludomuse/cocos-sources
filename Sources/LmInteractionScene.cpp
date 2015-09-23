@@ -16,6 +16,7 @@ LmInteractionScene::LmInteractionScene()
 	m_bDashboardIsHidden=true;
 	m_bMoveDone=true;
 	m_bBackPressed=false;
+	m_iNumberOfGameComponent=0;
 
 	//pointer
 	m_pBackDashboardButton=nullptr;
@@ -37,9 +38,6 @@ LmInteractionScene::~LmInteractionScene()
 
 	delete m_pLmIntroduction;
 
-	//remove the custom event
-	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners("IntroductionFinished");
-
 }
 
 
@@ -51,23 +49,49 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pUser = l_pUser;
 
 	initDashboardLayer();
-	if(!m_pLmIntroduction->init(this))//will be init with parameters from json TODO
+	if(!m_pLmIntroduction->init(this))
 	{
 		CCLOG("LmIntroduction init failed");
 		return false;
 	}
 
-	//init callback method of the custom event (use to know when an interactionScene want to communicate with this)
-	auto IntroductionFinished = [=](EventCustom * event)
-									{
-										runGame();
-									};
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 
-	//add the custom event to the event dispatcher
-	Director::getInstance()->getEventDispatcher()->addCustomEventListener("IntroductionFinished",IntroductionFinished);
+	//next button
+	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
+	m_pNextButton->setTouchEnabled(true);
+	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width*0.8,m_pNextButton->getContentSize().height*0.7));
+	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::nextLayer, this));
+	addChild(m_pNextButton,1);
 
+	//previous button
+	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
+	m_pPreviousButton->setTouchEnabled(true);
+	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.7));
+	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::previousLayer, this));
+	addChild(m_pPreviousButton,1);
 
 	return true;
+}
+
+void LmInteractionScene::previousLayer()
+{
+	if(m_pLmIntroduction->isBActionDone())// action is done is used to sync Lmintroduction
+	{
+		m_pLmIntroduction->previousLayer();
+	}
+}
+
+void LmInteractionScene::nextLayer()
+{
+	//false => introduction is finished
+	if(!m_pLmIntroduction->nextLayer() && m_pLmIntroduction->isBActionDone())
+	{
+		removeChild(m_pNextButton);
+		removeChild(m_pPreviousButton);
+		runGame();
+	}
 }
 
 void LmInteractionScene::initDashboardLayer()
@@ -180,5 +204,11 @@ void LmInteractionScene::backToDashboard()
 		Director::getInstance()->popScene();
 		Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("BackToDashboard");
 	}
+}
+
+LmGameComponent* LmInteractionScene::makeGameComponent()
+{
+	m_iNumberOfGameComponent++;
+	return new LmGameComponent(m_iNumberOfGameComponent);
 }
 
