@@ -208,7 +208,11 @@ void LmInteractionScene::backToDashboard()
 
 LmGameComponent* LmInteractionScene::makeGameComponent()
 {
+	//generate a new id
 	m_iNumberOfGameComponent++;
-	return new LmGameComponent(m_iNumberOfGameComponent);
+	//register it into the id table
+	m_aIdTable.insert(std::pair<int,LmGameComponent*>(m_iNumberOfGameComponent,new LmGameComponent(m_iNumberOfGameComponent)));
+
+	return m_aIdTable.find(m_iNumberOfGameComponent)->second;
 }
 

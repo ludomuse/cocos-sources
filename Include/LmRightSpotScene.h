@@ -14,11 +14,12 @@
 #include "LmInteractionScene.h"
 
 #include <random>
-#include <algorithm>
 #include <iterator>
-#include <iostream>
 #include <tuple>
-
+// sort algorithm
+#include <algorithm>    // std::sort
+#include <vector>       // std::vector
+#include <utility>
 
 //margiin between image in the scrollview
 static const float s_fMarginBetweenImage = 10.0f;
@@ -79,7 +80,9 @@ private:
 	//use for long click
 	int m_iBufferId;
 	int m_iHoleTouchedIndex;
+	int m_iBufferIdFillingImage;
 	bool m_bSameGameComponent;
+	bool m_bBufferCollideFillingImage;
 
 	//where we stock the sprite while moving with listener
 	cocos2d::Sprite* m_pBufferSprite;
@@ -131,7 +134,10 @@ private:
 	int touchCollideHoleInRightImage(cocos2d::Touch*);
 
 	//check if the right image is complete
-	bool endOfGame();
+	bool win();
+	bool m_bWin;
+
+
 
 
 	//test
@@ -155,6 +161,8 @@ public:
 
 	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
 	void layerChildReceive(int);
+
+
 
 };
 

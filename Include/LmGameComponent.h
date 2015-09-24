@@ -57,6 +57,9 @@ public:
 	cocos2d::Vec2 getPosition()const;
 	void setTexture(cocos2d::Texture2D*);
 
+	//sorting function on x and y
+	static bool sortFromTopLeftToRightBottom(LmGameComponent*, LmGameComponent*);
+
 private:
 
 	//ATTRIBUTES

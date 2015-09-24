@@ -59,6 +59,8 @@ public:
 	void setBParent(bool bParent) {
 		m_bParent = bParent;
 	}
+
+	void addToScore(int);
 };
 
 

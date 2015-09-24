@@ -24,3 +24,8 @@ LmUser::~LmUser()
 {
 
 }
+
+void LmUser::addToScore(int points)
+{
+	m_iScore+=points;
+}

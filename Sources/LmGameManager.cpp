@@ -212,7 +212,7 @@ bool LmGameManager::init()
 
 	//init callback method of the custom event (use to know when an interactionScene want to communicate with this)
 	auto InteractionSceneFinished = [=](EventCustom * event)
-													{
+															{
 
 		//TODO
 		//check if t's done and win etc and update sprite (for now its everytime done)
@@ -231,17 +231,17 @@ bool LmGameManager::init()
 		//reset touch enable
 		removeListeners(false);
 
-													};
+															};
 
 	auto BackToDashboard = [=](EventCustom * event)
-													{
+															{
 
 		m_bBackToDashboard=true;
 
 		//reset touch enable
 		removeListeners(false);
 
-													};
+															};
 
 	//add the custom event to the event dispatcher
 	Director::getInstance()->getEventDispatcher()->addCustomEventListener("InteractionSceneFinished",InteractionSceneFinished);
@@ -393,8 +393,13 @@ void LmGameManager::updateDashboard()
 	//update interaction done
 	char l_aInteractionDoneString[10];
 	sprintf(l_aInteractionDoneString,"%d/%d",m_iInteractionDone,m_aInteractionSceneOfTheGame.size());
-	//slow but we are using it just at the end of an interaction TODO
+	//slow but we are using it just at the end of an interaction
 	m_pLabelInteractionDone->setString(l_aInteractionDoneString);
+
+	//update score
+	char l_aScoreString[10];
+	sprintf(l_aScoreString,"%d pts",m_pUser1->getPScore());
+	m_pLabelScore->setString(l_aScoreString);
 
 }
 

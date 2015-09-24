@@ -125,6 +125,26 @@ void LmGameComponent::setTexture(cocos2d::Texture2D* texture)
 	m_pSpriteComponent->setTexture(texture);
 }
 
+bool LmGameComponent::sortFromTopLeftToRightBottom(LmGameComponent* l_pLmGameComponent1,LmGameComponent* l_pLmGameComponent2)
+{
+	bool result=true;
+
+	//order x increasing
+	if((l_pLmGameComponent1->getPosition().x)>(l_pLmGameComponent2->getPosition().x))
+	{
+		result = true;
+	}
+	else if((l_pLmGameComponent1->getPosition().x)==(l_pLmGameComponent2->getPosition().x))//they are on the same line
+	{
+		result = ((l_pLmGameComponent1->getPosition().y)<(l_pLmGameComponent2->getPosition().y));
+	}
+	else
+	{
+		result = false;
+	}
+
+	return !result;
+}
 
 
 

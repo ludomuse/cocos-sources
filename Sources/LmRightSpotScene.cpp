@@ -40,9 +40,12 @@ LmRightSpotScene::LmRightSpotScene(
 	m_bBufferSpriteVisible=false;
 	m_bBufferSpriteFillHole=false;
 	m_iHoleTouchedIndex=-1;
+	m_iBufferIdFillingImage=-1;
 	m_fHeightRect=0;
 	m_fWidthRect=0;
 	m_bGameComponentAlreadyInRightImage=false;
+	m_bBufferCollideFillingImage=false;
+	m_bWin=false;
 
 	//pointer
 	m_pBackDashboardButton=nullptr;
@@ -69,8 +72,6 @@ LmRightSpotScene::LmRightSpotScene(
 LmRightSpotScene::~LmRightSpotScene()
 {
 	//destroy all gamecomponent
-
-	delete m_pSendingArea;
 
 	for(it_type it=m_aIdTable.begin();it!=m_aIdTable.end();++it)
 	{
@@ -151,8 +152,6 @@ bool LmRightSpotScene::initGame()
 				m_aScrollViewImages.push_back(makeGameComponent());
 				//cut the right rect on the source file
 				m_aScrollViewImages.at(l_iIndex)->initSpriteComponent((*it),l_oRectStencil);
-				//register it into the id table
-				m_aIdTable.insert(std::pair<int,LmGameComponent*>(m_aScrollViewImages.at(l_iIndex)->getIId(),m_aScrollViewImages.at(l_iIndex)));
 				m_aScrollViewImages.at(l_iIndex)->setAnchorPoint(Vec2(0,0));
 				l_iIndex++;
 
@@ -192,12 +191,16 @@ bool LmRightSpotScene::initGame()
 
 				//test we get the id of the last one so the layer child receive smthg
 				id = m_aRightImage.at(l_iIndex)->getIId();
+				layerChildReceive(id);
 
 				//we add an hole to the right image layer child
 				m_aHolesRightImage.push_back(Rect(l_oVectorPosition.x,l_oVectorPosition.y,m_fWidthRect,m_fHeightRect));
 
 				//we get the id of the right gamecomponent going to the scrollview (sort by increased order)
 				m_aIdSequenceWin.push_back(m_aRightImage.at(l_iIndex)->getIId());
+
+
+
 			}
 			else
 			{
@@ -207,10 +210,6 @@ bool LmRightSpotScene::initGame()
 				m_aRightImage.at(l_iIndex)->addTo(m_pLayerUserChild);
 
 			}
-
-			//register it into the id table
-			m_aIdTable.insert(std::pair<int,LmGameComponent*>(m_aRightImage.at(l_iIndex)->getIId(),m_aRightImage.at(l_iIndex)));
-
 			l_iIndex++;
 		}
 	}
@@ -298,15 +297,14 @@ bool LmRightSpotScene::initGame()
 	{
 		//child view
 
-		//test like we receive smthg
-		layerChildReceive(id);
-
 		//init listener
 		m_pListener = EventListenerTouchOneByOne::create();
 		m_pListener->onTouchBegan = CC_CALLBACK_2(LmRightSpotScene::onTouchBeganChild, this);
 		m_pListener->onTouchMoved = CC_CALLBACK_2(LmRightSpotScene::onTouchMovedChild, this);
 		m_pListener->onTouchEnded = CC_CALLBACK_2(LmRightSpotScene::onTouchEndedChild, this);
 		Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(m_pListener,m_pLayerUserChild);
+
+		//add the layer to the game
 		m_pLayerGame->addChild(m_pLayerUserChild);
 
 	}
@@ -334,6 +332,10 @@ void LmRightSpotScene::endGame()
 			m_pLayerGame->removeChild(m_pLayerUserParent);
 		}*/
 
+		if(m_bWin)
+		{
+			m_pUser->addToScore(10);
+		}
 		removeChild(m_pLayerGame);
 		CCLOG("popscene");
 		Director::getInstance()->popScene();
@@ -534,6 +536,26 @@ void LmRightSpotScene::onTouchMovedChild(Touch* touch,Event* event)
 			m_bBufferSpriteFillHole=false;
 		}
 
+		//if we collide image before set to visible again
+		if(m_bBufferCollideFillingImage && m_iBufferId!=m_iBufferIdFillingImage)
+		{
+			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(true);
+		}
+		//check if we collide an hole fill with an image
+		m_iBufferIdFillingImage=idLmGameComponentTouchedInFillingHoleInRightImage(touch);
+
+		//an image from the sending area can't replace a filling image
+		if(m_iBufferIdFillingImage>=0 && m_bGameComponentAlreadyInRightImage)
+		{
+			m_bBufferCollideFillingImage=true;
+			//the filling image collide is invisible
+			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(false);
+		}
+		else
+		{
+			m_bBufferCollideFillingImage=false;
+		}
+
 
 	}
 }
@@ -573,8 +595,8 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch,Event* event)
 
 			//we remove the hole from hole vector
 			m_aHolesRightImage.erase(m_aHolesRightImage.begin()+m_iHoleTouchedIndex);
-		}
-		else if(bufferCollideSendingArea() && m_bGameComponentAlreadyInRightImage)//if we end the movement to sending area and the image come from the filling hole vector
+		}//if we end the movement to sending area and the image come from the filling hole vector
+		else if(bufferCollideSendingArea() && m_bGameComponentAlreadyInRightImage)
 		{
 			m_bGameComponentAlreadyInRightImage=false;
 			// we add the hole free
@@ -592,6 +614,23 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch,Event* event)
 			Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 			m_aIdTable.find(m_iBufferId)->second->setPosition(Vec2(l_oVisibleSize.width*0.9,l_oVisibleSize.height*0.5));
 
+		}//if we take an image already in the right image and we want to exchange its position with another filling image
+		else if(m_bGameComponentAlreadyInRightImage && m_bBufferCollideFillingImage)
+		{
+			//no change on hole just swap position of m_iBufferId and m_iBufferIdFillingImage
+			auto bufferPosition = m_aIdTable.find(m_iBufferId)->second->getPosition();
+			m_aIdTable.find(m_iBufferId)->second->setPosition(m_aIdTable.find(m_iBufferIdFillingImage)->second->getPosition());
+			m_aIdTable.find(m_iBufferIdFillingImage)->second->setPosition(bufferPosition);
+			//visible gain
+			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(true);
+
+		}
+
+		//reset to visible when an action finish
+		if(m_bBufferCollideFillingImage && m_iBufferId!=m_iBufferIdFillingImage)
+		{
+			m_bBufferCollideFillingImage=false;
+			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(true);
 		}
 		//remove the buffer sprite froim the layer
 		m_pLayerUserChild->removeChild(m_pBufferSprite);
@@ -602,13 +641,13 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch,Event* event)
 		if(!m_aHolesRightImage.size())
 		{
 			//check if win
-			if(endOfGame())
+			if(win())
 			{
-				CCLOG("win");
+				m_bWin=true;
 			}
 			else
 			{
-				CCLOG("not good combination");
+				m_bWin=false;
 			}
 		}
 	}
@@ -624,7 +663,7 @@ void LmRightSpotScene::layerChildReceive(int l_iIdLmGameComponent)
 	//we get the gamecomponent with id
 	auto l_pGameComponentReceived = m_aIdTable.find(l_iIdLmGameComponent)->second;
 
-	//put it approximatly in the sending area
+	//put it approximatly in the sending area(
 	l_pGameComponentReceived->setPosition(Vec2(l_oVisibleSize.width*0.9,l_oVisibleSize.height*0.5));
 	l_pGameComponentReceived->setAnchorPoint(Vec2(0,0));
 	m_aSendingAreaElements.push_back(l_pGameComponentReceived);
@@ -692,8 +731,10 @@ int LmRightSpotScene::touchCollideHoleInRightImage(Touch* touch)
 	return -1;
 }
 
-bool LmRightSpotScene::endOfGame()
+bool LmRightSpotScene::win()
 {
+	//we order our vector with piece top left at the begining and bot right at the end
+	std::sort(m_aFillingHoleInRightImage.begin(),m_aFillingHoleInRightImage.end(),LmGameComponent::sortFromTopLeftToRightBottom);
 	//make a vector with id in it
 	std::vector<int> l_aIdSequence;
 	//init it with fillinghole vector
@@ -701,8 +742,6 @@ bool LmRightSpotScene::endOfGame()
 	{
 		l_aIdSequence.push_back((*it)->getIId());
 	}
-	//we get this vector and sort it by increase order using default comparison (operator <):
-	std::sort(l_aIdSequence.begin(),l_aIdSequence.end());
 
 	bool l_bAre_equal = true;
 
@@ -717,7 +756,5 @@ bool LmRightSpotScene::endOfGame()
 	}
 
 	return l_bAre_equal;
-
 }
-
 

@@ -154,7 +154,7 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 		//TODO find peers and set attributes and instanciate socket
 
 		//tablet are connected create both user
-		m_pUser1->setPScore(54);
+		m_pUser1->setPScore(0);
 		m_pUser1->setPUserName(m_pLogEditBox->getText());
 		m_pUser1->setPUserTabletName("tablet1_name");
 
@@ -172,7 +172,7 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 			m_pUser2->setBParent(true);
 		}
 
-		m_pUser2->setPScore(20);
+		m_pUser2->setPScore(0);
 		m_pUser2->setPUserName("2nd user");
 		m_pUser2->setPUserTabletName("tablet2_name");
 
