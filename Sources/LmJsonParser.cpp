@@ -90,11 +90,12 @@ void LmJsonParser::initInteractionSceneOfTheGame()
 		case LmRightSpotScene::s_iId:
 			makeLmRightSpotScene(l_aSceneArray[i]);
 			break;
+		case LmQuizz_v1Scene::s_iId:
+			makeLmQuizz_v1Scene(l_aSceneArray[i]);
+			break;
 		default:
 			CCLOG("default switch @ LmJsonParser::initInteractionSceneOfTheGame");
 		}
-
-
 	}
 
 }
@@ -196,5 +197,15 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	//get the element we just push to set the introduction
 	m_aInteractionSceneOfTheGame.at(m_aInteractionSceneOfTheGame.size()-1)->setPLmIntroduction(getLmIntroduction(l_oScene));
 }
+
+void LmJsonParser::makeLmQuizz_v1Scene(const rapidjson::Value& l_oScene)
+{
+	//TODO
+	m_aInteractionSceneOfTheGame.push_back(new LmQuizz_v1Scene);
+
+	//get the element we just push to set the introduction
+	m_aInteractionSceneOfTheGame.at(m_aInteractionSceneOfTheGame.size()-1)->setPLmIntroduction(getLmIntroduction(l_oScene));
+}
+
 
 

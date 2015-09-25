@@ -60,11 +60,6 @@ protected:
 	cocos2d::ui::Button* m_pNextButton;
 	cocos2d::ui::Button* m_pPreviousButton;
 
-	//callback
-	void previousLayer();
-	void nextLayer();
-
-
 	//gui elements
 	cocos2d::Sprite* m_pSpriteDashboardBand;
 
@@ -86,6 +81,10 @@ protected:
 	int m_iNumberOfGameComponent;
 
 	//METHODS
+
+	//callback
+	void previousLayer();
+	void nextLayer();
 
 	//interface for all games where we init our games and so on
 	virtual void runGame()=0;

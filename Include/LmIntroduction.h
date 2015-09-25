@@ -59,6 +59,9 @@ public:
 	//return true if there is a previous layer
 	bool previousLayer();
 
+	int getIIndex() const {
+		return m_iIndex;
+	}
 };
 
 #endif // LMINTRODUCTION_H

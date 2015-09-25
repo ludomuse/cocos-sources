@@ -7,8 +7,6 @@
 
 #include "../Include/LmRightSpotScene.h"
 
-
-
 using namespace cocos2d;
 
 LmRightSpotScene::LmRightSpotScene(
@@ -37,7 +35,6 @@ LmRightSpotScene::LmRightSpotScene(
 	m_iBufferId=-1;
 	m_bSameGameComponent=false;
 	m_bSpriteSelected=false;
-	m_bBufferSpriteVisible=false;
 	m_bBufferSpriteFillHole=false;
 	m_iHoleTouchedIndex=-1;
 	m_iBufferIdFillingImage=-1;
@@ -46,6 +43,7 @@ LmRightSpotScene::LmRightSpotScene(
 	m_bGameComponentAlreadyInRightImage=false;
 	m_bBufferCollideFillingImage=false;
 	m_bWin=false;
+	m_bFirstMoveAfterLongClick=false;
 
 	//pointer
 	m_pBackDashboardButton=nullptr;
@@ -85,7 +83,13 @@ LmRightSpotScene::~LmRightSpotScene()
 
 void LmRightSpotScene::runGame()
 {
-	initGame();
+	if(!initGame())
+	{
+		CCLOG("initGame failed");
+	}
+
+	//we preload the sound
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("audio/son.mp3");
 }
 
 bool LmRightSpotScene::initGame()
@@ -135,12 +139,8 @@ bool LmRightSpotScene::initGame()
 	int l_iIndex=0;
 	Rect l_oRectStencil;
 
-
-
-
 	for (std::vector<std::string>::iterator it = m_aFilenamesWrongImmages.begin(); it != m_aFilenamesWrongImmages.end(); ++it)
 	{
-
 		for(int i=0;i<m_iHoleOnX;i++)
 		{
 			for(int j=0;j<m_iHoleOnY;j++)
@@ -154,7 +154,6 @@ bool LmRightSpotScene::initGame()
 				m_aScrollViewImages.at(l_iIndex)->initSpriteComponent((*it),l_oRectStencil);
 				m_aScrollViewImages.at(l_iIndex)->setAnchorPoint(Vec2(0,0));
 				l_iIndex++;
-
 			}
 		}
 	}
@@ -198,9 +197,6 @@ bool LmRightSpotScene::initGame()
 
 				//we get the id of the right gamecomponent going to the scrollview (sort by increased order)
 				m_aIdSequenceWin.push_back(m_aRightImage.at(l_iIndex)->getIId());
-
-
-
 			}
 			else
 			{
@@ -208,7 +204,6 @@ bool LmRightSpotScene::initGame()
 				m_aRightImage.at(l_iIndex)->setAnchorPoint(Vec2(0,0));
 				m_aRightImage.at(l_iIndex)->setPosition(l_oVectorPosition);
 				m_aRightImage.at(l_iIndex)->addTo(m_pLayerUserChild);
-
 			}
 			l_iIndex++;
 		}
@@ -279,7 +274,6 @@ bool LmRightSpotScene::initGame()
 		m_pScrollView->setTouchEnabled(true);
 		m_pLayerUserParent->addChild(m_pScrollView);
 
-
 		//to listen on touch began etc on the scrollview
 		m_pScrollView->setSwallowTouches(false);
 
@@ -306,7 +300,6 @@ bool LmRightSpotScene::initGame()
 
 		//add the layer to the game
 		m_pLayerGame->addChild(m_pLayerUserChild);
-
 	}
 
 	return true;
@@ -317,20 +310,6 @@ void LmRightSpotScene::endGame()
 	if(m_bFinishButtonSync)
 	{
 		m_bFinishButtonSync=false;
-
-		/*//test
-		if(m_bChildSet)
-		{
-			m_bChildSet=false;
-			m_pLayerGame->removeChild(m_pLayerUserChild);
-			m_pLayerGame->addChild(m_pLayerUserParent,1);
-		}
-		else
-		{
-			m_bChildSet=true;
-			m_pLayerGame->addChild(m_pLayerUserChild,1);
-			m_pLayerGame->removeChild(m_pLayerUserParent);
-		}*/
 
 		if(m_bWin)
 		{
@@ -380,11 +359,14 @@ void LmRightSpotScene::onTouchMovedParent(Touch* touch,Event* event)
 
 	if(m_bSpriteSelected)
 	{
-		if(!m_bBufferSpriteVisible)
+		if(m_bFirstMoveAfterLongClick)
 		{
+			m_bFirstMoveAfterLongClick=false;
 			m_pBufferSprite->setVisible(true);
-			m_bBufferSpriteVisible=true;
+			m_aIdTable.find(m_iBufferId)->second->setVisible(false);
 		}
+
+
 		moveBufferSprite(touch);
 
 		if(bufferCollideSendingArea())
@@ -456,14 +438,18 @@ void LmRightSpotScene::checkLongClick()
 		//with the buffer id we know which game component is selected
 		CCLOG("lond click on %d",m_aIdTable.find(m_iBufferId)->first);
 
+		//play sound
+		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("audio/son.mp3",false);
+
 		initBufferSprite(m_iBufferId,m_pLayerScrollView);
 		m_pScrollView->setTouchEnabled(false);
-		m_pBufferSprite->setVisible(false);
-		m_bBufferSpriteVisible=false;
 		//we add the buffer
 		m_pLayerUserParent->addChild(m_pBufferSprite);
 
-
+		//need to be visible still we move
+		m_pBufferSprite->setVisible(false);
+		m_aIdTable.find(m_iBufferId)->second->setVisible(true);
+		m_bFirstMoveAfterLongClick=true;
 	}
 
 }

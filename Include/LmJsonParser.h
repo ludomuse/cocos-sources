@@ -28,6 +28,7 @@
 #include "LmInteractionScene.h"
 #include "LmPuzzleScene.h"
 #include "LmRightSpotScene.h"
+#include "LmQuizz_v1Scene.h"
 
 
 class LmJsonParser
@@ -69,6 +70,7 @@ private:
 
 	//our function which make scene
 	void makeLmRightSpotScene(const rapidjson::Value&);
+	void makeLmQuizz_v1Scene(const rapidjson::Value&);
 };
 
 

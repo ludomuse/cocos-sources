@@ -93,6 +93,8 @@ bool LmIntroduction::nextLayer()
 			//callback function
 			auto l_pMoveLeftDone = CallFunc::create( std::bind(&LmIntroduction::moveLeftDone,this) );
 
+			m_iIndex++;
+
 			//run the sequence so we know when its finished then callback function
 			m_pLayerTransition->runAction(Sequence::create(l_pMoveLeft,l_pMoveLeftDone,nullptr));
 
@@ -134,6 +136,8 @@ bool LmIntroduction::previousLayer()
 			//callback function
 			auto l_pMoveRightDone = CallFunc::create( std::bind(&LmIntroduction::moveRightDone,this) );
 
+			m_iIndex--;
+
 			//run the sequence so we know when its finished then callback function
 			m_pLayerTransition->runAction(Sequence::create(l_pMoveRight,l_pMoveRightDone,nullptr));
 
@@ -148,7 +152,6 @@ void LmIntroduction::moveRightDone()
 {
 	//we remove the current to put the next one as current
 	m_pLayerTransition->removeChild(m_pCurrentLayer);
-	m_iIndex--;
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
 	m_pCurrentLayer->playSound();
 
@@ -165,7 +168,6 @@ void LmIntroduction::moveLeftDone()
 {
 	//we remove the current to put the next one as current
 	m_pLayerTransition->removeChild(m_pCurrentLayer);
-	m_iIndex++;
 	m_pCurrentLayer = m_aLayers.at(m_iIndex);
 	m_pCurrentLayer->playSound();
 

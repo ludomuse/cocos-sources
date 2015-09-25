@@ -30,10 +30,29 @@ static const float s_fLongClickDuration = 1.0f;
 
 class LmRightSpotScene : public LmInteractionScene
 {
+
+public:
+
+	//id of this scene
+	static const int s_iId = 0;
+
+	/*6 parameters =>
+	 *  FilenameSpriteBackground
+	 *  FilenameSpriteCollideZone
+	 *  FilenamesWrongImmages
+	 *  FilenameRightImage
+	 *  HoleOnX
+	 *  HoleOnY
+	 *  LocationOfHole*/
+	LmRightSpotScene(std::string,std::string,std::vector<std::string>,std::string,int,int,std::vector<std::pair<int,int>>);
+	~LmRightSpotScene();
+
+	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
+	void layerChildReceive(int);
+
 private:
 
 	//ATTRIBUTES
-
 
 	//what we need to get from the json file
 	std::string m_sFilenameSpriteBackground;
@@ -51,7 +70,7 @@ private:
 	std::vector<LmGameComponent*> m_aRightImage;
 	//holes in right image
 	std::vector<cocos2d::Rect> m_aHolesRightImage;
-	//hole in scroll view still unused
+	//hole in scroll view TODO
 	std::vector<cocos2d::Rect> m_aHolesScrollView;
 	//elements in sending area
 	std::vector<LmGameComponent*> m_aSendingAreaElements;
@@ -61,12 +80,14 @@ private:
 	//good id sequence of the right image to know when it's win
 	std::vector<int> m_aIdSequenceWin;
 
+	//rect stencil dimension
 	float m_fHeightRect;
 	float m_fWidthRect;
 
 	//attributes gui
 	cocos2d::Sprite* m_pSpriteBackground;
 
+	//finish button
 	cocos2d::ui::Button* m_pFinishButton;
 	bool m_bFinishButtonSync;
 
@@ -77,7 +98,7 @@ private:
 	//listener
 	cocos2d::EventListenerTouchOneByOne* m_pListener;
 
-	//use for long click
+	//use to handle touch event
 	int m_iBufferId;
 	int m_iHoleTouchedIndex;
 	int m_iBufferIdFillingImage;
@@ -87,8 +108,7 @@ private:
 	//where we stock the sprite while moving with listener
 	cocos2d::Sprite* m_pBufferSprite;
 	bool m_bSpriteSelected;
-	//to avoid to set every frame on the touchmovedparent
-	bool m_bBufferSpriteVisible;
+	bool m_bFirstMoveAfterLongClick;
 	//to know if the buffer fill an hole
 	bool m_bBufferSpriteFillHole;
 	//to know when we deplace a piece from the right image to generate the hole again
@@ -120,7 +140,6 @@ private:
 	//move pieces received in child layer
 	void moveBufferSprite(cocos2d::Touch*);
 
-
 	//use for long click
 	void checkLongClick();
 
@@ -136,34 +155,6 @@ private:
 	//check if the right image is complete
 	bool win();
 	bool m_bWin;
-
-
-
-
-	//test
-	bool m_bChildSet;
-
-public:
-
-	//id of this scene
-	static const int s_iId = 0;
-
-	/*6 parameters =>
-	 *  FilenameSpriteBackground
-	 *  FilenameSpriteCollideZone
-	 *  FilenamesWrongImmages
-	 *  FilenameRightImage
-	 *  HoleOnX
-	 *  HoleOnY
-	 *  LocationOfHole*/
-	LmRightSpotScene(std::string,std::string,std::vector<std::string>,std::string,int,int,std::vector<std::pair<int,int>>);
-	~LmRightSpotScene();
-
-	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
-	void layerChildReceive(int);
-
-
-
 };
 
 

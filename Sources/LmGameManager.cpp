@@ -70,124 +70,6 @@ LmGameManager::~LmGameManager()
 
 }
 
-bool LmGameManager::initDashboard()
-{
-	//use to place elements
-	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
-
-	//create thhe scene the main layer and put element on it
-	m_pDashboardScene = Scene::create();
-	m_pBlueLayer = Layer::create();
-	m_pPinkLayer = Layer::create();
-	m_pDashboardScene->addChild(m_pBlueLayer);
-	m_pDashboardScene->addChild(m_pPinkLayer);
-
-	//we add the different background with different zorder
-
-	//background blue
-	m_pSpriteBackgroundBlue = Sprite::create("fullBlue.png");
-	m_pSpriteBackgroundBlue->setPosition(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.5f);
-	m_pBlueLayer->addChild(m_pSpriteBackgroundBlue);
-
-	//background pink
-	m_pSpriteBackgroundPink = Sprite::create("halfPink.png");
-	m_pSpriteBackgroundPink->setPosition(l_oVisibleSize.width*0.5f,
-			m_pSpriteBackgroundPink->getContentSize().height*(-0.5f+s_fMagingOfSpriteBackgroundUser2Profile));
-	m_pPinkLayer->addChild(m_pSpriteBackgroundPink);
-
-
-	//background profile blue
-	m_pSpriteBackgroundBlueProfile = Sprite::create("spriteBackgroundUser1Profile.png");
-	m_pSpriteBackgroundBlueProfile->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,l_oVisibleSize.height*0.5);
-	m_pBlueLayer->addChild(m_pSpriteBackgroundBlueProfile,1);
-
-	//user1 name
-	m_pLabelUser1Name = Label::createWithTTF(m_pUser1->getPUserName(), "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelUser1Name->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
-			m_pSpriteBackgroundBlueProfile->getContentSize().height*0.95f);
-	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelUser1Name,1);
-
-	//label score
-	char l_aScoreString[20];
-	sprintf(l_aScoreString,"%d pts",m_pUser1->getPScore());
-	m_pLabelScore = Label::createWithTTF(l_aScoreString, "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelScore->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
-			m_pSpriteBackgroundBlueProfile->getContentSize().height*0.65f);
-	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelScore,1);
-
-	//how manny interaction done label
-	char l_aInteractionDoneString[20];
-	sprintf(l_aInteractionDoneString,"%d/%d",m_iInteractionDone,m_aInteractionSceneOfTheGame.size());
-	m_pLabelInteractionDone = Label::createWithTTF(l_aInteractionDoneString, "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelInteractionDone->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
-			m_pSpriteBackgroundBlueProfile->getContentSize().height*0.55f);
-	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelInteractionDone,1);
-
-	//background profil pink
-	auto m_pSpriteBackgroundPinkProfile = Sprite::create("spriteBackgroundUser2Profile.png");
-	m_pSpriteBackgroundPinkProfile->setPosition(m_pSpriteBackgroundPinkProfile->getContentSize().width*0.5f,
-			m_pSpriteBackgroundPinkProfile->getContentSize().height*(-0.5f+s_fMagingOfSpriteBackgroundUser2Profile));
-	m_pPinkLayer->addChild(m_pSpriteBackgroundPinkProfile,1);
-
-	//add the band mid at the top of the pink background
-	m_pSpriteBandMid = Sprite::create("bandMid.png");
-	m_pSpriteBandMid->setAnchorPoint(Vec2(0,0.5));
-	m_pSpriteBandMid->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width,m_pSpriteBackgroundPink->getContentSize().height*s_fMagingOfSpriteBackgroundUser2Profile);
-	m_pPinkLayer->addChild(m_pSpriteBandMid);
-
-	//compare button with ui::Button
-	m_pCompareButton = ui::Button::create("compareNormal.png");
-	m_pCompareButton->setTouchEnabled(true);
-	m_pCompareButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.1f));
-	m_pCompareButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::compare, this));
-	m_pPinkLayer->addChild(m_pCompareButton);
-	m_pCompareButton->retain();
-
-	//label compare button
-	m_pLabelCompareButton = Label::createWithTTF("comparer", "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelCompareButton->setPosition(l_oVisibleSize.width*0.6f+m_pCompareButton->getContentSize().width,l_oVisibleSize.height*0.1f);
-	m_pPinkLayer->addChild(m_pLabelCompareButton);
-	m_pLabelCompareButton->retain();
-
-	//back button
-	m_pBackButton = ui::Button::create("backNormal.png");
-	m_pBackButton->setTouchEnabled(true);
-	m_pBackButton -> setPosition(Vect((l_oVisibleSize.width-m_pSpriteBackgroundBlueProfile->getContentSize().width)*0.5f+m_pSpriteBackgroundBlueProfile->getContentSize().width
-			,l_oVisibleSize.height*0.95f));
-	m_pBackButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::back, this));
-	m_pBackButton->retain();
-
-	//put the top band
-	m_pSpriteBandTop = Sprite::create("bandTop.png");
-	m_pSpriteBandTop->setAnchorPoint(Vec2(0,1));
-	m_pSpriteBandTop->setPosition(Vec2(0,l_oVisibleSize.height+l_oOrigin.y));
-	m_pBlueLayer->addChild(m_pSpriteBandTop);
-	m_pSpriteBandTop->retain();
-
-	//title label app
-	m_sTitleApplication=m_pLmServerManager->getSTitleApplication();
-	m_pLabelTitleApplication = Label::createWithTTF(m_sTitleApplication, "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelTitleApplication->setAnchorPoint(Vec2(0,0.5));
-	m_pLabelTitleApplication->setPosition(Vec2(m_pSpriteBackgroundBlueProfile->getContentSize().width*1.2f
-			,m_pSpriteBandTop->getContentSize().height*0.5f));
-	m_pLabelTitleApplication->setColor(Color3B::BLACK);
-	m_pSpriteBandTop->addChild(m_pLabelTitleApplication);
-
-	//init interactions
-	initDashboardInteraction();
-
-	//play next interaction button
-	m_pPlayNextInteractionButton = ui::Button::create("playNextInteraction.png");
-	m_pPlayNextInteractionButton->setTouchEnabled(true);
-	m_pPlayNextInteractionButton->setAnchorPoint(Vec2(1,0.5));
-	m_pPlayNextInteractionButton->setPosition(Vec2(m_pSpriteBandMid->getContentSize().width,m_pSpriteBandMid->getContentSize().height*0.5f));
-	m_pPlayNextInteractionButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::runNextInteraction, this));
-	m_pSpriteBandMid->addChild(m_pPlayNextInteractionButton,2);
-
-
-	return true;
-}
 
 bool LmGameManager::init()
 {
@@ -250,6 +132,128 @@ bool LmGameManager::init()
 
 	return true;
 }
+
+bool LmGameManager::initDashboard()
+{
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+
+	//create thhe scene the main layer and put element on it
+	m_pDashboardScene = Scene::create();
+	m_pBlueLayer = Layer::create();
+	m_pPinkLayer = Layer::create();
+	m_pDashboardScene->addChild(m_pBlueLayer);
+	m_pDashboardScene->addChild(m_pPinkLayer);
+
+	//we add the different background with different zorder
+
+	//background blue
+	m_pSpriteBackgroundBlue = Sprite::create("fullBlue.png");
+	m_pSpriteBackgroundBlue->setPosition(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.5f);
+	m_pBlueLayer->addChild(m_pSpriteBackgroundBlue);
+
+	//background pink
+	m_pSpriteBackgroundPink = Sprite::create("halfPink.png");
+	m_pSpriteBackgroundPink->setPosition(l_oVisibleSize.width*0.5f,
+			m_pSpriteBackgroundPink->getContentSize().height*(-0.5f+s_fMagingOfSpriteBackgroundUser2Profile));
+	m_pPinkLayer->addChild(m_pSpriteBackgroundPink);
+
+
+	//background profile blue
+	m_pSpriteBackgroundBlueProfile = Sprite::create("spriteBackgroundUser1Profile.png");
+	m_pSpriteBackgroundBlueProfile->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,l_oVisibleSize.height*0.5);
+	m_pBlueLayer->addChild(m_pSpriteBackgroundBlueProfile,1);
+
+	//user1 name
+	m_pLabelUser1Name = Label::createWithTTF(m_pUser1->getPUserName(), "fonts/JosefinSans-Regular.ttf",20);
+	m_pLabelUser1Name->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
+			m_pSpriteBackgroundBlueProfile->getContentSize().height*0.95f);
+	m_pLabelUser1Name->setMaxLineWidth(m_pSpriteBackgroundBlueProfile->getContentSize().width);
+	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelUser1Name,1);
+
+	//label score
+	char l_aScoreString[20];
+	sprintf(l_aScoreString,"%d pts",m_pUser1->getPScore());
+	m_pLabelScore = Label::createWithTTF(l_aScoreString, "fonts/JosefinSans-Regular.ttf",20);
+	m_pLabelScore->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
+			m_pSpriteBackgroundBlueProfile->getContentSize().height*0.65f);
+	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelScore,1);
+
+	//how manny interaction done label
+	char l_aInteractionDoneString[20];
+	sprintf(l_aInteractionDoneString,"%d/%d",m_iInteractionDone,m_aInteractionSceneOfTheGame.size());
+	m_pLabelInteractionDone = Label::createWithTTF(l_aInteractionDoneString, "fonts/JosefinSans-Regular.ttf",20);
+	m_pLabelInteractionDone->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width*0.5f,
+			m_pSpriteBackgroundBlueProfile->getContentSize().height*0.55f);
+	m_pSpriteBackgroundBlueProfile->addChild(m_pLabelInteractionDone,1);
+
+	//background profil pink
+	auto m_pSpriteBackgroundPinkProfile = Sprite::create("spriteBackgroundUser2Profile.png");
+	m_pSpriteBackgroundPinkProfile->setPosition(m_pSpriteBackgroundPinkProfile->getContentSize().width*0.5f,
+			m_pSpriteBackgroundPinkProfile->getContentSize().height*(-0.5f+s_fMagingOfSpriteBackgroundUser2Profile));
+	m_pPinkLayer->addChild(m_pSpriteBackgroundPinkProfile,1);
+
+	//add the band mid at the top of the pink background
+	m_pSpriteBandMid = Sprite::create("bandMid.png");
+	m_pSpriteBandMid->setAnchorPoint(Vec2(0,0.5));
+	m_pSpriteBandMid->setPosition(m_pSpriteBackgroundBlueProfile->getContentSize().width,m_pSpriteBackgroundPink->getContentSize().height*s_fMagingOfSpriteBackgroundUser2Profile);
+	m_pPinkLayer->addChild(m_pSpriteBandMid);
+
+	//compare button with ui::Button
+	m_pCompareButton = ui::Button::create("compareNormal.png");
+	m_pCompareButton->setTouchEnabled(true);
+	m_pCompareButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.1f));
+	m_pCompareButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::compare, this));
+	m_pPinkLayer->addChild(m_pCompareButton);
+	m_pCompareButton->retain();
+
+	//label compare button
+	m_pLabelCompareButton = Label::createWithTTF("comparer", "fonts/JosefinSans-Regular.ttf",20);
+	m_pLabelCompareButton->setPosition(l_oVisibleSize.width*0.6f+m_pCompareButton->getContentSize().width,l_oVisibleSize.height*0.1f);
+	m_pPinkLayer->addChild(m_pLabelCompareButton);
+	m_pLabelCompareButton->retain();
+
+	//back button
+	m_pBackButton = ui::Button::create("backNormal.png");
+	m_pBackButton->setTouchEnabled(true);
+	m_pBackButton -> setPosition(Vect((l_oVisibleSize.width-m_pSpriteBackgroundBlueProfile->getContentSize().width)*0.5f+m_pSpriteBackgroundBlueProfile->getContentSize().width
+			,l_oVisibleSize.height*0.95f));
+	m_pBackButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::back, this));
+	m_pBackButton->retain();
+
+	//put the top band
+	m_pSpriteBandTop = Sprite::create("bandTop.png");
+	m_pSpriteBandTop->setAnchorPoint(Vec2(0,1));
+	m_pSpriteBandTop->setPosition(Vec2(0,l_oVisibleSize.height+l_oOrigin.y));
+	m_pBlueLayer->addChild(m_pSpriteBandTop);
+	m_pSpriteBandTop->retain();
+
+	//title label app
+	m_sTitleApplication=m_pLmServerManager->getSTitleApplication();
+	m_pLabelTitleApplication = Label::createWithTTF(m_sTitleApplication, "fonts/JosefinSans-Regular.ttf",20);
+	m_pLabelTitleApplication->setPosition(Vec2((l_oVisibleSize.width-m_pSpriteBackgroundBlueProfile->getContentSize().width)*0.5
+			+m_pSpriteBackgroundBlueProfile->getContentSize().width
+			,m_pSpriteBandTop->getContentSize().height*0.5f));
+	m_pLabelTitleApplication->setColor(Color3B::BLACK);
+	m_pLabelTitleApplication->setMaxLineWidth((l_oVisibleSize.width-m_pSpriteBackgroundBlueProfile->getContentSize().width)*0.9);
+	m_pSpriteBandTop->addChild(m_pLabelTitleApplication);
+
+	//init interactions
+	initDashboardInteraction();
+
+	//play next interaction button
+	m_pPlayNextInteractionButton = ui::Button::create("playNextInteraction.png");
+	m_pPlayNextInteractionButton->setTouchEnabled(true);
+	m_pPlayNextInteractionButton->setAnchorPoint(Vec2(1,0.5));
+	m_pPlayNextInteractionButton->setPosition(Vec2(m_pSpriteBandMid->getContentSize().width,m_pSpriteBandMid->getContentSize().height*0.5f));
+	m_pPlayNextInteractionButton->addTouchEventListener(CC_CALLBACK_0(LmGameManager::runNextInteraction, this));
+	m_pSpriteBandMid->addChild(m_pPlayNextInteractionButton,2);
+
+
+	return true;
+}
+
 
 void LmGameManager::runGame()
 {

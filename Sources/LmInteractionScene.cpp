@@ -70,6 +70,7 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pPreviousButton->setTouchEnabled(true);
 	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.7));
 	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::previousLayer, this));
+	m_pPreviousButton->setVisible(false);
 	addChild(m_pPreviousButton,1);
 
 	return true;
@@ -77,14 +78,23 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 
 void LmInteractionScene::previousLayer()
 {
-	if(m_pLmIntroduction->isBActionDone())// action is done is used to sync Lmintroduction
+
+	if(m_pLmIntroduction->previousLayer())
 	{
-		m_pLmIntroduction->previousLayer();
+		if(m_pLmIntroduction->getIIndex()==0)
+		{
+			m_pPreviousButton->setVisible(false);
+		}
+
 	}
+
+
+
 }
 
 void LmInteractionScene::nextLayer()
 {
+
 	//false => introduction is finished
 	if(!m_pLmIntroduction->nextLayer() && m_pLmIntroduction->isBActionDone())
 	{
@@ -92,6 +102,16 @@ void LmInteractionScene::nextLayer()
 		removeChild(m_pPreviousButton);
 		runGame();
 	}
+	else
+	{
+		if(m_pLmIntroduction->getIIndex()>0)
+		{
+			m_pPreviousButton->setVisible(true);
+		}
+	}
+
+
+
 }
 
 void LmInteractionScene::initDashboardLayer()
