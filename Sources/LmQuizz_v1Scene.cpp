@@ -10,24 +10,43 @@
 using namespace cocos2d;
 using namespace cocos2d::ui;
 
-LmQuizz_v1Scene::LmQuizz_v1Scene() :
+LmQuizz_v1Scene::LmQuizz_v1Scene(std::string l_sFilenameSpriteBackground,
+		std::string l_sFilenameSpriteBandTop,
+		std::string l_sFilenameSpriteAnswerBackground,
+		std::string l_sFilenameSpriteAnswerCross,
+		std::string l_sFilenameSpriteGoodAnswerButton,
+		std::string l_sFilenameSpriteBadAnswerButton,
+		std::vector<LmQuestion*> l_aQuestions, int l_iAttemptByQuestion,
+		float l_fTimerDuration, bool l_bTimerEnbaled) :
 		LmInteractionScene()
 {
 
 	//json
-	m_sFilenameSpriteBackground = "log.png";
-
-	for (int i = 0; i < 5; i++)
-	{
-		m_aQuestions.push_back(new LmQuestion);
-	}
-
-	m_iAttemptByQuestion = 3;
-	m_fTimerDuration = 1.0f;
+	m_sFilenameSpriteBackground = l_sFilenameSpriteBackground;
+	m_sFilenameSpriteBandTop = l_sFilenameSpriteBandTop;
+	m_sFilenameSpriteAnswerBackground = l_sFilenameSpriteAnswerBackground;
+	m_sFilenameSpriteAnswerCross = l_sFilenameSpriteAnswerCross;
+	m_aQuestions = l_aQuestions;
+	m_iAttemptByQuestion = l_iAttemptByQuestion;
+	m_fTimerDuration = l_fTimerDuration;
+	m_bTimerEnbaled = l_bTimerEnbaled;
+	m_sFilenameSpriteGoodAnswerButton = l_sFilenameSpriteGoodAnswerButton;
+	m_sFilenameSpriteBadAnswerButton = l_sFilenameSpriteBadAnswerButton;
 
 	//pointer
 	m_pSpriteBackground = nullptr;
 	m_pTimer = nullptr;
+	m_pNextQuestionButton = nullptr;
+	m_pAnswerLabel1 = nullptr;
+	m_pAnswerLabel2 = nullptr;
+	m_pAnswerLabel3 = nullptr;
+	m_pAnswerLabel4 = nullptr;
+	m_pQuestionLabel = nullptr;
+	m_pBandTopSprite = nullptr;
+	m_pCheckBoxAnswer1 = nullptr;
+	m_pCheckBoxAnswer2 = nullptr;
+	m_pCheckBoxAnswer3 = nullptr;
+	m_pCheckBoxAnswer4 = nullptr;
 
 	//primitive type
 	m_iCounter = 0;
@@ -40,7 +59,11 @@ LmQuizz_v1Scene::LmQuizz_v1Scene() :
 
 LmQuizz_v1Scene::~LmQuizz_v1Scene()
 {
-
+	for (std::vector<LmQuestion*>::iterator it = m_aQuestions.begin();
+			it != m_aQuestions.end(); ++it)
+	{
+		delete (*it);
+	}
 }
 
 void LmQuizz_v1Scene::runGame()
@@ -75,10 +98,13 @@ bool LmQuizz_v1Scene::initGame()
 	m_pTimer->setPosition(
 			Point(l_oVisibleSize.width * 0.5f + l_oOrigin.x,
 					l_oVisibleSize.height * 0.05 + l_oOrigin.y));
-	m_pLayerGame->addChild(m_pTimer, 1);
+	if (m_bTimerEnbaled)
+	{
+		m_pLayerGame->addChild(m_pTimer, 1);
+	}
 
 	//band top sprite
-	m_pBandTopSprite = Sprite::create("bandTop.png");
+	m_pBandTopSprite = Sprite::create(m_sFilenameSpriteBandTop);
 	m_pBandTopSprite->setAnchorPoint(Vec2(0, 1));
 	m_pBandTopSprite->setPosition(Vec2(0, l_oVisibleSize.height + l_oOrigin.y));
 	m_pLayerGame->addChild(m_pBandTopSprite);
@@ -90,8 +116,8 @@ bool LmQuizz_v1Scene::initGame()
 
 	//menuitem answer create + set position
 	//1
-	m_pCheckBoxAnswer1 = CheckBox::create("answerBackground.png",
-			"answerSelected.png");
+	m_pCheckBoxAnswer1 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+			m_sFilenameSpriteAnswerCross);
 	m_pCheckBoxAnswer1->setTouchEnabled(true);
 	m_pCheckBoxAnswer1->setSwallowTouches(false);
 	m_pCheckBoxAnswer1->setPosition(
@@ -101,8 +127,8 @@ bool LmQuizz_v1Scene::initGame()
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
 	m_pLayerGame->addChild(m_pCheckBoxAnswer1);
 	//2
-	m_pCheckBoxAnswer2 = CheckBox::create("answerBackground.png",
-			"answerSelected.png");
+	m_pCheckBoxAnswer2 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+			m_sFilenameSpriteAnswerCross);
 	m_pCheckBoxAnswer2->setTouchEnabled(true);
 	m_pCheckBoxAnswer2->setSwallowTouches(false);
 	m_pCheckBoxAnswer2->setPosition(
@@ -112,8 +138,8 @@ bool LmQuizz_v1Scene::initGame()
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
 	m_pLayerGame->addChild(m_pCheckBoxAnswer2);
 	//3
-	m_pCheckBoxAnswer3 = CheckBox::create("answerBackground.png",
-			"answerSelected.png");
+	m_pCheckBoxAnswer3 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+			m_sFilenameSpriteAnswerCross);
 	m_pCheckBoxAnswer3->setTouchEnabled(true);
 	m_pCheckBoxAnswer3->setSwallowTouches(false);
 	m_pCheckBoxAnswer3->setPosition(
@@ -123,8 +149,8 @@ bool LmQuizz_v1Scene::initGame()
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
 	m_pLayerGame->addChild(m_pCheckBoxAnswer3);
 	//4
-	m_pCheckBoxAnswer4 = CheckBox::create("answerBackground.png",
-			"answerSelected.png");
+	m_pCheckBoxAnswer4 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+			m_sFilenameSpriteAnswerCross);
 	m_pCheckBoxAnswer4->setTouchEnabled(true);
 	m_pCheckBoxAnswer4->setSwallowTouches(false);
 	m_pCheckBoxAnswer4->setPosition(
@@ -224,33 +250,32 @@ void LmQuizz_v1Scene::beginQuestion()
 {
 	if (m_bNextQuestionButtonCanBePress)
 	{
-		m_bNextQuestionButtonCanBePress=false;
+		m_bNextQuestionButtonCanBePress = false;
 		m_pNextQuestionButton->setVisible(false);
-
 
 		//no more layers end of the game
 		if ((int) m_iIndexQuestion >= (int) (m_aQuestions.size() - 1))
 		{
-			CCLOG("end of the game");
 			m_pFinishGameButton->setVisible(true);
 		}
 		else
 		{
-			CCLOG("reset checkbox");
 			//reset checkbox
 			m_pCheckBoxAnswer1->setSelected(false);
 			m_pCheckBoxAnswer2->setSelected(false);
 			m_pCheckBoxAnswer3->setSelected(false);
 			m_pCheckBoxAnswer4->setSelected(false);
 
-
 			m_iNumberOfAttempt = m_iAttemptByQuestion;
 
-			//reset timer
-			m_pTimer->setPercent(0);
-			m_iCounter = 0;
-			schedule(schedule_selector(LmQuizz_v1Scene::updateLoadingBar),
-					m_fTimerDuration);
+			if (m_bTimerEnbaled)
+			{
+				//reset timer
+				m_pTimer->setPercent(0);
+				m_iCounter = 0;
+				schedule(schedule_selector(LmQuizz_v1Scene::updateLoadingBar),
+						m_fTimerDuration);
+			}
 
 			//disable answer selected
 			m_iAnswerSelected = -1;
@@ -286,6 +311,27 @@ void LmQuizz_v1Scene::checkAnswer()
 			== m_iAnswerSelected)
 	{
 		//load good texture for next button to indicate win
+		m_pNextQuestionButton->loadTextureNormal(
+				m_sFilenameSpriteGoodAnswerButton);
+		m_pNextQuestionButton->loadTexturePressed(
+				m_sFilenameSpriteGoodAnswerButton);
+		switch (m_iAnswerSelected)
+		{
+		case 1:
+			m_pCheckBoxAnswer1->setSelected(true);
+			break;
+		case 2:
+			m_pCheckBoxAnswer2->setSelected(true);
+			break;
+		case 3:
+			m_pCheckBoxAnswer3->setSelected(true);
+			break;
+		case 4:
+			m_pCheckBoxAnswer4->setSelected(true);
+			break;
+		default:
+			break;
+		}
 		questionFinish();
 	}
 	else
@@ -298,6 +344,10 @@ void LmQuizz_v1Scene::checkAnswer()
 		else
 		{
 			//load good texture for the next button to indicate loose
+			m_pNextQuestionButton->loadTextureNormal(
+					m_sFilenameSpriteBadAnswerButton);
+			m_pNextQuestionButton->loadTexturePressed(
+					m_sFilenameSpriteBadAnswerButton);
 			questionFinish();
 		}
 	}
@@ -344,8 +394,6 @@ void LmQuizz_v1Scene::answerSelected(Ref* pSender, CheckBox::EventType type)
 	default:
 		break;
 	}
-	CCLOG("before check answer");
-
 	checkAnswer();
 
 }
@@ -354,8 +402,11 @@ void LmQuizz_v1Scene::questionFinish()
 {
 	//disable touch on checkbox
 	checkBoxTouchEnabled(false);
-	//stop timer
-	unschedule(schedule_selector(LmQuizz_v1Scene::updateLoadingBar));
+	if (m_bTimerEnbaled)
+	{
+		//stop timer
+		unschedule(schedule_selector(LmQuizz_v1Scene::updateLoadingBar));
+	}
 
 	//make appear the next question button
 	m_pNextQuestionButton->setVisible(true);

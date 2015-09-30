@@ -22,7 +22,7 @@ class LmInteractionScene: public cocos2d::Scene
 public:
 
 	LmInteractionScene();
-	~LmInteractionScene();
+	virtual ~LmInteractionScene();
 
 	//init
 	bool init(LmUser*);

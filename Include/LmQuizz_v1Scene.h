@@ -11,17 +11,30 @@
 #include "LmInteractionScene.h"
 #include "ui/CocosGUI.h"
 #include "LmQuestion.h"
-#include <functional>
 
-
-class LmQuizz_v1Scene : public LmInteractionScene
+class LmQuizz_v1Scene: public LmInteractionScene
 {
 public:
 
 	//id of this scene
 	static const int s_iId = 1;
 
-	LmQuizz_v1Scene();//default one
+	/*
+	 * 8 parameters
+	 * FilenameSpriteBackground
+	 * FilenameSpriteBandTop
+	 * FilenameSpriteAnswerBackground
+	 * FilenameSpriteAnswerCross
+	 * FilenameSpriteGoodAnswerButton
+	 * FilenameSpriteBadAnswerButton
+	 * Questions
+	 * AttemptByQuestion
+	 * TimerDuration
+	 * TimerEnbaled
+	 */
+	LmQuizz_v1Scene(std::string, std::string, std::string, std::string,
+			std::string, std::string, std::vector<LmQuestion*>, int, float,
+			bool);
 	~LmQuizz_v1Scene();
 
 private:
@@ -30,10 +43,16 @@ private:
 
 	//json parameters
 	std::string m_sFilenameSpriteBackground;
-	std::vector<LmQuestion*>  m_aQuestions;
-	int m_iAttemptByQuestion;
-	float m_fTimerDuration;//time between each percent of the timer bar
+	std::string m_sFilenameSpriteBandTop;
+	std::string m_sFilenameSpriteAnswerBackground;
+	std::string m_sFilenameSpriteAnswerCross;
+	std::string m_sFilenameSpriteGoodAnswerButton;
+	std::string m_sFilenameSpriteBadAnswerButton;
 
+	std::vector<LmQuestion*> m_aQuestions;
+	int m_iAttemptByQuestion;
+	float m_fTimerDuration; //time between each percent of the timer bar
+	bool m_bTimerEnbaled;
 
 	//gui elements
 
@@ -75,8 +94,6 @@ private:
 	//buffer to know how attempt remain
 	int m_iNumberOfAttempt;
 
-
-
 	//METHODS
 
 	//inherit method main of the scene
@@ -95,10 +112,10 @@ private:
 	void initNextQuestion();
 
 	//callback method of answer box
-	void answerSelected(cocos2d::Ref* ,cocos2d::ui::CheckBox::EventType );
+	void answerSelected(cocos2d::Ref*, cocos2d::ui::CheckBox::EventType);
 
 	//to select checkbox and answer slected
-	void select(int , bool );
+	void select(int, bool);
 
 	//check the answer
 	void checkAnswer();
@@ -108,12 +125,6 @@ private:
 
 	//enbaled touch checkbox question
 	void checkBoxTouchEnabled(bool);
-
-
-
-
-
-
 
 };
 

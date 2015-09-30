@@ -21,7 +21,7 @@
 #include <fstream>
 #include "cocos2d.h"
 
-//use to make introduction of each scene
+//use to make each scene
 #include "LmInteractionScene.h"
 #include "LmPuzzleScene.h"
 #include "LmRightSpotScene.h"

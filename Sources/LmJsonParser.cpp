@@ -245,15 +245,134 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 
 	//get the element we just push to set the introduction
 	initSetPoint(l_oScene,
-				m_aInteractionSceneOfTheGame.at(
-						m_aInteractionSceneOfTheGame.size() - 1));
+			m_aInteractionSceneOfTheGame.at(
+					m_aInteractionSceneOfTheGame.size() - 1));
 }
 
 void LmJsonParser::makeLmQuizz_v1Scene(const rapidjson::Value& l_oScene)
 {
-	//TODO
-	m_aInteractionSceneOfTheGame.push_back(new LmQuizz_v1Scene);
+	/*
+	 * 8 parameters
+	 * FilenameSpriteBackground
+	 * FilenameSpriteBandTop
+	 * FilenameSpriteAnswerBackground
+	 * FilenameSpriteAnswerCross
+	 * FilenameSpriteGoodAnswerButton
+	 * FilenameSpriteBadAnswerButton
+	 * Questions
+	 * AttemptByQuestion
+	 * TimerDuration
+	 * TimerEnbaled
+	 */
 
+	//buffers
+	std::string l_sFilenameSpriteBackgroundBuffer;
+	std::string l_sFilenameSpriteBandTopBuffer;
+	std::string l_sFilenameSpriteAnswerBackgroundBuffer;
+	std::string l_sFilenameSpriteAnswerCrossBuffer;
+	std::string l_sFilenameSpriteGoodAnswerButton;
+	std::string l_sFilenameSpriteBadAnswerButton;
+	std::vector<LmQuestion*> l_aQuestionsBuffer;
+	int l_iAttemptByQuestionBuffer;
+	float l_fTimerDurationBuffer;
+	bool l_bTimerEnbaledBuffer;
+
+	//use to deep copy string
+	std::string l_sBufferString;
+
+	assert(l_oScene["FilenameSpriteBackground"].IsString());
+	l_sBufferString = l_oScene["FilenameSpriteBackground"].GetString();
+	l_sFilenameSpriteBackgroundBuffer = l_sBufferString.c_str();
+
+	assert(l_oScene["FilenameSpriteBandTop"].IsString());
+	l_sBufferString = l_oScene["FilenameSpriteBandTop"].GetString();
+	l_sFilenameSpriteBandTopBuffer = l_sBufferString.c_str();
+
+	assert(l_oScene["FilenameSpriteAnswerBackground"].IsString());
+	l_sBufferString = l_oScene["FilenameSpriteAnswerBackground"].GetString();
+	l_sFilenameSpriteAnswerBackgroundBuffer = l_sBufferString.c_str();
+
+	assert(l_oScene["FilenameSpriteAnswerCross"].IsString());
+	l_sBufferString = l_oScene["FilenameSpriteAnswerCross"].GetString();
+	l_sFilenameSpriteAnswerCrossBuffer = l_sBufferString.c_str();
+
+	assert(l_oScene["FilenameSpriteGoodAnswerButton"].IsString());
+	l_sBufferString = l_oScene["FilenameSpriteGoodAnswerButton"].GetString();
+	l_sFilenameSpriteGoodAnswerButton = l_sBufferString.c_str();
+
+	assert(l_oScene["FilenameSpriteBadAnswerButton"].IsString());
+	l_sBufferString = l_oScene["FilenameSpriteBadAnswerButton"].GetString();
+	l_sFilenameSpriteBadAnswerButton = l_sBufferString.c_str();
+
+	assert(l_oScene["Questions"].IsArray());
+	std::string l_sAnswer1Buffer;
+	std::string l_sAnswer2Buffer;
+	std::string l_sAnswer3Buffer;
+	std::string l_sAnswer4Buffer;
+	int l_iNumberGoodAnswerBuffer;
+	std::string l_sQuestionBuffer;
+
+	for (int i = 0; i < l_oScene["Questions"].Size(); i++)
+	{
+		assert(l_oScene["Questions"][i].IsObject());
+
+		assert(l_oScene["Questions"][i]["Question"].IsString());
+		l_sBufferString = l_oScene["Questions"][i]["Question"].GetString();
+		l_sQuestionBuffer = l_sBufferString.c_str();
+
+		assert(l_oScene["Questions"][i]["Answer1"].IsString());
+		l_sBufferString = l_oScene["Questions"][i]["Answer1"].GetString();
+		l_sAnswer1Buffer = l_sBufferString.c_str();
+
+		assert(l_oScene["Questions"][i]["Answer2"].IsString());
+		l_sBufferString = l_oScene["Questions"][i]["Answer2"].GetString();
+		l_sAnswer2Buffer = l_sBufferString.c_str();
+
+		assert(l_oScene["Questions"][i]["Answer3"].IsString());
+		l_sBufferString = l_oScene["Questions"][i]["Answer3"].GetString();
+		l_sAnswer3Buffer = l_sBufferString.c_str();
+
+		assert(l_oScene["Questions"][i]["Answer4"].IsString());
+		l_sBufferString = l_oScene["Questions"][i]["Answer4"].GetString();
+		l_sAnswer4Buffer = l_sBufferString.c_str();
+
+		assert(l_oScene["Questions"][i]["NumberRightAnswer"].IsInt());
+		l_iNumberGoodAnswerBuffer =
+				l_oScene["Questions"][i]["NumberRightAnswer"].GetInt();
+
+		/*
+		 * answer1
+		 * answer2
+		 * answer3
+		 * answer4
+		 * number good answer
+		 * question
+		 */
+
+		l_aQuestionsBuffer.push_back(
+				new LmQuestion(l_sAnswer1Buffer, l_sAnswer2Buffer,
+						l_sAnswer3Buffer, l_sAnswer4Buffer,
+						l_iNumberGoodAnswerBuffer, l_sQuestionBuffer));
+	}
+
+	assert(l_oScene["AttemptByQuestion"].IsInt());
+	l_iAttemptByQuestionBuffer = l_oScene["AttemptByQuestion"].GetInt();
+
+	assert(l_oScene["TimerDuration"].IsInt());
+	l_fTimerDurationBuffer = (float) l_oScene["TimerDuration"].GetInt();
+
+	assert(l_oScene["TimerEnbaled"].IsBool());
+	l_bTimerEnbaledBuffer = l_oScene["TimerEnbaled"].GetBool();
+
+	m_aInteractionSceneOfTheGame.push_back(
+			new LmQuizz_v1Scene(l_sFilenameSpriteBackgroundBuffer,
+					l_sFilenameSpriteBandTopBuffer,
+					l_sFilenameSpriteAnswerBackgroundBuffer,
+					l_sFilenameSpriteAnswerCrossBuffer,
+					l_sFilenameSpriteGoodAnswerButton,
+					l_sFilenameSpriteBadAnswerButton, l_aQuestionsBuffer,
+					l_iAttemptByQuestionBuffer, l_fTimerDurationBuffer,
+					l_bTimerEnbaledBuffer));
 	initSetPoint(l_oScene,
 			m_aInteractionSceneOfTheGame.at(
 					m_aInteractionSceneOfTheGame.size() - 1));

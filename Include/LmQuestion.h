@@ -10,12 +10,19 @@
 
 #include <string>
 
-
 class LmQuestion
 {
 public:
-
-	LmQuestion();
+	/*
+	 * answer1
+	 * answer2
+	 * answer3
+	 * answer4
+	 * number good answer
+	 * question
+	 */
+	LmQuestion(std::string, std::string, std::string, std::string, int,
+			std::string);
 	~LmQuestion();
 
 	int getINumberGoodAnswer() const
