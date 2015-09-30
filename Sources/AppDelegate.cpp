@@ -8,8 +8,8 @@ USING_NS_CC;
 AppDelegate::AppDelegate()
 {
 	//object
-	m_pLmGameManager = new LmGameManager;//need to be delete
-	m_pLmMenu = new LmMenu;//need to be delete
+	m_pLmGameManager = new LmGameManager; //need to be delete
+	m_pLmMenu = new LmMenu; //need to be delete
 }
 
 AppDelegate::~AppDelegate()
@@ -18,7 +18,8 @@ AppDelegate::~AppDelegate()
 	delete m_pLmMenu;
 
 	//remove listener
-	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners("MenuFinished");
+	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners(
+			"MenuFinished");
 }
 
 //if you want a different context,just modify the value of glContextAttrs
@@ -27,7 +28,8 @@ void AppDelegate::initGLContextAttrs()
 {
 	//set OpenGL context attributions,now can only set six attributions:
 	//red,green,blue,alpha,depth,stencil
-	GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
+	GLContextAttrs glContextAttrs =
+	{ 8, 8, 8, 8, 24, 8 };
 
 	GLView::setGLContextAttrs(glContextAttrs);
 }
@@ -73,7 +75,7 @@ void AppDelegate::initPathsForResolution()
 	auto l_director = Director::getInstance();
 	auto l_glview = l_director->getOpenGLView();
 
-	if(!l_glview)
+	if (!l_glview)
 	{
 		l_glview = GLViewImpl::create("Ludomuse");
 		l_director->setOpenGLView(l_glview);
@@ -87,7 +89,8 @@ void AppDelegate::initPathsForResolution()
 
 	// Set the design resolution, refer to this link for more information => http://www.cocos2d-x.org/wiki/Detailed_explanation_of_Cocos2d-x_Multi-resolution_adaptation
 	//EXACT_FIT || NO_BORDER || SHOW_ALL
-	l_glview->setDesignResolutionSize(s_DesignResolutionSize.width, s_DesignResolutionSize.height, ResolutionPolicy::NO_BORDER);
+	l_glview->setDesignResolutionSize(s_DesignResolutionSize.width,
+			s_DesignResolutionSize.height, ResolutionPolicy::NO_BORDER);
 
 	//get the size of the device's screen
 	Size l_frameSize = l_glview->getFrameSize();
@@ -103,20 +106,35 @@ void AppDelegate::initPathsForResolution()
 		l_resDirOrders.push_back("largeResolutionSize");
 		l_resDirOrders.push_back("mediumResolutionSize");
 		l_resDirOrders.push_back("smallResolutionSize");
-		l_director->setContentScaleFactor(MIN(s_LargeResolutionSize.height/s_DesignResolutionSize.height, s_LargeResolutionSize.width/s_DesignResolutionSize.width));
+		l_director->setContentScaleFactor(
+				MIN(
+						s_LargeResolutionSize.height
+								/ s_DesignResolutionSize.height,
+						s_LargeResolutionSize.width
+								/ s_DesignResolutionSize.width));
 	}
 	// if the frame's height is larger than the height of small size.
 	else if (l_frameSize.height > s_SmallResolutionSize.height)
 	{
 		l_resDirOrders.push_back("mediumResolutionSize");
 		l_resDirOrders.push_back("smallResolutionSize");
-		l_director->setContentScaleFactor(MIN(s_MediumResolutionSize.height/s_DesignResolutionSize.height, s_MediumResolutionSize.width/s_DesignResolutionSize.width));
+		l_director->setContentScaleFactor(
+				MIN(
+						s_MediumResolutionSize.height
+								/ s_DesignResolutionSize.height,
+						s_MediumResolutionSize.width
+								/ s_DesignResolutionSize.width));
 	}
 	// if the frame's height is smaller than the height of medium size.
 	else
 	{
 		l_resDirOrders.push_back("smallResolutionSize");
-		l_director->setContentScaleFactor(MIN(s_SmallResolutionSize.height/s_DesignResolutionSize.height, s_SmallResolutionSize.width/s_DesignResolutionSize.width));
+		l_director->setContentScaleFactor(
+				MIN(
+						s_SmallResolutionSize.height
+								/ s_DesignResolutionSize.height,
+						s_SmallResolutionSize.width
+								/ s_DesignResolutionSize.width));
 	}
 
 	//set the paths
@@ -134,13 +152,14 @@ bool AppDelegate::init()
 
 	//init callback method of the custom event (use to know when LmMenu finished )
 	auto MenuFinished = [=](EventCustom * event)
-								{
+	{
 		//LmGameManager get users from the LmMenu
-		m_pLmGameManager->setPUser1(m_pLmMenu->getPUser1());
-		m_pLmGameManager->setPUser2(m_pLmMenu->getPUser2());
-		m_pLmGameManager->runGame();
-								};
+			m_pLmGameManager->setPUser1(m_pLmMenu->getPUser1());
+			m_pLmGameManager->setPUser2(m_pLmMenu->getPUser2());
+			m_pLmGameManager->runGame();
+		};
 
 	//add the custom event to the event dispatcher
-	Director::getInstance()->getEventDispatcher()->addCustomEventListener("MenuFinished",MenuFinished);
+	Director::getInstance()->getEventDispatcher()->addCustomEventListener(
+			"MenuFinished", MenuFinished);
 }

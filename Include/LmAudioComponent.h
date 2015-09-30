@@ -10,7 +10,4 @@
 
 #include "cocos2d.h"
 
-
-
-
 #endif /* CLASSES_LMAUDIOCOMPONENT_H_ */

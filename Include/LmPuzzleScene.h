@@ -1,13 +1,12 @@
 /*************************************************************************
-                           LmPuzzleScene  -
+ LmPuzzleScene  -
  *************************************************************************/
 #ifndef LMPUZZLESCENE_H
 #define LMPUZZLESCENE_H
 
 #include "LmInteractionScene.h"
 
-
-class LmPuzzleScene : public LmInteractionScene
+class LmPuzzleScene: public LmInteractionScene
 {
 private:
 
@@ -20,12 +19,10 @@ private:
 
 	cocos2d::Label* label;
 
-
 public:
 
 	LmPuzzleScene(int);
 	~LmPuzzleScene();
-
 
 };
 

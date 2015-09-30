@@ -10,7 +10,6 @@
 #ifndef CLASSES_SOURCES_LMUSER_H_
 #define CLASSES_SOURCES_LMUSER_H_
 
-
 class LmUser
 {
 
@@ -26,43 +25,47 @@ public:
 	LmUser();
 	~LmUser();
 
-
-
-	const char* getPUserName() const {
+	const char* getPUserName() const
+	{
 		return m_pUserName;
 	}
 
-	void setPUserName(const char* pUserName) {
+	void setPUserName(const char* pUserName)
+	{
 		m_pUserName = pUserName;
 	}
 
-	const char* getPUserTabletName() const {
+	const char* getPUserTabletName() const
+	{
 		return m_pUserTabletName;
 	}
 
-	void setPUserTabletName(const char* pUserTabletName) {
+	void setPUserTabletName(const char* pUserTabletName)
+	{
 		m_pUserTabletName = pUserTabletName;
 	}
 
-	int getPScore() const {
+	int getPScore() const
+	{
 		return m_iScore;
 	}
 
-	void setPScore(int pScore) {
+	void setPScore(int pScore)
+	{
 		m_iScore = pScore;
 	}
 
-	bool isBParent() const {
+	bool isBParent() const
+	{
 		return m_bParent;
 	}
 
-	void setBParent(bool bParent) {
+	void setBParent(bool bParent)
+	{
 		m_bParent = bParent;
 	}
 
 	void addToScore(int);
 };
-
-
 
 #endif /* CLASSES_SOURCES_LMUSER_H_ */

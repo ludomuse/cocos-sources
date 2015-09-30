@@ -7,16 +7,15 @@
 
 #include "../Include/LmUser.h"
 
-
 LmUser::LmUser()
 {
 
 	//primitive type
-	m_iScore=0;
+	m_iScore = 0;
 
 	//pointer
-	m_pUserName=nullptr;
-	m_pUserTabletName=nullptr;
+	m_pUserName = nullptr;
+	m_pUserTabletName = nullptr;
 
 }
 
@@ -27,5 +26,5 @@ LmUser::~LmUser()
 
 void LmUser::addToScore(int points)
 {
-	m_iScore+=points;
+	m_iScore += points;
 }

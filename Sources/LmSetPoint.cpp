@@ -1,11 +1,12 @@
+
 //use for the debug
 #define COCOS2D_DEBUG 1
 
-#include "../Include/LmIntroduction.h"
+#include "../Include/LmSetPoint.h"
 
 USING_NS_CC;
 
-LmIntroduction::LmIntroduction()
+LmSetPoint::LmSetPoint()
 {
 	//primitive type
 	m_iIndex=0;
@@ -19,7 +20,7 @@ LmIntroduction::LmIntroduction()
 
 }
 
-LmIntroduction::~LmIntroduction()
+LmSetPoint::~LmSetPoint()
 {
 	//Browse the vector of LmLayer and delete them
 	for (std::vector<LmLayer*>::iterator it = m_aLayers.begin(); it != m_aLayers.end(); ++it)
@@ -29,7 +30,7 @@ LmIntroduction::~LmIntroduction()
 
 }
 
-bool LmIntroduction::init(cocos2d::Scene* l_pInteractionScene)
+bool LmSetPoint::init(cocos2d::Scene* l_pInteractionScene)
 {
 
 	m_pInteractionScene = l_pInteractionScene;
@@ -58,7 +59,7 @@ bool LmIntroduction::init(cocos2d::Scene* l_pInteractionScene)
 	return true;
 }
 
-bool LmIntroduction::nextLayer()
+bool LmSetPoint::nextLayer()
 {
 
 	if(m_bActionDone)
@@ -68,7 +69,6 @@ bool LmIntroduction::nextLayer()
 		if(m_iIndex>=m_iSize-1)
 		{
 			m_bActionDone=true;
-
 			//we indicate to the inyeractionscene that introduction is over
 			m_pInteractionScene->removeChild(m_pLayerTransition);
 			m_pInteractionScene->removeChild(m_pCurrentLayer);
@@ -91,7 +91,7 @@ bool LmIntroduction::nextLayer()
 
 			auto l_pMoveLeft = MoveBy::create(s_fTimeBetweenLmLayer,Vect(-l_oVisibleSize.width,0));
 			//callback function
-			auto l_pMoveLeftDone = CallFunc::create( std::bind(&LmIntroduction::moveLeftDone,this) );
+			auto l_pMoveLeftDone = CallFunc::create( std::bind(&LmSetPoint::moveLeftDone,this) );
 
 			m_iIndex++;
 
@@ -103,9 +103,11 @@ bool LmIntroduction::nextLayer()
 
 	}
 
+	return false;
+
 }
 
-bool LmIntroduction::previousLayer()
+bool LmSetPoint::previousLayer()
 {
 	if(m_bActionDone)
 	{
@@ -134,7 +136,7 @@ bool LmIntroduction::previousLayer()
 
 			auto l_pMoveRight = MoveBy::create(s_fTimeBetweenLmLayer,Vect(l_oVisibleSize.width,0));
 			//callback function
-			auto l_pMoveRightDone = CallFunc::create( std::bind(&LmIntroduction::moveRightDone,this) );
+			auto l_pMoveRightDone = CallFunc::create( std::bind(&LmSetPoint::moveRightDone,this) );
 
 			m_iIndex--;
 
@@ -146,9 +148,11 @@ bool LmIntroduction::previousLayer()
 
 	}
 
+	return false;
+
 }
 
-void LmIntroduction::moveRightDone()
+void LmSetPoint::moveRightDone()
 {
 	//we remove the current to put the next one as current
 	m_pLayerTransition->removeChild(m_pCurrentLayer);
@@ -164,7 +168,7 @@ void LmIntroduction::moveRightDone()
 
 }
 
-void LmIntroduction::moveLeftDone()
+void LmSetPoint::moveLeftDone()
 {
 	//we remove the current to put the next one as current
 	m_pLayerTransition->removeChild(m_pCurrentLayer);
@@ -179,7 +183,7 @@ void LmIntroduction::moveLeftDone()
 	m_bActionDone = true;
 }
 
-void LmIntroduction::add(LmLayer* layer)
+void LmSetPoint::add(LmLayer* layer)
 {
 	m_aLayers.push_back(layer);
 }

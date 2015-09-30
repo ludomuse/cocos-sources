@@ -19,23 +19,28 @@ public:
 	LmGameComponent(int);
 	~LmGameComponent();
 
-
 	//init the sprite component with a filename (and a stencil)
 	void initSpriteComponent(std::string);
-	void initSpriteComponent(std::string,const cocos2d::Rect&);
+	void initSpriteComponent(std::string, const cocos2d::Rect&);
 
 	//return the size of the sprite component
-	cocos2d::Size getContentSize()const;
+	cocos2d::Size getContentSize() const;
 
 	//return the id of this gamecomponent
-	int getIId() const {return m_iId;}
+	int getIId() const
+	{
+		return m_iId;
+	}
 
 	//return the sprite component
-	cocos2d::Sprite* getPSpriteComponent() const {return m_pSpriteComponent;}
+	cocos2d::Sprite* getPSpriteComponent() const
+	{
+		return m_pSpriteComponent;
+	}
 
 	//to handle add/remove of a layer
 	void addTo(cocos2d::Layer*);
-	void addTo(cocos2d::Layer*,int);
+	void addTo(cocos2d::Layer*, int);
 	void removeFrom(cocos2d::Layer*);
 
 	//handle position
@@ -51,14 +56,18 @@ public:
 	//visible or not on the screen
 	void setVisible(bool);
 
-	void setSize(const cocos2d::Size& oSize) {	m_oSize = oSize;}
+	void setSize(const cocos2d::Size& oSize)
+	{
+		m_oSize = oSize;
+	}
 
-	cocos2d::Vec2 getPositionInWorldSpace(cocos2d::Node*)const;
-	cocos2d::Vec2 getPosition()const;
+	cocos2d::Vec2 getPositionInWorldSpace(cocos2d::Node*) const;
+	cocos2d::Vec2 getPosition() const;
 	void setTexture(cocos2d::Texture2D*);
 
 	//sorting function on x and y
-	static bool sortFromTopLeftToRightBottom(LmGameComponent*, LmGameComponent*);
+	static bool sortFromTopLeftToRightBottom(LmGameComponent*,
+			LmGameComponent*);
 
 private:
 
@@ -74,7 +83,5 @@ private:
 	int m_iId;
 
 };
-
-
 
 #endif /* CLASSES_LMGAMECOMPONENT_H_ */

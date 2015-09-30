@@ -87,10 +87,6 @@ private:
 	//attributes gui
 	cocos2d::Sprite* m_pSpriteBackground;
 
-	//finish button
-	cocos2d::ui::Button* m_pFinishButton;
-	bool m_bFinishButtonSync;
-
 	//scrollview
 	cocos2d::ui::ScrollView* m_pScrollView;
 	cocos2d::Layer* m_pLayerScrollView;
@@ -119,9 +115,6 @@ private:
 	//inherit method main of the scene
 	void runGame();
 	bool initGame();
-
-	//call to finished this interaction
-	void endGame();
 
 	//callback method of parent layer
 	bool onTouchBeganParent(cocos2d::Touch*, cocos2d::Event*);

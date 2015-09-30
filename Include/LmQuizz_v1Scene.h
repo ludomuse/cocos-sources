@@ -10,8 +10,9 @@
 
 #include "LmInteractionScene.h"
 #include "ui/CocosGUI.h"
+#include "LmQuestion.h"
+#include <functional>
 
-static const int s_fTimerDuration = 0.5f;//time between each percent of the timer bar
 
 class LmQuizz_v1Scene : public LmInteractionScene
 {
@@ -21,7 +22,6 @@ public:
 	static const int s_iId = 1;
 
 	LmQuizz_v1Scene();//default one
-	LmQuizz_v1Scene(std::string,std::map<std::string,std::map<std::string,bool>> );
 	~LmQuizz_v1Scene();
 
 private:
@@ -30,20 +30,33 @@ private:
 
 	//json parameters
 	std::string m_sFilenameSpriteBackground;
-	std::map<std::string,std::map<std::string,bool>>  m_aQuestionResponseMap;
-	std::vector<int> m_aNumberGoodAnswer;
+	std::vector<LmQuestion*>  m_aQuestions;
 	int m_iAttemptByQuestion;
+	float m_fTimerDuration;//time between each percent of the timer bar
 
 
 	//gui elements
 
-	cocos2d::Sprite* m_pSpriteBackground;
-	//finish button
-	cocos2d::ui::Button* m_pFinishButton;
-	bool m_bFinishButtonSync;
+	cocos2d::Sprite* m_pBandTopSprite;
 
-	int m_iAnswerSlected;
-	cocos2d::Sprite* m_pSpriteAnswerSelected;
+	//label question
+	cocos2d::Label* m_pQuestionLabel;
+
+	//answer
+	cocos2d::Label* m_pAnswerLabel1;
+	cocos2d::Label* m_pAnswerLabel2;
+	cocos2d::Label* m_pAnswerLabel3;
+	cocos2d::Label* m_pAnswerLabel4;
+
+	//menu item image & menu
+	cocos2d::ui::CheckBox* m_pCheckBoxAnswer1;
+	cocos2d::ui::CheckBox* m_pCheckBoxAnswer2;
+	cocos2d::ui::CheckBox* m_pCheckBoxAnswer3;
+	cocos2d::ui::CheckBox* m_pCheckBoxAnswer4;
+
+	cocos2d::Sprite* m_pSpriteBackground;
+
+	int m_iAnswerSelected;
 	//use to place element
 	float m_fHeight;
 
@@ -52,22 +65,16 @@ private:
 	//timer counter
 	int m_iCounter;
 
-	//index of the map which contain question/answer
-	std::vector<cocos2d::Layer*> m_aLayers;
-
-	//layer to print at the end of each question
-	cocos2d::Layer* m_pLayerEndQuestion;
-	//listener
-	cocos2d::EventListenerTouchOneByOne* m_pListener;
-
 	//index of question
-	int m_iIndexLayer;
+	int m_iIndexQuestion;
 
-	//to know when a question is finish
-	bool m_bQuestionNotFinish;
+	//to go to the next question
+	cocos2d::ui::Button* m_pNextQuestionButton;
+	bool m_bNextQuestionButtonCanBePress;
 
 	//buffer to know how attempt remain
 	int m_iNumberOfAttempt;
+
 
 
 	//METHODS
@@ -76,8 +83,6 @@ private:
 	void runGame();
 	//init method
 	bool initGame();
-	//call to finished this interaction
-	void endGame();
 
 	//timer
 	void updateLoadingBar(float);
@@ -86,20 +91,23 @@ private:
 	//utility method
 	void beginQuestion();
 
-	//init layer with good label
-	void initLayers();
+	//init label and incrtement index for the next question
+	void initNextQuestion();
 
 	//callback method of answer box
-	bool firstAnswerSelected(cocos2d::Ref*);
-	bool secondAnswerSelected(cocos2d::Ref*);
-	bool thirdAnswerSelected(cocos2d::Ref*);
-	bool fourthAnswerSelected(cocos2d::Ref*);
+	void answerSelected(cocos2d::Ref* ,cocos2d::ui::CheckBox::EventType );
+
+	//to select checkbox and answer slected
+	void select(int , bool );
 
 	//check the answer
 	void checkAnswer();
 
-	//callback method for the layer end
-	bool onTouchBeganLayerEnd(cocos2d::Touch* , cocos2d::Event*);
+	//call when question is finish
+	void questionFinish();
+
+	//enbaled touch checkbox question
+	void checkBoxTouchEnabled(bool);
 
 
 
@@ -108,7 +116,5 @@ private:
 
 
 };
-
-
 
 #endif /* CLASSES_INCLUDE_LMQUIZZ_V1SCENE_H_ */

@@ -1,5 +1,5 @@
 /*************************************************************************
-                           LmGameManager  -  Manage all steps
+ LmGameManager  -  Manage all steps
  *************************************************************************/
 #ifndef LMGAMEMANAGER_H__
 #define LMGAMEMANAGER_H__
@@ -9,12 +9,6 @@
 #include "LmServerManager.h"
 #include "LmUser.h"
 #include "LmInteractionScene.h"
-
-//Different resolution
-static const cocos2d::Size s_DesignResolutionSize = cocos2d::Size(480, 300);
-static const cocos2d::Size s_SmallResolutionSize = cocos2d::Size(480, 300);
-static const cocos2d::Size s_MediumResolutionSize = cocos2d::Size(1280, 800);
-static const cocos2d::Size s_LargeResolutionSize = cocos2d::Size(1900, 1200);
 
 static const float s_fMagingOfSpriteBackgroundUser2Profile = 0.4f;
 static const float s_fTimeCompareAction = 0.5f;
@@ -26,6 +20,9 @@ private:
 
 	//ATTRIBUTES
 
+	//layer splash
+	cocos2d::Layer* m_pSplashSreenLayer;
+
 	std::vector<LmInteractionScene*> m_aInteractionSceneOfTheGame;
 
 	//use to get the vector of interactionScene
@@ -36,7 +33,7 @@ private:
 	LmUser* m_pUser2;
 
 	//scene of the dashboard
-	cocos2d::Scene* m_pDashboardScene;
+	cocos2d::Scene* m_pGameManagerScene;
 
 	//layer of dashboard
 	cocos2d::Layer* m_pBlueLayer;
@@ -77,6 +74,9 @@ private:
 	//to know if it's a back to the dashboard or its interactionscenefinished
 	bool m_bBackToDashboard;
 
+	//listener
+	cocos2d::EventListenerTouchOneByOne* m_pListener;
+
 	//METHODS
 
 	//call server manager and init m_vectorSceneOfTheGame
@@ -96,6 +96,9 @@ private:
 	//init the dashboard
 	bool initDashboard();
 
+	//init splash screen
+	bool initSplashScreen();
+
 	//put interaction sprite on the dashboard
 	void initDashboardInteraction();
 
@@ -105,8 +108,8 @@ private:
 	//remove listeners avoid conflict between scene true = remove false = add
 	void removeListeners(bool);
 
-
-
+	//callback method for the layer splash
+	bool onTouchBeganSplashScreen(cocos2d::Touch*, cocos2d::Event*);
 
 public:
 
@@ -116,10 +119,15 @@ public:
 	//call different method of gamemanager, init launch scene and handle layers of interactions
 	void runGame();
 
-	void setPUser1( LmUser* pUser1) {m_pUser1 = pUser1;}
+	void setPUser1(LmUser* pUser1)
+	{
+		m_pUser1 = pUser1;
+	}
 
-	void setPUser2( LmUser* pUser2) {m_pUser2 = pUser2;}
-
+	void setPUser2(LmUser* pUser2)
+	{
+		m_pUser2 = pUser2;
+	}
 
 };
 

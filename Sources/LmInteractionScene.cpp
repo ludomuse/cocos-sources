@@ -8,39 +8,46 @@ USING_NS_CC;
 LmInteractionScene::LmInteractionScene()
 {
 	//object
-	m_pLmIntroduction = new LmIntroduction;//need to be delete
+	m_pLmSetPointBegin = new LmSetPoint; //need to be delete
 
 	//primitive type
-	m_bDone=false;
-	m_bActionRunning=false;
-	m_bDashboardIsHidden=true;
-	m_bMoveDone=true;
-	m_bBackPressed=false;
-	m_iNumberOfGameComponent=0;
+	m_bDone = false;
+	m_bActionRunning = false;
+	m_bDashboardIsHidden = true;
+	m_bMoveDone = true;
+	m_bBackPressed = false;
+	m_iNumberOfGameComponent = 0;
+	m_bFinishGameButtonSync = true;
+	m_bSetPointBegin = true;
+	m_bSetPointFinished = false;
 
 	//pointer
-	m_pBackDashboardButton=nullptr;
-	m_pUser=nullptr;
-	m_pDashboardBandLayer=nullptr;
-	m_pMoveLayerButton=nullptr;
-	m_pLayerGame=nullptr;
-	m_pLabelScore=nullptr;
-	m_pLayerUserChild=nullptr;
-	m_pLabelUserName=nullptr;
-	m_pGuiElementsLayer=nullptr;
-	m_pLayerUserParent=nullptr;
-	m_pSpriteDashboardBand=nullptr;
+	m_pBackDashboardButton = nullptr;
+	m_pUser = nullptr;
+	m_pDashboardBandLayer = nullptr;
+	m_pMoveLayerButton = nullptr;
+	m_pLayerGame = nullptr;
+	m_pLabelScore = nullptr;
+	m_pLayerUserChild = nullptr;
+	m_pLabelUserName = nullptr;
+	m_pLayerUserParent = nullptr;
+	m_pSpriteDashboardBand = nullptr;
+	m_pFinishGameButton = nullptr;
+	m_pSendingArea = nullptr;
 
 }
 
 LmInteractionScene::~LmInteractionScene()
 {
 
-	delete m_pLmIntroduction;
+	m_pLayerGame->release();
+	m_pNextButton->release();
+	m_pPreviousButton->release();
+
+	delete m_pLmSetPointBegin;
+	delete m_pLmSetPointEnd;
 
 }
-
-
 
 bool LmInteractionScene::init(LmUser* l_pUser)
 {
@@ -49,9 +56,9 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pUser = l_pUser;
 
 	initDashboardLayer();
-	if(!m_pLmIntroduction->init(this))
+	if (!m_pLmSetPointBegin->init(this))
 	{
-		CCLOG("LmIntroduction init failed");
+		CCLOG("LmSetPoint init failed");
 		return false;
 	}
 
@@ -59,58 +66,125 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 
 	//next button
-	m_pNextButton = ui::Button::create("nextButtonNormal.png","nextButtonPressed.png");
+	m_pNextButton = ui::Button::create("nextButtonNormal.png",
+			"nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
-	m_pNextButton -> setPosition(Vect(l_oVisibleSize.width-m_pNextButton->getContentSize().width*0.8,m_pNextButton->getContentSize().height*0.7));
-	m_pNextButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::nextLayer, this));
-	addChild(m_pNextButton,1);
+	m_pNextButton->setPosition(
+			Vect(
+					l_oVisibleSize.width
+							- m_pNextButton->getContentSize().width * 0.8,
+					m_pNextButton->getContentSize().height * 0.7));
+	m_pNextButton->addTouchEventListener(
+			CC_CALLBACK_0(LmInteractionScene::nextSetPointLayer, this));
+	m_pNextButton->retain();
+	addChild(m_pNextButton, 1);
 
 	//previous button
-	m_pPreviousButton = ui::Button::create("previousButtonNormal.png","previousButtonPressed.png");
+	m_pPreviousButton = ui::Button::create("previousButtonNormal.png",
+			"previousButtonPressed.png");
 	m_pPreviousButton->setTouchEnabled(true);
-	m_pPreviousButton -> setPosition(Vect(m_pPreviousButton->getContentSize().width*0.8,m_pPreviousButton->getContentSize().height*0.7));
-	m_pPreviousButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::previousLayer, this));
+	m_pPreviousButton->setPosition(
+			Vect(m_pPreviousButton->getContentSize().width * 0.8,
+					m_pPreviousButton->getContentSize().height * 0.7));
+	m_pPreviousButton->addTouchEventListener(
+			CC_CALLBACK_0(LmInteractionScene::previousSetPointLayer, this));
 	m_pPreviousButton->setVisible(false);
-	addChild(m_pPreviousButton,1);
+	m_pPreviousButton->retain();
+	addChild(m_pPreviousButton, 1);
+
+	//create the game layer
+	m_pLayerGame = Layer::create();
+	m_pLayerGame->retain();
+
+	//finish button
+	m_pFinishGameButton = ui::Button::create("nextButtonNormal.png",
+			"nextButtonPressed.png");
+	m_pFinishGameButton->setTouchEnabled(true);
+	m_pFinishGameButton->setPosition(
+			Vect(
+					l_oVisibleSize.width
+							- m_pFinishGameButton->getContentSize().width * 0.8,
+					m_pFinishGameButton->getContentSize().height * 0.7));
+	m_pFinishGameButton->addTouchEventListener(
+			CC_CALLBACK_0(LmInteractionScene::endGame, this));
+	m_pFinishGameButton->setVisible(false);
+	m_pLayerGame->addChild(m_pFinishGameButton, 1);
 
 	return true;
 }
 
-void LmInteractionScene::previousLayer()
+void LmInteractionScene::previousSetPointLayer()
 {
 
-	if(m_pLmIntroduction->previousLayer())
+	if (m_bSetPointBegin)
 	{
-		if(m_pLmIntroduction->getIIndex()==0)
+		if (m_pLmSetPointBegin->previousLayer())
 		{
-			m_pPreviousButton->setVisible(false);
+			if (m_pLmSetPointBegin->getIIndex() == 0)
+			{
+				m_pPreviousButton->setVisible(false);
+			}
 		}
-
-	}
-
-
-
-}
-
-void LmInteractionScene::nextLayer()
-{
-
-	//false => introduction is finished
-	if(!m_pLmIntroduction->nextLayer() && m_pLmIntroduction->isBActionDone())
-	{
-		removeChild(m_pNextButton);
-		removeChild(m_pPreviousButton);
-		runGame();
 	}
 	else
 	{
-		if(m_pLmIntroduction->getIIndex()>0)
+		if (m_pLmSetPointEnd->previousLayer())
 		{
-			m_pPreviousButton->setVisible(true);
+			if (m_pLmSetPointEnd->getIIndex() == 0)
+			{
+				m_pPreviousButton->setVisible(false);
+			}
 		}
 	}
+}
 
+void LmInteractionScene::nextSetPointLayer()
+{
 
+	if (m_bSetPointBegin)
+	{
+		//false => setpoint begin is finished
+		if (!m_pLmSetPointBegin->nextLayer()
+				&& m_pLmSetPointBegin->isBActionDone() && !m_bSetPointFinished)
+		{
+			m_bSetPointFinished = true;
+			m_pNextButton->setVisible(false);
+			m_pPreviousButton->setVisible(false);
+
+			runGame();
+		}
+		else
+		{
+			if (m_pLmSetPointBegin->getIIndex() > 0 && !m_bSetPointFinished)
+			{
+				m_pPreviousButton->setVisible(true);
+			}
+		}
+
+	}
+	else
+	{
+		//false => setpoint end is finished
+		if (!m_pLmSetPointEnd->nextLayer() && m_pLmSetPointEnd->isBActionDone()
+				&& !m_bSetPointFinished)
+		{
+			m_bSetPointFinished = true;
+			m_pNextButton->setVisible(false);
+			m_pPreviousButton->setVisible(false);
+			//finish the interaction
+			CCLOG("popscene");
+			Director::getInstance()->popScene();
+			Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(
+					"InteractionSceneFinished");
+		}
+		else
+		{
+			if (m_pLmSetPointEnd->getIIndex() > 0 && !m_bSetPointFinished)
+			{
+				m_pPreviousButton->setVisible(true);
+			}
+		}
+	}
 
 }
 
@@ -122,70 +196,102 @@ void LmInteractionScene::initDashboardLayer()
 
 	//layer
 	m_pDashboardBandLayer = Layer::create();
-	this->addChild(m_pDashboardBandLayer,2);
+	this->addChild(m_pDashboardBandLayer, 2);
 
 	//spritebackground
-	m_pSpriteDashboardBand = Sprite::create("spriteBackgroundUser1Profile.png");
-	m_pSpriteDashboardBand->setAnchorPoint(Vec2(0,0));
-	m_pSpriteDashboardBand->setPosition(Vec2(m_pSpriteDashboardBand->getContentSize().width*(-s_fDashboardRatioHidden),0));
-	m_pDashboardBandLayer->addChild(m_pSpriteDashboardBand,0);
+	m_pSpriteDashboardBand = LmSprite::create(
+			"spriteBackgroundUser1Profile.png");
+	m_pSpriteDashboardBand->setAnchorPoint(Vec2(0, 0));
+	m_pSpriteDashboardBand->setPosition(Vec2(0, 0));
+	m_pDashboardBandLayer->addChild(m_pSpriteDashboardBand, 0);
 
 	//button to move the layer
 	m_pMoveLayerButton = ui::Button::create("moveDashboardLayer.png");
 	m_pMoveLayerButton->setTouchEnabled(true);
-	m_pMoveLayerButton -> setPosition(Vec2((1-s_fDashboardRatioHidden)*(m_pSpriteDashboardBand->getContentSize().width*0.5f),l_oVisibleSize.height*0.5f));
-	m_pMoveLayerButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::moveDashboardLayer, this));
-	m_pDashboardBandLayer->addChild(m_pMoveLayerButton,0);
-
-	//gui elements
-	m_pGuiElementsLayer = Layer::create();
+	m_pMoveLayerButton->setPosition(
+			Vec2(m_pSpriteDashboardBand->getContentSize().width,
+					l_oVisibleSize.height * 0.5f));
+	m_pMoveLayerButton->addTouchEventListener(
+			CC_CALLBACK_0(LmInteractionScene::moveDashboardLayer, this));
+	m_pDashboardBandLayer->addChild(m_pMoveLayerButton, 0);
 
 	//user1 name
-	m_pLabelUserName = Label::createWithTTF(m_pUser->getPUserName(), "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelUserName->setPosition(m_pSpriteDashboardBand->getContentSize().width*(0.5f-s_fDashboardRatioHidden)
-			,m_pSpriteDashboardBand->getContentSize().height*0.7f);
-	m_pGuiElementsLayer->addChild(m_pLabelUserName);
+	m_pLabelUserName = Label::createWithTTF(m_pUser->getPUserName(),
+			"fonts/JosefinSans-Regular.ttf", 20);
+	m_pLabelUserName->setPosition(
+			m_pSpriteDashboardBand->getContentSize().width * (0.5f),
+			m_pSpriteDashboardBand->getContentSize().height * 0.7f);
+	m_pDashboardBandLayer->addChild(m_pLabelUserName);
 
 	//label score
 	char l_aScoreString[10];
-	sprintf(l_aScoreString,"%d pts",m_pUser->getPScore());
-	m_pLabelScore = Label::createWithTTF(l_aScoreString, "fonts/JosefinSans-Regular.ttf",20);
-	m_pLabelScore->setPosition(m_pSpriteDashboardBand->getContentSize().width*(0.5f-s_fDashboardRatioHidden)
-			,m_pSpriteDashboardBand->getContentSize().height*0.5f);
-	m_pGuiElementsLayer->addChild(m_pLabelScore);
+	sprintf(l_aScoreString, "%d pts", m_pUser->getPScore());
+	m_pLabelScore = Label::createWithTTF(l_aScoreString,
+			"fonts/JosefinSans-Regular.ttf", 20);
+	m_pLabelScore->setPosition(
+			m_pSpriteDashboardBand->getContentSize().width * (0.5f),
+			m_pSpriteDashboardBand->getContentSize().height * 0.5f);
+	m_pDashboardBandLayer->addChild(m_pLabelScore);
 
 	m_pBackDashboardButton = ui::Button::create("backToDashboard.png");
 	m_pBackDashboardButton->setTouchEnabled(true);
-	m_pBackDashboardButton -> setPosition(Vec2(m_pSpriteDashboardBand->getContentSize().width*(0.5f-s_fDashboardRatioHidden)
-			,m_pSpriteDashboardBand->getContentSize().height*0.3f));
-	m_pBackDashboardButton->addTouchEventListener(CC_CALLBACK_0(LmInteractionScene::backToDashboard, this));
-	m_pGuiElementsLayer->addChild(m_pBackDashboardButton);
+	m_pBackDashboardButton->setPosition(
+			Vec2(m_pSpriteDashboardBand->getContentSize().width * (0.5f),
+					m_pSpriteDashboardBand->getContentSize().height * 0.3f));
+	m_pBackDashboardButton->addTouchEventListener(
+			CC_CALLBACK_0(LmInteractionScene::backToDashboard, this));
+	m_pDashboardBandLayer->addChild(m_pBackDashboardButton);
 
+	//hide it
+	auto l_oMoveLeftAction = MoveBy::create(0,
+			Vect(
+					(-1) * s_fDashboardRatioHidden
+							* m_pSpriteDashboardBand->getContentSize().width,
+					0));
+	m_pDashboardBandLayer->runAction(l_oMoveLeftAction);
 
-	m_pDashboardBandLayer->addChild(m_pGuiElementsLayer,1);
-
-
+	m_pSpriteDashboardBand->setBTouchEnabled(!m_bDashboardIsHidden);
 
 }
 
 void LmInteractionScene::moveDashboardLayer()
 {
-	if(m_bMoveDone)
+	if (m_bMoveDone)
 	{
-		m_bMoveDone=false;
+		m_bMoveDone = false;
 
 		//we look if we have to move right or left
-		if(m_bDashboardIsHidden)
+		if (m_bDashboardIsHidden)
 		{
-			auto l_oMoveRightAction = MoveBy::create(s_fTimeMovingDashboard,Vect(s_fDashboardRatioHidden*m_pSpriteDashboardBand->getContentSize().width,0));
-			auto l_oMoveRightActionDone = CallFunc::create( std::bind(&LmInteractionScene::moveRightDone,this) );
-			m_pDashboardBandLayer->runAction(Sequence::create(l_oMoveRightAction,l_oMoveRightActionDone,nullptr));
+			auto l_oMoveRightAction =
+					MoveBy::create(s_fTimeMovingDashboard,
+							Vect(
+									s_fDashboardRatioHidden
+											* m_pSpriteDashboardBand->getContentSize().width,
+									0));
+			auto l_oMoveRightActionDone = CallFunc::create(
+					std::bind(&LmInteractionScene::moveRightDone, this));
+			m_pDashboardBandLayer->runAction(
+					Sequence::create(l_oMoveRightAction, l_oMoveRightActionDone,
+							nullptr));
+			m_bDashboardIsHidden = false;
+			m_pSpriteDashboardBand->setBTouchEnabled(!m_bDashboardIsHidden);
 		}
 		else
 		{
-			auto l_oMoveLeftAction = MoveBy::create(s_fTimeMovingDashboard,Vect((-1)*s_fDashboardRatioHidden*m_pSpriteDashboardBand->getContentSize().width,0));
-			auto l_oMoveLeftActionDone = CallFunc::create( std::bind(&LmInteractionScene::moveLeftDone,this) );
-			m_pDashboardBandLayer->runAction(Sequence::create(l_oMoveLeftAction,l_oMoveLeftActionDone,nullptr));
+			auto l_oMoveLeftAction =
+					MoveBy::create(s_fTimeMovingDashboard,
+							Vect(
+									(-1) * s_fDashboardRatioHidden
+											* m_pSpriteDashboardBand->getContentSize().width,
+									0));
+			auto l_oMoveLeftActionDone = CallFunc::create(
+					std::bind(&LmInteractionScene::moveLeftDone, this));
+			m_pDashboardBandLayer->runAction(
+					Sequence::create(l_oMoveLeftAction, l_oMoveLeftActionDone,
+							nullptr));
+			m_bDashboardIsHidden = true;
+			m_pSpriteDashboardBand->setBTouchEnabled(!m_bDashboardIsHidden);
 		}
 
 	}
@@ -195,34 +301,33 @@ void LmInteractionScene::moveDashboardLayer()
 void LmInteractionScene::moveRightDone()
 {
 	//enable back button
-	m_bBackPressed=false;
+	m_bBackPressed = false;
 
 	//active button
-	m_bMoveDone=true;
-	m_bDashboardIsHidden=false;
+	m_bMoveDone = true;
 
 }
 
 void LmInteractionScene::moveLeftDone()
 {
 	//disable back button
-	m_bBackPressed=true;
+	m_bBackPressed = true;
 
 	//active button
-	m_bMoveDone=true;
-	m_bDashboardIsHidden=true;
+	m_bMoveDone = true;
 
 }
 
 void LmInteractionScene::backToDashboard()
 {
-	if(!m_bBackPressed && m_bMoveDone && m_pLmIntroduction->isBActionDone())
+	if (!m_bBackPressed && m_bMoveDone && m_pLmSetPointBegin->isBActionDone())
 	{
-		m_bBackPressed=true;
+		m_bBackPressed = true;
 
 		CCLOG("popscene");
 		Director::getInstance()->popScene();
-		Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("BackToDashboard");
+		Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(
+				"BackToDashboard");
 	}
 }
 
@@ -231,8 +336,36 @@ LmGameComponent* LmInteractionScene::makeGameComponent()
 	//generate a new id
 	m_iNumberOfGameComponent++;
 	//register it into the id table
-	m_aIdTable.insert(std::pair<int,LmGameComponent*>(m_iNumberOfGameComponent,new LmGameComponent(m_iNumberOfGameComponent)));
+	m_aIdTable.insert(
+			std::pair<int, LmGameComponent*>(m_iNumberOfGameComponent,
+					new LmGameComponent(m_iNumberOfGameComponent)));
 
 	return m_aIdTable.find(m_iNumberOfGameComponent)->second;
+}
+
+void LmInteractionScene::endGame()
+{
+	if (m_bFinishGameButtonSync)
+	{
+		m_bFinishGameButtonSync = false;
+
+		//the game is finished we can remove the layer of the game
+		removeChild(m_pLayerGame);
+
+		//so the next time we print the end setpoint
+		m_bSetPointBegin = false;
+		//new setpoint
+		m_bSetPointFinished = false;
+
+		m_pNextButton->setVisible(true);
+		m_pPreviousButton->setVisible(false);
+
+		//init the end set point
+		if (!m_pLmSetPointEnd->init(this))
+		{
+			CCLOG("LmSetPoint init failed");
+		}
+
+	}
 }
 
