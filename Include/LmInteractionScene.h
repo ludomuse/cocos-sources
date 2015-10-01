@@ -15,7 +15,7 @@ typedef std::map<int, LmGameComponent*>::iterator it_type;
 
 static const float s_fDashboardRatioHidden = 0.95f;
 static const float s_fTimeMovingDashboard = 0.4f;
-static const float s_fMarginLeft = 30.0f;
+static const float s_fMarginLeft = 80.0f;
 
 class LmInteractionScene: public cocos2d::Scene
 {

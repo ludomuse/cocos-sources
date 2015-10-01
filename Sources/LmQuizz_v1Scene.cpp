@@ -315,23 +315,6 @@ void LmQuizz_v1Scene::checkAnswer()
 				m_sFilenameSpriteGoodAnswerButton);
 		m_pNextQuestionButton->loadTexturePressed(
 				m_sFilenameSpriteGoodAnswerButton);
-		switch (m_iAnswerSelected)
-		{
-		case 1:
-			m_pCheckBoxAnswer1->setSelected(true);
-			break;
-		case 2:
-			m_pCheckBoxAnswer2->setSelected(true);
-			break;
-		case 3:
-			m_pCheckBoxAnswer3->setSelected(true);
-			break;
-		case 4:
-			m_pCheckBoxAnswer4->setSelected(true);
-			break;
-		default:
-			break;
-		}
 		questionFinish();
 	}
 	else
@@ -411,7 +394,6 @@ void LmQuizz_v1Scene::questionFinish()
 	//make appear the next question button
 	m_pNextQuestionButton->setVisible(true);
 	m_bNextQuestionButtonCanBePress = true;
-
 }
 
 void LmQuizz_v1Scene::select(int l_iIdCheckBoxPressed, bool selected)

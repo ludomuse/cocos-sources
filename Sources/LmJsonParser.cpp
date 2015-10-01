@@ -105,7 +105,6 @@ void LmJsonParser::initInteractionSceneOfTheGame()
 
 	for (int i = 0; i < l_aSceneArray.Size(); i++)
 	{
-
 		assert(l_aSceneArray[i].IsObject());
 		assert(l_aSceneArray[i]["Id"].IsInt());
 		l_iIdScene = l_aSceneArray[i]["Id"].GetInt();
@@ -179,7 +178,6 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	/*6 parameters =>
 	 *  FilenameSpriteBackground
 	 *  FilenameSpriteCollideZone
-	 *  FilenamesWrongImmages
 	 *  FilenameRightImage
 	 *  HoleOnX
 	 *  HoleOnY
@@ -188,7 +186,6 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	//buffers
 	std::string l_sFilenameSpriteBackgroundBuffer;
 	std::string l_sFilenameSpriteCollideZoneBuffer;
-	std::vector<std::string> l_aFilenamesWrongImagesBuffer;
 	std::string l_sFilenameRightImageBuffer;
 	int l_iHoleOnXBuffer;
 	int l_iHoleOnYBuffer;
@@ -201,14 +198,6 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	assert(l_oScene["FilenameSpriteCollideZone"].IsString());
 	l_sFilenameSpriteCollideZoneBuffer =
 			l_oScene["FilenameSpriteCollideZone"].GetString();
-
-	assert(l_oScene["FilenamesWrongImages"].IsArray());
-	for (int i = 0; i < l_oScene["FilenamesWrongImages"].Size(); i++)
-	{
-		assert(l_oScene["FilenamesWrongImages"][i].IsString());
-		l_aFilenamesWrongImagesBuffer.push_back(
-				l_oScene["FilenamesWrongImages"][i].GetString());
-	}
 
 	assert(l_oScene["FilenameRightImage"].IsString());
 	l_sFilenameRightImageBuffer = l_oScene["FilenameRightImage"].GetString();
@@ -238,8 +227,8 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	//create the scene delete in the game manager
 	m_aInteractionSceneOfTheGame.push_back(
 			new LmRightSpotScene(l_sFilenameSpriteBackgroundBuffer,
-					l_sFilenameSpriteCollideZoneBuffer,
-					l_aFilenamesWrongImagesBuffer, l_sFilenameRightImageBuffer,
+					l_sFilenameSpriteCollideZoneBuffer
+					, l_sFilenameRightImageBuffer,
 					l_iHoleOnXBuffer, l_iHoleOnYBuffer,
 					l_aLocationOfHoleBuffer));
 

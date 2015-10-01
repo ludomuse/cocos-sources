@@ -11,7 +11,6 @@ using namespace cocos2d;
 
 LmRightSpotScene::LmRightSpotScene(std::string l_sFilenameSpriteBackground,
 		std::string l_sFilenameSpriteCollideZone,
-		std::vector<std::string> l_aFilenamesWrongImmages,
 		std::string l_sFilenameRightImage, int l_iHoleOnX, int l_iHoleOnY,
 		std::vector<std::pair<int, int>> l_aLocationOfHole) :
 		LmInteractionScene()
@@ -20,12 +19,7 @@ LmRightSpotScene::LmRightSpotScene(std::string l_sFilenameSpriteBackground,
 	//json parameters we need to make deep copy
 	m_sFilenameSpriteBackground = l_sFilenameSpriteBackground.c_str();
 	m_sFilenameSpriteCollideZone = l_sFilenameSpriteCollideZone.c_str();
-	for (std::vector<std::string>::iterator it =
-			l_aFilenamesWrongImmages.begin();
-			it != l_aFilenamesWrongImmages.end(); ++it)
-	{
-		m_aFilenamesWrongImmages.push_back((*it).c_str());
-	}
+
 	m_sFilenameRightImage = l_sFilenameRightImage.c_str();
 	m_iHoleOnX = l_iHoleOnX;
 	m_iHoleOnY = l_iHoleOnY;
@@ -33,33 +27,17 @@ LmRightSpotScene::LmRightSpotScene(std::string l_sFilenameSpriteBackground,
 
 	//primitive type
 	m_iBufferId = -1;
-	m_bSameGameComponent = false;
 	m_bSpriteSelected = false;
 	m_bBufferSpriteFillHole = false;
 	m_iHoleTouchedIndex = -1;
-	m_iBufferIdFillingImage = -1;
 	m_fHeightRect = 0;
 	m_fWidthRect = 0;
-	m_bGameComponentAlreadyInRightImage = false;
-	m_bBufferCollideFillingImage = false;
 	m_bWin = false;
-	m_bFirstMoveAfterLongClick = false;
 
 	//pointer
 	m_pBufferSprite = nullptr;
-	m_pDashboardBandLayer = nullptr;
-	m_pLabelScore = nullptr;
-	m_pLabelUserName = nullptr;
-	m_pLayerGame = nullptr;
-	m_pLayerScrollView = nullptr;
-	m_pLayerUserChild = nullptr;
-	m_pLayerUserParent = nullptr;
 	m_pListener = nullptr;
-	m_pMoveLayerButton = nullptr;
-	m_pScrollView = nullptr;
 	m_pSpriteBackground = nullptr;
-	m_pSpriteDashboardBand = nullptr;
-	m_pUser = nullptr;
 
 }
 
@@ -131,41 +109,14 @@ bool LmRightSpotScene::initGame()
 							- m_pSendingArea->getContentSize().width),
 			l_oVisibleSize.height);
 
-	//we get dimension of the right image ( /!\ guessing that all ressources are making same resolution /!\ )
+	//we get dimension of the image
 	auto l_oSpriteRightImgSpot = Sprite::create(m_sFilenameRightImage);
 	float l_fWidthRightImage = l_oSpriteRightImgSpot->getContentSize().width;
 	float l_fHeightRightImage = l_oSpriteRightImgSpot->getContentSize().height;
 	m_fWidthRect = l_fWidthRightImage / m_iHoleOnX;
 	m_fHeightRect = l_fHeightRightImage / m_iHoleOnY;
 
-	//for each wrong image
-	int l_iIndex = 0;
 	Rect l_oRectStencil;
-
-	for (std::vector<std::string>::iterator it =
-			m_aFilenamesWrongImmages.begin();
-			it != m_aFilenamesWrongImmages.end(); ++it)
-	{
-		for (int i = 0; i < m_iHoleOnX; i++)
-		{
-			for (int j = 0; j < m_iHoleOnY; j++)
-			{
-				//get the stencil
-				l_oRectStencil = Rect(m_fWidthRect * i, m_fHeightRect * j,
-						m_fWidthRect, m_fHeightRect);
-
-				//add new gamecomponent
-				m_aScrollViewImages.push_back(makeGameComponent());
-				//cut the right rect on the source file
-				m_aScrollViewImages.at(l_iIndex)->initSpriteComponent((*it),
-						l_oRectStencil);
-				m_aScrollViewImages.at(l_iIndex)->setAnchorPoint(Vec2(0, 0));
-				l_iIndex++;
-			}
-		}
-	}
-
-	l_iIndex = 0;
 
 	//test
 	int id;
@@ -182,15 +133,16 @@ bool LmRightSpotScene::initGame()
 			//get the stencil
 			l_oRectStencil = Rect(m_fWidthRect * i, m_fHeightRect * j,
 					m_fWidthRect, m_fHeightRect);
+
+			//position to place hole and fix elements
 			Vec2 l_oVectorPosition = Vec2(
 					m_fWidthRect * i + l_oPointToPlaceRightImage.x,
 					(m_iHoleOnY - (j + 1)) * m_fHeightRect
 							+ l_oPointToPlaceRightImage.y);
-
-			//push to the right image vector
-			m_aRightImage.push_back(makeGameComponent());
-			m_aRightImage.at(l_iIndex)->initSpriteComponent(
-					m_sFilenameRightImage, l_oRectStencil);
+			//create gamecomponent
+			LmGameComponent* GameComponentCreated = makeGameComponent();
+			GameComponentCreated->initSpriteComponent(m_sFilenameRightImage,
+					l_oRectStencil);
 
 			//check if this piece is a hole
 			std::vector<std::pair<int, int>>::iterator it;
@@ -198,33 +150,33 @@ bool LmRightSpotScene::initGame()
 			{ i, j };
 			it = std::find(m_aLocationOfHole.begin(), m_aLocationOfHole.end(),
 					l_PairBuffer);
+			//yes
 			if (it != m_aLocationOfHole.end())
 			{
-				//yes we also add this piece to the scrollview
-				m_aScrollViewImages.push_back(m_aRightImage.at(l_iIndex));
-				m_aRightImage.at(l_iIndex)->setAnchorPoint(Vec2(0, 0));
+				//add this piece to the dynamic elements
+				m_aDynamicGameComponents.push_back(GameComponentCreated);
 
-				//test we get the id of the last one so the layer child receive smthg
-				id = m_aRightImage.at(l_iIndex)->getIId();
-				layerChildReceive(id);
+				//test to have dynamic piece already in the layer child
+				id = GameComponentCreated->getIId();
 
-				//we add an hole to the right image layer child
-				m_aHolesRightImage.push_back(
+				//we add an hole to the image layer child
+				m_aHolesImageChild.push_back({
 						Rect(l_oVectorPosition.x, l_oVectorPosition.y,
-								m_fWidthRect, m_fHeightRect));
+								m_fWidthRect, m_fHeightRect),GameComponentCreated->getIId()});
 
-				//we get the id of the right gamecomponent going to the scrollview (sort by increased order)
-				m_aIdSequenceWin.push_back(
-						m_aRightImage.at(l_iIndex)->getIId());
 			}
 			else
 			{
-				//no we set position and add it to layer child
-				m_aRightImage.at(l_iIndex)->setAnchorPoint(Vec2(0, 0));
-				m_aRightImage.at(l_iIndex)->setPosition(l_oVectorPosition);
-				m_aRightImage.at(l_iIndex)->addTo(m_pLayerUserChild);
+
+				//push to the fix element vector
+				m_aStaticGameComponents.push_back(GameComponentCreated);
+
+				//we set position and add it to layer child
+				GameComponentCreated->setAnchorPoint(Vec2(0, 0));
+				GameComponentCreated->setPosition(l_oVectorPosition);
+				GameComponentCreated->addTo(m_pLayerUserChild);
+
 			}
-			l_iIndex++;
 		}
 	}
 
@@ -237,62 +189,34 @@ bool LmRightSpotScene::initGame()
 		auto l_fWidthImage = m_fWidthRect + s_fMarginBetweenImage;
 		auto l_fHeightImage = m_fHeightRect + s_fMarginBetweenImage;
 
-		//init the scroll view
-		m_pScrollView = ui::ScrollView::create();
-		m_pScrollView->setContentSize(l_oPlayableScreenSize);
-		m_pScrollView->setAnchorPoint(Vec2(0, 0));
-		m_pScrollView->setPosition(Vec2(s_fMarginLeft, 0));
-		m_pScrollView->setDirection(
-				cocos2d::ui::ScrollView::Direction::HORIZONTAL);
-
-		Size l_oContainerSize;
 		//check height of piece to know how many to display in a row
 		int numberOfImageInLine = (int) l_oPlayableScreenSize.height
 				/ l_fHeightImage;
-		//if there is no enough image
-		if ((m_aScrollViewImages.size() / (float) numberOfImageInLine + 0.5)
-				* (l_fWidthImage) <= l_oPlayableScreenSize.width)
-		{
-			//container = framesize
-			l_oContainerSize = l_oPlayableScreenSize;
-		}
-		else
-		{
-			l_oContainerSize = Size(
-					(m_aScrollViewImages.size() / (float) numberOfImageInLine
-							+ 0.5) * (l_fWidthImage),
-					l_oPlayableScreenSize.height);
-		}
 
-		//set container
-		m_pScrollView->setInnerContainerSize(l_oContainerSize);
-
-		//shuffle the vector of scrollimages
+		//shuffle the vector
 		std::random_device rd;
 		std::mt19937 g(rd());
-		std::shuffle(m_aScrollViewImages.begin(), m_aScrollViewImages.end(), g);
+		std::shuffle(m_aDynamicGameComponents.begin(),
+				m_aDynamicGameComponents.end(), g);
 
-		l_iIndex = 0;
-
-		//the layer which contain all the sprites
-		m_pLayerScrollView = Layer::create();
-		m_pScrollView->addChild(m_pLayerScrollView);
+		int l_iIndex = 0;
 
 		int l_iLineIndex = 1;
 
 		for (std::vector<LmGameComponent*>::iterator it =
-				m_aScrollViewImages.begin(); it != m_aScrollViewImages.end();
-				++it)
+				m_aDynamicGameComponents.begin();
+				it != m_aDynamicGameComponents.end(); ++it)
 		{
+			(*it)->setPosition(Vec2(0, 0.5));
+
 			(*it)->setPosition(
-					Vec2((l_iIndex) * (l_fWidthImage),
-							-l_fHeightImage * 0.5
-									+ (l_oOrigin.y
-											+ l_oPlayableScreenSize.height)
-											* ((float) l_iLineIndex
-													/ (float) (numberOfImageInLine
-															+ 1))));
-			(*it)->addTo(m_pLayerScrollView);
+					Vec2((l_iIndex) * (l_fWidthImage) + s_fMarginLeft,
+							l_oPlayableScreenSize.height
+									* ((float) l_iLineIndex
+											/ (float) (numberOfImageInLine + 1))));
+
+			(*it)->addTo(m_pLayerUserParent);
+
 			l_iLineIndex++;
 
 			//last line
@@ -303,13 +227,6 @@ bool LmRightSpotScene::initGame()
 			}
 		}
 
-		m_pScrollView->setBounceEnabled(true);
-		m_pScrollView->setTouchEnabled(true);
-		m_pLayerUserParent->addChild(m_pScrollView);
-
-		//to listen on touch began etc on the scrollview
-		m_pScrollView->setSwallowTouches(false);
-
 		//init listener
 		m_pListener = EventListenerTouchOneByOne::create();
 		m_pListener->onTouchBegan = CC_CALLBACK_2(
@@ -319,14 +236,17 @@ bool LmRightSpotScene::initGame()
 		m_pListener->onTouchEnded = CC_CALLBACK_2(
 				LmRightSpotScene::onTouchEndedParent, this);
 		Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
-				m_pListener, m_pScrollView);
+				m_pListener, m_pLayerUserParent);
 
 		//add the layer to the game
 		m_pLayerGame->addChild(m_pLayerUserParent);
+
 	}
 	else
 	{
 		//child view
+
+		layerChildReceive(id);
 
 		//init listener
 		m_pListener = EventListenerTouchOneByOne::create();
@@ -348,26 +268,19 @@ bool LmRightSpotScene::initGame()
 
 bool LmRightSpotScene::onTouchBeganParent(Touch* touch, Event* event)
 {
-	//get the id of the gameobject touched or -1 otherwise
-	m_iBufferId = idLmGameComponentTouchedInScrollView(touch);
-	CCLOG("click on %d", m_aIdTable.find(m_iBufferId)->first);
+	m_iBufferId = idDynamicLmGameComponent(touch);
 
 	//if something is touched
 	if (m_iBufferId >= 0)
 	{
-		//init bool to know if we leave the location
-		m_bSameGameComponent = true;
-		//begin a click
-		auto delay = DelayTime::create(s_fLongClickDuration);
-		m_pLayerScrollView->runAction(
-				Sequence::create(delay,
-						CallFunc::create(
-								std::bind(&LmRightSpotScene::checkLongClick,
-										this)), nullptr));
+		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
+		initBufferSprite(m_iBufferId);
+		moveBufferSprite(touch);
+		m_pLayerUserParent->addChild(m_pBufferSprite);
 	}
 	else
 	{
-		m_bSameGameComponent = false;
+		m_bSpriteSelected = false;
 	}
 
 	return true;
@@ -375,27 +288,20 @@ bool LmRightSpotScene::onTouchBeganParent(Touch* touch, Event* event)
 
 void LmRightSpotScene::onTouchMovedParent(Touch* touch, Event* event)
 {
-	if (m_iBufferId == idLmGameComponentTouchedInScrollView(touch)
-			&& m_bSameGameComponent)
-	{
-		//we are on the same object
-		m_bSameGameComponent = true;
-	}
-	else
-	{
-		m_bSameGameComponent = false;
-	}
-
 	if (m_bSpriteSelected)
 	{
-		if (m_bFirstMoveAfterLongClick)
-		{
-			m_bFirstMoveAfterLongClick = false;
-			m_pBufferSprite->setVisible(true);
-			m_aIdTable.find(m_iBufferId)->second->setVisible(false);
-		}
 
 		moveBufferSprite(touch);
+	}
+
+}
+
+void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
+{
+	if (m_bSpriteSelected)
+	{
+		//no sprite selected anymore
+		m_bSpriteSelected = false;
 
 		if (bufferCollideSendingArea())
 		{
@@ -403,41 +309,11 @@ void LmRightSpotScene::onTouchMovedParent(Touch* touch, Event* event)
 			CCLOG("we send the %d gamecomponent",
 					m_aIdTable.find(m_iBufferId)->first);
 
-			m_bSpriteSelected = false;
-			m_pScrollView->setTouchEnabled(true);
-			//remove the buffer sprite from the layer
-			m_pLayerUserParent->removeChild(m_pBufferSprite);
+			//move gamecomponent
+			setPositionInSendingArea(m_iBufferId);
 
-			//we put the gamecomponent visible again (local)
-			m_aIdTable.find(m_iBufferId)->second->setVisible(true);
-
-			//remove the element of the scrollview vector
-			m_aScrollViewImages.erase(
-					std::remove(m_aScrollViewImages.begin(),
-							m_aScrollViewImages.end(),
-							m_aIdTable.find(m_iBufferId)->second),
-					m_aScrollViewImages.end());
-
-			//add the sending area vector
-			m_aSendingAreaElements.push_back(
-					m_aIdTable.find(m_iBufferId)->second);
-
+			m_pSendingAreaElement = m_aIdTable.find(m_iBufferId)->second;
 		}
-	}
-
-}
-
-void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
-{
-
-	//reset the action
-	m_bSameGameComponent = false;
-
-	if (m_bSpriteSelected)
-	{
-		//no sprite selected anymore
-		m_bSpriteSelected = false;
-		m_pScrollView->setTouchEnabled(true);
 
 		//remove the buffer sprite froim the layer
 		m_pLayerUserParent->removeChild(m_pBufferSprite);
@@ -447,45 +323,22 @@ void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
 
 }
 
-int LmRightSpotScene::idLmGameComponentTouchedInScrollView(Touch* touch)
+int LmRightSpotScene::idDynamicLmGameComponent(Touch* touch)
 {
 	auto l_oTouchLocation = touch->getLocation();
 
 	for (std::vector<LmGameComponent*>::iterator it =
-			m_aScrollViewImages.begin(); it != m_aScrollViewImages.end(); ++it)
+			m_aDynamicGameComponents.begin();
+			it != m_aDynamicGameComponents.end(); ++it)
 	{
 
-		if ((*it)->getBoundingBoxInWorldSpace(m_pLayerScrollView).containsPoint(
+		if ((*it)->getPSpriteComponent()->getBoundingBox().containsPoint(
 				l_oTouchLocation))
 		{
 			return (*it)->getIId();
 		}
 	}
 	return -1;
-}
-
-void LmRightSpotScene::checkLongClick()
-{
-	if (m_bSameGameComponent)
-	{
-		//with the buffer id we know which game component is selected
-		CCLOG("lond click on %d", m_aIdTable.find(m_iBufferId)->first);
-
-		//play sound
-		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(
-				"audio/son.mp3", false);
-
-		initBufferSprite(m_iBufferId, m_pLayerScrollView);
-		m_pScrollView->setTouchEnabled(false);
-		//we add the buffer
-		m_pLayerUserParent->addChild(m_pBufferSprite);
-
-		//need to be visible still we move
-		m_pBufferSprite->setVisible(false);
-		m_aIdTable.find(m_iBufferId)->second->setVisible(true);
-		m_bFirstMoveAfterLongClick = true;
-	}
-
 }
 
 bool LmRightSpotScene::bufferCollideSendingArea()
@@ -496,37 +349,15 @@ bool LmRightSpotScene::bufferCollideSendingArea()
 
 bool LmRightSpotScene::onTouchBeganChild(Touch* touch, Event* event)
 {
-	int l_iIndexSendingArea = idLmGameComponentTouchedInSendingArea(touch);
-	int l_iIndexRightImage = idLmGameComponentTouchedInFillingHoleInRightImage(
-			touch);
-
-	if (l_iIndexRightImage >= 0)
-	{
-		//we touched an element in the image
-		m_iBufferId = l_iIndexRightImage;
-		m_bGameComponentAlreadyInRightImage = true;
-	}
-	else if (l_iIndexSendingArea >= 0)
-	{
-		//sending area element touched
-		m_iBufferId = l_iIndexSendingArea;
-		m_bGameComponentAlreadyInRightImage = false;
-	}
-	else
-	{
-		//nothing is touched
-		m_iBufferId = -1;
-		m_bGameComponentAlreadyInRightImage = false;
-	}
+	m_iBufferId = idLmGameComponentTouchedInSendingArea(touch);
 
 	//if something is touched
 	if (m_iBufferId >= 0)
 	{
 		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
-		initBufferSprite(m_iBufferId, m_pLayerUserChild);
+		initBufferSprite(m_iBufferId);
 		moveBufferSprite(touch);
 		m_pLayerUserChild->addChild(m_pBufferSprite);
-
 	}
 	else
 	{
@@ -547,7 +378,7 @@ void LmRightSpotScene::onTouchMovedChild(Touch* touch, Event* event)
 		if (m_iHoleTouchedIndex >= 0)
 		{
 
-			auto l_oHoleTouched = m_aHolesRightImage.at(m_iHoleTouchedIndex);
+			auto l_oHoleTouched = m_aHolesImageChild.at(m_iHoleTouchedIndex).first;
 			//we move the buffer sprite to this position
 			m_pBufferSprite->setAnchorPoint(Vec2(0, 0));
 			m_pBufferSprite->setPosition(
@@ -559,28 +390,6 @@ void LmRightSpotScene::onTouchMovedChild(Touch* touch, Event* event)
 			m_bBufferSpriteFillHole = false;
 		}
 
-		//if we collide image before set to visible again
-		if (m_bBufferCollideFillingImage
-				&& m_iBufferId != m_iBufferIdFillingImage)
-		{
-			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(true);
-		}
-		//check if we collide an hole fill with an image
-		m_iBufferIdFillingImage =
-				idLmGameComponentTouchedInFillingHoleInRightImage(touch);
-
-		//an image from the sending area can't replace a filling image
-		if (m_iBufferIdFillingImage >= 0 && m_bGameComponentAlreadyInRightImage)
-		{
-			m_bBufferCollideFillingImage = true;
-			//the filling image collide is invisible
-			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(false);
-		}
-		else
-		{
-			m_bBufferCollideFillingImage = false;
-		}
-
 	}
 }
 
@@ -588,6 +397,7 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch, Event* event)
 {
 	if (m_bSpriteSelected)
 	{
+
 		//no sprite selected anymore
 		m_bSpriteSelected = false;
 
@@ -595,104 +405,36 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch, Event* event)
 		if (m_bBufferSpriteFillHole)
 		{
 
-			//if the gameobject was in the image
-			if (m_bGameComponentAlreadyInRightImage)
+			//check if its good position
+			if (imageWellPlaced(m_iHoleTouchedIndex,m_iBufferId))
 			{
-				m_bGameComponentAlreadyInRightImage = false;
-				// we add the hole free
-				auto position =
-						m_aIdTable.find(m_iBufferId)->second->getPosition();
-				m_aHolesRightImage.push_back(
-						Rect(position.x, position.y, m_fWidthRect,
-								m_fHeightRect));
+
+				//we change position of this gameobject to that hole
+				m_pSendingAreaElement->setAnchorPoint(Vec2(0, 0));
+				m_pSendingAreaElement->setPosition(
+						Vec2(
+								m_aHolesImageChild.at(m_iHoleTouchedIndex).first.origin.x,
+								m_aHolesImageChild.at(m_iHoleTouchedIndex).first.origin.y));
+
+				//reset sendingelement
+				m_pSendingAreaElement = nullptr;
+
 			}
 			else
 			{
-				//switch from sending area vector to filling hole vector
-				m_aSendingAreaElements.erase(
-						std::remove(m_aSendingAreaElements.begin(),
-								m_aSendingAreaElements.end(),
-								m_aIdTable.find(m_iBufferId)->second),
-						m_aSendingAreaElements.end());
-				m_aFillingHoleInRightImage.push_back(
-						m_aIdTable.find(m_iBufferId)->second);
+
+				//send back to the void
+
+				CCLOG("send back to parent");
 			}
 
-			//we change position of this gameobject to that hole
-			m_aIdTable.find(m_iBufferId)->second->setPosition(
-					Vec2(m_aHolesRightImage.at(m_iHoleTouchedIndex).origin.x,
-							m_aHolesRightImage.at(m_iHoleTouchedIndex).origin.y));
-
-			//we remove the hole from hole vector
-			m_aHolesRightImage.erase(
-					m_aHolesRightImage.begin() + m_iHoleTouchedIndex);
-		} //if we end the movement to sending area and the image come from the filling hole vector
-		else if (bufferCollideSendingArea()
-				&& m_bGameComponentAlreadyInRightImage)
-		{
-			m_bGameComponentAlreadyInRightImage = false;
-			// we add the hole free
-			auto position = m_aIdTable.find(m_iBufferId)->second->getPosition();
-			m_aHolesRightImage.push_back(
-					Rect(position.x, position.y, m_fWidthRect, m_fHeightRect));
-
-			//switch from filling hole vector to sending area
-			m_aFillingHoleInRightImage.erase(
-					std::remove(m_aFillingHoleInRightImage.begin(),
-							m_aFillingHoleInRightImage.end(),
-							m_aIdTable.find(m_iBufferId)->second),
-					m_aFillingHoleInRightImage.end());
-			m_aSendingAreaElements.push_back(
-					m_aIdTable.find(m_iBufferId)->second);
-
-			//TODO put the new position of the vector
-			//use to place elements
-			Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-			m_aIdTable.find(m_iBufferId)->second->setPosition(
-					Vec2(l_oVisibleSize.width * 0.9,
-							l_oVisibleSize.height * 0.5));
-
-		}//if we take an image already in the right image and we want to exchange its position with another filling image
-		else if (m_bGameComponentAlreadyInRightImage
-				&& m_bBufferCollideFillingImage)
-		{
-			//no change on hole just swap position of m_iBufferId and m_iBufferIdFillingImage
-			auto bufferPosition =
-					m_aIdTable.find(m_iBufferId)->second->getPosition();
-			m_aIdTable.find(m_iBufferId)->second->setPosition(
-					m_aIdTable.find(m_iBufferIdFillingImage)->second->getPosition());
-			m_aIdTable.find(m_iBufferIdFillingImage)->second->setPosition(
-					bufferPosition);
-			//visible gain
-			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(true);
-
 		}
 
-		//reset to visible when an action finish
-		if (m_bBufferCollideFillingImage
-				&& m_iBufferId != m_iBufferIdFillingImage)
-		{
-			m_bBufferCollideFillingImage = false;
-			m_aIdTable.find(m_iBufferIdFillingImage)->second->setVisible(true);
-		}
 		//remove the buffer sprite froim the layer
 		m_pLayerUserChild->removeChild(m_pBufferSprite);
 		//we put the gamecomponent visible again
 		m_aIdTable.find(m_iBufferId)->second->setVisible(true);
 
-		//if there is no more hole in the right image
-		if (!m_aHolesRightImage.size())
-		{
-			//check if win
-			if (win())
-			{
-				m_bWin = true;
-			}
-			else
-			{
-				m_bWin = false;
-			}
-		}
 	}
 
 }
@@ -708,46 +450,25 @@ void LmRightSpotScene::layerChildReceive(int l_iIdLmGameComponent)
 			m_aIdTable.find(l_iIdLmGameComponent)->second;
 
 	//put it approximatly in the sending area(
-	l_pGameComponentReceived->setPosition(
-			Vec2(l_oVisibleSize.width * 0.9, l_oVisibleSize.height * 0.5));
-	l_pGameComponentReceived->setAnchorPoint(Vec2(0, 0));
-	m_aSendingAreaElements.push_back(l_pGameComponentReceived);
+	setPositionInSendingArea(l_iIdLmGameComponent);
+	m_pSendingAreaElement = l_pGameComponentReceived;
 	l_pGameComponentReceived->addTo(m_pLayerUserChild);
 
 }
 
 int LmRightSpotScene::idLmGameComponentTouchedInSendingArea(Touch* touch)
 {
-	auto l_oTouchLocation = touch->getLocation();
-
-	for (std::vector<LmGameComponent*>::iterator it =
-			m_aSendingAreaElements.begin(); it != m_aSendingAreaElements.end();
-			++it)
+	if (m_pSendingAreaElement)
 	{
-		if ((*it)->getBoundingBoxInWorldSpace(m_pLayerUserChild).containsPoint(
+		auto l_oTouchLocation = touch->getLocation();
+
+		if (m_pSendingAreaElement->getPSpriteComponent()->getBoundingBox().containsPoint(
 				l_oTouchLocation))
 		{
-			return (*it)->getIId();
+			return m_pSendingAreaElement->getIId();
 		}
 	}
-	return -1;
-}
 
-int LmRightSpotScene::idLmGameComponentTouchedInFillingHoleInRightImage(
-		Touch* touch)
-{
-	auto l_oTouchLocation = touch->getLocation();
-
-	for (std::vector<LmGameComponent*>::iterator it =
-			m_aFillingHoleInRightImage.begin();
-			it != m_aFillingHoleInRightImage.end(); ++it)
-	{
-		if ((*it)->getBoundingBoxInWorldSpace(m_pLayerUserChild).containsPoint(
-				l_oTouchLocation))
-		{
-			return (*it)->getIId();
-		}
-	}
 	return -1;
 }
 
@@ -757,8 +478,7 @@ void LmRightSpotScene::moveBufferSprite(Touch* touch)
 	m_pBufferSprite->setPosition(Vec2(l_oTouchLocation.x, l_oTouchLocation.y));
 }
 
-void LmRightSpotScene::initBufferSprite(int l_iIdGameComponent,
-		Node* l_pParentGamecomponent)
+void LmRightSpotScene::initBufferSprite(int l_iIdGameComponent)
 {
 	//the sprite is selected
 	m_bSpriteSelected = true;
@@ -768,8 +488,7 @@ void LmRightSpotScene::initBufferSprite(int l_iIdGameComponent,
 					m_aIdTable.find(l_iIdGameComponent)->second->getPSpriteComponent()->getSpriteFrame());
 	m_pBufferSprite->setAnchorPoint(Vec2(0.5, 0.5));
 	m_pBufferSprite->setPosition(
-			m_aIdTable.find(l_iIdGameComponent)->second->getPositionInWorldSpace(
-					l_pParentGamecomponent));
+			m_aIdTable.find(l_iIdGameComponent)->second->getPosition());
 	m_aIdTable.find(l_iIdGameComponent)->second->setVisible(false);
 }
 
@@ -777,9 +496,9 @@ int LmRightSpotScene::touchCollideHoleInRightImage(Touch* touch)
 {
 	auto l_oTouchLocation = touch->getLocation();
 
-	for (int i = 0; i < m_aHolesRightImage.size(); i++)
+	for (int i = 0; i < m_aHolesImageChild.size(); i++)
 	{
-		if (m_aHolesRightImage.at(i).containsPoint(l_oTouchLocation))
+		if (m_aHolesImageChild.at(i).first.containsPoint(l_oTouchLocation))
 		{
 			return i;
 		}
@@ -787,34 +506,20 @@ int LmRightSpotScene::touchCollideHoleInRightImage(Touch* touch)
 	return -1;
 }
 
-bool LmRightSpotScene::win()
+void LmRightSpotScene::setPositionInSendingArea(int id)
 {
-	//we order our vector with piece top left at the begining and bot right at the end
-	std::sort(m_aFillingHoleInRightImage.begin(),
-			m_aFillingHoleInRightImage.end(),
-			LmGameComponent::sortFromTopLeftToRightBottom);
-	//make a vector with id in it
-	std::vector<int> l_aIdSequence;
-	//init it with fillinghole vector
-	for (std::vector<LmGameComponent*>::iterator it =
-			m_aFillingHoleInRightImage.begin();
-			it != m_aFillingHoleInRightImage.end(); ++it)
-	{
-		l_aIdSequence.push_back((*it)->getIId());
-	}
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
-	bool l_bAre_equal = true;
+	m_aIdTable.find(id)->second->setAnchorPoint(Vec2(0, 0.5));
+	m_aIdTable.find(id)->second->setPosition(
+			Vec2(l_oVisibleSize.width - m_pSendingArea->getContentSize().width,
+					l_oVisibleSize.height * 0.5));
+}
 
-	//they have both the same size because m_ahole.size==0
-	for (int i = 0; i < l_aIdSequence.size(); i++)
-	{
-		if (l_aIdSequence[i] != m_aIdSequenceWin[i])
-		{
-			l_bAre_equal = false;
-			break;
-		}
-	}
-
-	return l_bAre_equal;
+bool LmRightSpotScene::imageWellPlaced(int l_iIndexHole,int l_iIdGameComponentPlaced)
+{
+	return (m_aHolesImageChild.at(l_iIndexHole).second==l_iIdGameComponentPlaced);
 }
 

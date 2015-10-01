@@ -23,12 +23,8 @@
 
 //margiin between image in the scrollview
 static const float s_fMarginBetweenImage = 10.0f;
-//the time of a long click to select image in the scrollview
-static const float s_fLongClickDuration = 1.0f;
 
-
-
-class LmRightSpotScene : public LmInteractionScene
+class LmRightSpotScene: public LmInteractionScene
 {
 
 public:
@@ -37,14 +33,14 @@ public:
 	static const int s_iId = 0;
 
 	/*6 parameters =>
-	 *  FilenameSpriteBackground
-	 *  FilenameSpriteCollideZone
-	 *  FilenamesWrongImmages
-	 *  FilenameRightImage
-	 *  HoleOnX
-	 *  HoleOnY
-	 *  LocationOfHole*/
-	LmRightSpotScene(std::string,std::string,std::vector<std::string>,std::string,int,int,std::vector<std::pair<int,int>>);
+		 *  FilenameSpriteBackground
+		 *  FilenameSpriteCollideZone
+		 *  FilenameRightImage
+		 *  HoleOnX
+		 *  HoleOnY
+		 *  LocationOfHole*/
+	LmRightSpotScene(std::string, std::string,
+			std::string, int, int, std::vector<std::pair<int, int>>);
 	~LmRightSpotScene();
 
 	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
@@ -57,28 +53,23 @@ private:
 	//what we need to get from the json file
 	std::string m_sFilenameSpriteBackground;
 	std::string m_sFilenameSpriteCollideZone;
-	std::vector<std::string>m_aFilenamesWrongImmages;
 	std::string m_sFilenameRightImage;
 	int m_iHoleOnX;
 	int m_iHoleOnY;
-	std::vector<std::pair<int,int>> m_aLocationOfHole;
+	std::vector<std::pair<int, int>> m_aLocationOfHole;
 
 	//different vector of gamecomponent
-	//scrollview images
-	std::vector<LmGameComponent*> m_aScrollViewImages;
-	//the right images complete
-	std::vector<LmGameComponent*> m_aRightImage;
-	//holes in right image
-	std::vector<cocos2d::Rect> m_aHolesRightImage;
-	//hole in scroll view TODO
-	std::vector<cocos2d::Rect> m_aHolesScrollView;
-	//elements in sending area
-	std::vector<LmGameComponent*> m_aSendingAreaElements;
-	//elements filling hole in right image
-	std::vector<LmGameComponent*> m_aFillingHoleInRightImage;
+	//dynamic element parent/child game
+	std::vector<LmGameComponent*> m_aDynamicGameComponents;
+	//element fix child game
+	std::vector<LmGameComponent*> m_aStaticGameComponents;
+	//holes in  image the int is to know the ifd of the gamecomponent
+	std::vector<std::pair<cocos2d::Rect,int>> m_aHolesImageChild;
+	//hole in  view parent
+	std::vector<std::pair<cocos2d::Rect,int>> m_aHolesLayerParent;
 
-	//good id sequence of the right image to know when it's win
-	std::vector<int> m_aIdSequenceWin;
+	//element in sending area
+	LmGameComponent* m_pSendingAreaElement;
 
 	//rect stencil dimension
 	float m_fHeightRect;
@@ -87,28 +78,20 @@ private:
 	//attributes gui
 	cocos2d::Sprite* m_pSpriteBackground;
 
-	//scrollview
-	cocos2d::ui::ScrollView* m_pScrollView;
-	cocos2d::Layer* m_pLayerScrollView;
-
 	//listener
 	cocos2d::EventListenerTouchOneByOne* m_pListener;
 
 	//use to handle touch event
 	int m_iBufferId;
 	int m_iHoleTouchedIndex;
-	int m_iBufferIdFillingImage;
-	bool m_bSameGameComponent;
-	bool m_bBufferCollideFillingImage;
 
 	//where we stock the sprite while moving with listener
 	cocos2d::Sprite* m_pBufferSprite;
 	bool m_bSpriteSelected;
-	bool m_bFirstMoveAfterLongClick;
 	//to know if the buffer fill an hole
 	bool m_bBufferSpriteFillHole;
-	//to know when we deplace a piece from the right image to generate the hole again
-	bool m_bGameComponentAlreadyInRightImage;
+
+	bool m_bWin;
 
 	//METHODS
 
@@ -126,30 +109,29 @@ private:
 	void onTouchEndedChild(cocos2d::Touch*, cocos2d::Event*);
 
 	//return the id of the gameobject touched -1 otherwise
-	int idLmGameComponentTouchedInScrollView(cocos2d::Touch*);
+	int idDynamicLmGameComponent(cocos2d::Touch*);
 	int idLmGameComponentTouchedInSendingArea(cocos2d::Touch*);
-	int idLmGameComponentTouchedInFillingHoleInRightImage(cocos2d::Touch*);
 
 	//move pieces received in child layer
 	void moveBufferSprite(cocos2d::Touch*);
-
-	//use for long click
-	void checkLongClick();
 
 	//to know if the sprite that we are moving collide sending area
 	bool bufferCollideSendingArea();
 
 	//init texture and position of the buffer and set to invisible the gamecomponent touched /!\ change the anchor point of the buffer sprite
-	void initBufferSprite(int,cocos2d::Node*);
+	void initBufferSprite(int);
 
 	//use to know what hole need to be fill with the buffer img
 	int touchCollideHoleInRightImage(cocos2d::Touch*);
 
 	//check if the right image is complete
 	bool win();
-	bool m_bWin;
+
+	//set position of the gamecomponent id in the  sending area
+	void setPositionInSendingArea(int);
+
+	bool imageWellPlaced(int ,int );
+
 };
-
-
 
 #endif /* CLASSES_INCLUDE_LMRIGHTSPOTSCENE_H_ */
