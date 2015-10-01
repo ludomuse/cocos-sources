@@ -37,6 +37,9 @@ public:
 			bool);
 	~LmQuizz_v1Scene();
 
+	//restart
+	void restart();
+
 private:
 
 	//ATTRIBUTES
@@ -55,6 +58,9 @@ private:
 	bool m_bTimerEnbaled;
 
 	//gui elements
+
+	//use to force checkbox to be checked when question finish
+	bool m_bQuestionFinished;
 
 	cocos2d::Sprite* m_pBandTopSprite;
 

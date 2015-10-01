@@ -27,6 +27,7 @@
 #include "LmRightSpotScene.h"
 #include "LmQuizz_v1Scene.h"
 #include "LmSetPoint.h"
+#include "LmReward.h"
 
 class LmJsonParser
 {
@@ -76,6 +77,7 @@ private:
 
 	//init the setpoint of an interaction according to the json
 	void initSetPoint(const rapidjson::Value& , LmInteractionScene* );
+	void initReward(const rapidjson::Value& , LmInteractionScene* );
 
 	//our function which make scene
 	void makeLmRightSpotScene(const rapidjson::Value&);

@@ -33,18 +33,21 @@ public:
 	static const int s_iId = 0;
 
 	/*6 parameters =>
-		 *  FilenameSpriteBackground
-		 *  FilenameSpriteCollideZone
-		 *  FilenameRightImage
-		 *  HoleOnX
-		 *  HoleOnY
-		 *  LocationOfHole*/
-	LmRightSpotScene(std::string, std::string,
-			std::string, int, int, std::vector<std::pair<int, int>>);
+	 *  FilenameSpriteBackground
+	 *  FilenameSpriteCollideZone
+	 *  FilenameRightImage
+	 *  HoleOnX
+	 *  HoleOnY
+	 *  LocationOfHole*/
+	LmRightSpotScene(std::string, std::string, std::string, int, int,
+			std::vector<std::pair<int, int>>);
 	~LmRightSpotScene();
 
 	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
 	void layerChildReceive(int);
+
+	//restart
+	void restart();
 
 private:
 
@@ -64,9 +67,9 @@ private:
 	//element fix child game
 	std::vector<LmGameComponent*> m_aStaticGameComponents;
 	//holes in  image the int is to know the ifd of the gamecomponent
-	std::vector<std::pair<cocos2d::Rect,int>> m_aHolesImageChild;
+	std::vector<std::pair<cocos2d::Rect, int>> m_aHolesImageChild;
 	//hole in  view parent
-	std::vector<std::pair<cocos2d::Rect,int>> m_aHolesLayerParent;
+	std::vector<std::pair<cocos2d::Rect, int>> m_aHolesLayerParent;
 
 	//element in sending area
 	LmGameComponent* m_pSendingAreaElement;
@@ -84,6 +87,7 @@ private:
 	//use to handle touch event
 	int m_iBufferId;
 	int m_iHoleTouchedIndex;
+	bool m_bSendingAreaElementTouched;
 
 	//where we stock the sprite while moving with listener
 	cocos2d::Sprite* m_pBufferSprite;
@@ -130,7 +134,9 @@ private:
 	//set position of the gamecomponent id in the  sending area
 	void setPositionInSendingArea(int);
 
-	bool imageWellPlaced(int ,int );
+	bool imageWellPlaced(int, int);
+
+	cocos2d::Rect holeOfThisDynamicElement(int);
 
 };
 

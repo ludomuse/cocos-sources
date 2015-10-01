@@ -428,7 +428,6 @@ void LmGameManager::initDashboardInteraction()
 
 void LmGameManager::runNextInteraction()
 {
-
 	//if its the last interactionscene the app finished
 	if (m_iIndexInteractionScene >= m_aInteractionSceneOfTheGame.size())
 	{
@@ -460,6 +459,12 @@ void LmGameManager::runNextInteraction()
 				TransitionFade::create(s_fTimeBetweenLmLayer,
 						m_aInteractionSceneOfTheGame.at(
 								m_iIndexInteractionScene)));
+
+		//it was a back
+		if (m_bBackToDashboard)
+		{
+			m_aInteractionSceneOfTheGame.at(m_iIndexInteractionScene)->restart();
+		}
 
 	}
 

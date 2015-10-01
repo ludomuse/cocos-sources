@@ -4,6 +4,8 @@
  *  Created on: 29 sept. 2015
  *      Author: http://www.cocos2d-x.org/wiki/How_To_Subclass_Sprite_And_Add_Event_Listeners
  *
+ *      A sprite that can swallow touches
+ *
  */
 
 #ifndef CLASSES_INCLUDE_LMSPRITE_H_

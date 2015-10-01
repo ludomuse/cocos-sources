@@ -55,6 +55,7 @@ LmQuizz_v1Scene::LmQuizz_v1Scene(std::string l_sFilenameSpriteBackground,
 	m_iIndexQuestion = -1;
 	m_iNumberOfAttempt = m_iAttemptByQuestion;
 	m_bNextQuestionButtonCanBePress = true;
+	m_bQuestionFinished = false;
 }
 
 LmQuizz_v1Scene::~LmQuizz_v1Scene()
@@ -63,6 +64,16 @@ LmQuizz_v1Scene::~LmQuizz_v1Scene()
 			it != m_aQuestions.end(); ++it)
 	{
 		delete (*it);
+	}
+}
+
+void LmQuizz_v1Scene::restart()
+{
+	//need top schedule the timer agian
+	if (m_bTimerEnbaled && !m_bQuestionFinished)
+	{
+		schedule(schedule_selector(LmQuizz_v1Scene::updateLoadingBar),
+				m_fTimerDuration);
 	}
 }
 
@@ -100,7 +111,7 @@ bool LmQuizz_v1Scene::initGame()
 					l_oVisibleSize.height * 0.05 + l_oOrigin.y));
 	if (m_bTimerEnbaled)
 	{
-		m_pLayerGame->addChild(m_pTimer, 1);
+		m_pLayerGame->addChild(m_pTimer);
 	}
 
 	//band top sprite
@@ -253,6 +264,8 @@ void LmQuizz_v1Scene::beginQuestion()
 		m_bNextQuestionButtonCanBePress = false;
 		m_pNextQuestionButton->setVisible(false);
 
+		m_bQuestionFinished = false;
+
 		//no more layers end of the game
 		if ((int) m_iIndexQuestion >= (int) (m_aQuestions.size() - 1))
 		{
@@ -282,7 +295,6 @@ void LmQuizz_v1Scene::beginQuestion()
 
 			//next layer
 			initNextQuestion();
-			checkBoxTouchEnabled(true);
 		}
 
 	}
@@ -319,10 +331,15 @@ void LmQuizz_v1Scene::checkAnswer()
 	}
 	else
 	{
+
+		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(
+				"audio/son.mp3", false);
+
 		//still have attempt
 		if (m_iNumberOfAttempt > 0)
 		{
 			m_iNumberOfAttempt--;
+
 		}
 		else
 		{
@@ -338,53 +355,73 @@ void LmQuizz_v1Scene::checkAnswer()
 
 void LmQuizz_v1Scene::answerSelected(Ref* pSender, CheckBox::EventType type)
 {
-
 	auto l_pCheckBoxPressed = dynamic_cast<CheckBox*>(pSender);
-	int l_iIdCheckBox = 0;
 
-	//register the sender
-	if (l_pCheckBoxPressed == m_pCheckBoxAnswer1)
+	if (m_bQuestionFinished)
 	{
-		l_iIdCheckBox = 1;
-	}
-	else if (l_pCheckBoxPressed == m_pCheckBoxAnswer2)
-	{
-		l_iIdCheckBox = 2;
-	}
-	else if (l_pCheckBoxPressed == m_pCheckBoxAnswer3)
-	{
-		l_iIdCheckBox = 3;
-	}
-	else if (l_pCheckBoxPressed == m_pCheckBoxAnswer4)
-	{
-		l_iIdCheckBox = 4;
+		//force to unchange the check
+		switch (type)
+		{
+		case CheckBox::EventType::SELECTED:
+			l_pCheckBoxPressed->setSelected(false);
+			break;
+
+		case CheckBox::EventType::UNSELECTED:
+			l_pCheckBoxPressed->setSelected(true);
+			break;
+
+		default:
+			break;
+		}
 	}
 	else
 	{
-		CCLOG("callback checkbox failed");
+		int l_iIdCheckBox = 0;
+
+		//register the sender
+		if (l_pCheckBoxPressed == m_pCheckBoxAnswer1)
+		{
+			l_iIdCheckBox = 1;
+		}
+		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer2)
+		{
+			l_iIdCheckBox = 2;
+		}
+		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer3)
+		{
+			l_iIdCheckBox = 3;
+		}
+		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer4)
+		{
+			l_iIdCheckBox = 4;
+		}
+		else
+		{
+			CCLOG("callback checkbox failed");
+		}
+
+		switch (type)
+		{
+		case CheckBox::EventType::SELECTED:
+			select(l_iIdCheckBox, true);
+			break;
+
+		case CheckBox::EventType::UNSELECTED:
+			select(l_iIdCheckBox, false);
+			break;
+
+		default:
+			break;
+		}
+		checkAnswer();
 	}
-
-	switch (type)
-	{
-	case CheckBox::EventType::SELECTED:
-		select(l_iIdCheckBox, true);
-		break;
-
-	case CheckBox::EventType::UNSELECTED:
-		select(l_iIdCheckBox, false);
-		break;
-
-	default:
-		break;
-	}
-	checkAnswer();
 
 }
 
 void LmQuizz_v1Scene::questionFinish()
 {
+	m_bQuestionFinished = true;
 	//disable touch on checkbox
-	checkBoxTouchEnabled(false);
 	if (m_bTimerEnbaled)
 	{
 		//stop timer
@@ -441,7 +478,8 @@ void LmQuizz_v1Scene::select(int l_iIdCheckBoxPressed, bool selected)
 void LmQuizz_v1Scene::checkBoxTouchEnabled(bool enabled)
 {
 	m_pCheckBoxAnswer1->setEnabled(enabled);
-	m_pCheckBoxAnswer2->setEnabled(enabled);
-	m_pCheckBoxAnswer3->setEnabled(enabled);
-	m_pCheckBoxAnswer4->setEnabled(enabled);
+	 m_pCheckBoxAnswer2->setEnabled(enabled);
+	 m_pCheckBoxAnswer3->setEnabled(enabled);
+	 m_pCheckBoxAnswer4->setEnabled(enabled);
 }
+

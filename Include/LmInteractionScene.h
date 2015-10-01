@@ -10,6 +10,8 @@
 #include "LmSetPoint.h"
 #include "LmUser.h"
 #include "LmSprite.h"
+#include "LmReward.h"
+
 
 typedef std::map<int, LmGameComponent*>::iterator it_type;
 
@@ -23,6 +25,9 @@ public:
 
 	LmInteractionScene();
 	virtual ~LmInteractionScene();
+
+	//in case we need to do stuff when we get the focus again after a back
+	virtual void restart()=0;
 
 	//init
 	bool init(LmUser*);
@@ -47,9 +52,17 @@ public:
 		m_pLmSetPointBegin = pLmSetPoint;
 	}
 
+	void setPLmReward(LmReward* pLmReward)
+	{
+		m_pLmReward = pLmReward;
+	}
+
 protected:
 
 	//ATTRIBUTES
+
+	//reward
+	LmReward* m_pLmReward;
 
 	//sending area
 	LmGameComponent* m_pSendingArea;

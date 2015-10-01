@@ -7,8 +7,10 @@ USING_NS_CC;
 
 LmInteractionScene::LmInteractionScene()
 {
-	//object
+	//object ludomuse
 	m_pLmSetPointBegin = new LmSetPoint; //need to be delete
+	m_pLmSetPointEnd = new LmSetPoint; //need to be delete
+	m_pLmReward = nullptr;
 
 	//primitive type
 	m_bDone = false;
@@ -34,11 +36,18 @@ LmInteractionScene::LmInteractionScene()
 	m_pSpriteDashboardBand = nullptr;
 	m_pFinishGameButton = nullptr;
 	m_pSendingArea = nullptr;
+	m_pNextButton = nullptr;
+	m_pPreviousButton = nullptr;
 
 }
 
 LmInteractionScene::~LmInteractionScene()
 {
+	//if this scene own a reward delete it
+	if (m_pLmReward)
+	{
+		delete m_pLmReward;
+	}
 
 	m_pLayerGame->release();
 	m_pNextButton->release();
@@ -64,6 +73,7 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 
 	//use to place elements
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
 	//next button
 	m_pNextButton = ui::Button::create("nextButtonNormal.png",
@@ -95,16 +105,31 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	//create the game layer
 	m_pLayerGame = Layer::create();
 	m_pLayerGame->retain();
-
+	CCLOG("0");
 	//finish button
 	m_pFinishGameButton = ui::Button::create("nextButtonNormal.png",
 			"nextButtonPressed.png");
+
+	//if there is a reward we init the button with the appropriate sprite
+	if (m_pLmReward)
+	{
+		CCLOG("1");
+		//init sprite reward
+		m_pLmReward->init();
+		//init background button
+		m_pFinishGameButton->loadTextures(
+				m_pLmReward->getSFilenameSpriteBackground(),
+				m_pLmReward->getSFilenameSpriteBackground(),
+				m_pLmReward->getSFilenameSpriteBackground());
+		//add the sprite to the button
+		m_pLmReward->getPSpriteReward()->setPosition(Vec2(l_oVisibleSize.width * 0.5+l_oOrigin.x, l_oVisibleSize.height * 0.5+l_oOrigin.y));
+		m_pFinishGameButton->addChild(m_pLmReward->getPSpriteReward());
+	}
+
+	CCLOG("2");
 	m_pFinishGameButton->setTouchEnabled(true);
 	m_pFinishGameButton->setPosition(
-			Vect(
-					l_oVisibleSize.width
-							- m_pFinishGameButton->getContentSize().width * 0.8,
-					m_pFinishGameButton->getContentSize().height * 0.7));
+			Vect(l_oVisibleSize.width * 0.5+l_oOrigin.x, l_oVisibleSize.height * 0.5+l_oOrigin.y));
 	m_pFinishGameButton->addTouchEventListener(
 			CC_CALLBACK_0(LmInteractionScene::endGame, this));
 	m_pFinishGameButton->setVisible(false);
@@ -348,6 +373,12 @@ void LmInteractionScene::endGame()
 	if (m_bFinishGameButtonSync)
 	{
 		m_bFinishGameButtonSync = false;
+
+		//if there is a reward we add score reward to the score of the user
+		if (m_pLmReward)
+		{
+			m_pUser->addToScore(m_pLmReward->getIRewardScore());
+		}
 
 		//the game is finished we can remove the layer of the game
 		removeChild(m_pLayerGame);

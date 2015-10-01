@@ -126,6 +126,66 @@ void LmJsonParser::initInteractionSceneOfTheGame()
 
 }
 
+void LmJsonParser::initSetPoint(const rapidjson::Value& l_oScene,
+		LmInteractionScene* l_pInteractionScene)
+{
+	if (m_bIsParent)
+	{
+		//get the element we just push to set the introduction begin
+		l_pInteractionScene->setPLmSetPointBegin(
+				getLmSetPoint(l_oScene, "SetPointBeginParent"));
+		//get the element we just push to set the introduction end
+		l_pInteractionScene->setPLmSetPointEnd(
+				getLmSetPoint(l_oScene, "SetPointEndParent"));
+	}
+	else
+	{
+		//get the element we just push to set the introduction begin
+		l_pInteractionScene->setPLmSetPointBegin(
+				getLmSetPoint(l_oScene, "SetPointBeginChild"));
+		//get the element we just push to set the introduction end
+		l_pInteractionScene->setPLmSetPointEnd(
+				getLmSetPoint(l_oScene, "SetPointEndChild"));
+	}
+}
+
+void LmJsonParser::initReward(const rapidjson::Value& l_oScene,
+		LmInteractionScene* l_pInteractionScene)
+{
+	if (l_oScene.HasMember("Reward"))
+	{
+		/*
+		 * 3 parameters
+		 * FilenameSpriteBackground
+		 * FilenameSpriteReward
+		 * RewardScore
+		 */
+
+		//buffers
+		std::string l_sFilenameSpriteBackground;
+		std::string l_sFilenameSpriteReward;
+		int l_iRewardScore;
+
+		//use to deep copy string
+		std::string l_sBufferString;
+
+		assert(l_oScene["Reward"]["FilenameSpriteBackground"].IsString());
+		l_sBufferString =
+				l_oScene["Reward"]["FilenameSpriteBackground"].GetString();
+		l_sFilenameSpriteBackground = l_sBufferString.c_str();
+
+		assert(l_oScene["Reward"]["FilenameSpriteReward"].IsString());
+		l_sBufferString =
+				l_oScene["Reward"]["FilenameSpriteReward"].GetString();
+		l_sFilenameSpriteReward = l_sBufferString.c_str();
+
+		assert(l_oScene["Reward"]["RewardScore"].IsInt());
+		l_iRewardScore = l_oScene["Reward"]["RewardScore"].GetInt();
+
+		l_pInteractionScene->setPLmReward(new LmReward(l_sFilenameSpriteBackground,l_sFilenameSpriteReward,l_iRewardScore));
+	}
+}
+
 LmSetPoint* LmJsonParser::getLmSetPoint(const rapidjson::Value& l_oScene,
 		const char* l_sNameSetPoint)
 {
@@ -227,13 +287,16 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 	//create the scene delete in the game manager
 	m_aInteractionSceneOfTheGame.push_back(
 			new LmRightSpotScene(l_sFilenameSpriteBackgroundBuffer,
-					l_sFilenameSpriteCollideZoneBuffer
-					, l_sFilenameRightImageBuffer,
-					l_iHoleOnXBuffer, l_iHoleOnYBuffer,
-					l_aLocationOfHoleBuffer));
+					l_sFilenameSpriteCollideZoneBuffer,
+					l_sFilenameRightImageBuffer, l_iHoleOnXBuffer,
+					l_iHoleOnYBuffer, l_aLocationOfHoleBuffer));
 
 	//get the element we just push to set the introduction
 	initSetPoint(l_oScene,
+			m_aInteractionSceneOfTheGame.at(
+					m_aInteractionSceneOfTheGame.size() - 1));
+
+	initReward(l_oScene,
 			m_aInteractionSceneOfTheGame.at(
 					m_aInteractionSceneOfTheGame.size() - 1));
 }
@@ -366,28 +429,9 @@ void LmJsonParser::makeLmQuizz_v1Scene(const rapidjson::Value& l_oScene)
 			m_aInteractionSceneOfTheGame.at(
 					m_aInteractionSceneOfTheGame.size() - 1));
 
-}
+	initReward(l_oScene,
+			m_aInteractionSceneOfTheGame.at(
+					m_aInteractionSceneOfTheGame.size() - 1));
 
-void LmJsonParser::initSetPoint(const rapidjson::Value& l_oScene,
-		LmInteractionScene* l_pInteractionScene)
-{
-	if (m_bIsParent)
-	{
-		//get the element we just push to set the introduction begin
-		l_pInteractionScene->setPLmSetPointBegin(
-				getLmSetPoint(l_oScene, "SetPointBeginParent"));
-		//get the element we just push to set the introduction end
-		l_pInteractionScene->setPLmSetPointEnd(
-				getLmSetPoint(l_oScene, "SetPointEndParent"));
-	}
-	else
-	{
-		//get the element we just push to set the introduction begin
-		l_pInteractionScene->setPLmSetPointBegin(
-				getLmSetPoint(l_oScene, "SetPointBeginChild"));
-		//get the element we just push to set the introduction end
-		l_pInteractionScene->setPLmSetPointEnd(
-				getLmSetPoint(l_oScene, "SetPointEndChild"));
-	}
 }
 

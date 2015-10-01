@@ -41,26 +41,29 @@ bool LmLayer::init()
 
 			//top left
 		case 1:
-			l_oSprite->setPosition(l_oVisibleSize.width / 4 + l_oOrigin.x,
-					3 * l_oVisibleSize.height / 4 + l_oOrigin.y);
+			l_oSprite->setAnchorPoint(Vec2(0, 1));
+			l_oSprite->setPosition(l_oOrigin.x,
+					l_oVisibleSize.height + l_oOrigin.y);
 			break;
 
 			//top right
 		case 2:
-			l_oSprite->setPosition(3 * l_oVisibleSize.width / 4 + l_oOrigin.x,
-					3 * l_oVisibleSize.height / 4 + l_oOrigin.y);
+			l_oSprite->setAnchorPoint(Vec2(1, 1));
+			l_oSprite->setPosition(l_oVisibleSize.width + l_oOrigin.x,
+					l_oVisibleSize.height + l_oOrigin.y);
 			break;
 
 			//bottom left
 		case 3:
-			l_oSprite->setPosition(l_oVisibleSize.width / 4 + l_oOrigin.x,
-					l_oVisibleSize.height / 4 + l_oOrigin.y);
+			l_oSprite->setAnchorPoint(Vec2(0, 0));
+			l_oSprite->setPosition(l_oOrigin.x, +l_oOrigin.y);
 			break;
 
 			//bottom right
 		case 4:
-			l_oSprite->setPosition(3 * l_oVisibleSize.width / 4 + l_oOrigin.x,
-					l_oVisibleSize.height / 4 + l_oOrigin.y);
+			l_oSprite->setAnchorPoint(Vec2(1, 0));
+			l_oSprite->setPosition(l_oVisibleSize.width + l_oOrigin.x,
+					+l_oOrigin.y);
 			break;
 
 		default:
