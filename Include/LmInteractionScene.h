@@ -12,7 +12,6 @@
 #include "LmSprite.h"
 #include "LmReward.h"
 
-
 typedef std::map<int, LmGameComponent*>::iterator it_type;
 
 static const float s_fDashboardRatioHidden = 0.95f;
@@ -21,6 +20,7 @@ static const float s_fMarginLeft = 80.0f;
 
 class LmInteractionScene: public cocos2d::Scene
 {
+
 public:
 
 	LmInteractionScene();
@@ -28,6 +28,9 @@ public:
 
 	//in case we need to do stuff when we get the focus again after a back
 	virtual void restart()=0;
+
+	//call by replay button
+	virtual void resetScene()=0;
 
 	//init
 	bool init(LmUser*);
@@ -61,6 +64,9 @@ protected:
 
 	//ATTRIBUTES
 
+	//to know if this has been win
+	bool m_bWin;
+
 	//reward
 	LmReward* m_pLmReward;
 
@@ -69,10 +75,6 @@ protected:
 
 	//autorelease object it's the first layer of the scene
 	cocos2d::Layer* m_pLayerGame;
-
-	//layer of user parent or child
-	cocos2d::Layer* m_pLayerUserParent;
-	cocos2d::Layer* m_pLayerUserChild;
 
 	//an introduction to the InteractionScene
 	LmSetPoint* m_pLmSetPointBegin;
@@ -88,6 +90,10 @@ protected:
 	bool m_bFinishGameButtonSync;
 	//call when the finishgamebutton is pressed
 	void endGame();
+
+	//replay button
+	cocos2d::ui::Button* m_pReplayButton;
+	bool m_bReplayButtonSync;
 
 	//introduction gui element
 	//buttons next and previous

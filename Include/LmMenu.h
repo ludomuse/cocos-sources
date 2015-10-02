@@ -15,6 +15,8 @@
 #include "LmUser.h"
 
 static const float s_fSplashScreenDuration = 0.5f;
+//filename sprite background
+static const std::string s_sFilenameSpriteBackground = "background5.png";
 
 class LmMenu
 {
@@ -30,6 +32,8 @@ private:
 	//our two layer one handle the loging the other the wifidirect
 	cocos2d::Layer* m_pLogLayer;
 	cocos2d::Layer* m_pWifiLayer;
+
+
 
 	//background img
 	cocos2d::Sprite* m_pSpriteLogBackground;

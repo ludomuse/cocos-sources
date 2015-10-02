@@ -40,6 +40,9 @@ public:
 	//restart
 	void restart();
 
+	//to reset the game
+	void resetScene();
+
 private:
 
 	//ATTRIBUTES

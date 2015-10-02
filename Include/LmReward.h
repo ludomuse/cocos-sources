@@ -11,18 +11,21 @@
 #define CLASSES_INCLUDE_LMREWARD_H_
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
+
 
 class LmReward
 {
 public:
 
 	/*
-	 * 3 parameters
+	 * 4 parameters
 	 * FilenameSpriteBackground
 	 * FilenameSpriteReward
 	 * RewardScore
+	 * FilenameSound
 	 */
-	LmReward(std::string, std::string, int);
+	LmReward(std::string, std::string, int, std::string);
 	~LmReward();
 
 	int getIRewardScore() const
@@ -42,6 +45,10 @@ public:
 
 	void init();
 
+	//play the reward sound
+	void playRewardSound();
+
+
 private:
 
 	//ATTRIBUTES
@@ -50,12 +57,15 @@ private:
 	std::string m_sFilenameSpriteBackground;
 	std::string m_sFilenameSpriteReward;
 	int m_iRewardScore;
+	std::string m_sFilenameSound;
 
 	//sprite to add to the button
 
 	cocos2d::Sprite* m_pSpriteReward;
 
 	//METHODS
+
+
 };
 
 #endif /* CLASSES_INCLUDE_LMREWARD_H_ */

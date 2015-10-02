@@ -152,37 +152,58 @@ void LmJsonParser::initSetPoint(const rapidjson::Value& l_oScene,
 void LmJsonParser::initReward(const rapidjson::Value& l_oScene,
 		LmInteractionScene* l_pInteractionScene)
 {
-	if (l_oScene.HasMember("Reward"))
+	//to make difference between child and parent
+	const char* l_sRewardTag;
+
+	if (m_bIsParent)
+	{
+		l_sRewardTag = "RewardParent";
+	}
+	else
+	{
+		l_sRewardTag = "RewardChild";
+	}
+
+	if (l_oScene.HasMember(l_sRewardTag))
 	{
 		/*
-		 * 3 parameters
+		 * 4 parameters
 		 * FilenameSpriteBackground
 		 * FilenameSpriteReward
 		 * RewardScore
+		 * FilenameSound
 		 */
 
 		//buffers
 		std::string l_sFilenameSpriteBackground;
 		std::string l_sFilenameSpriteReward;
 		int l_iRewardScore;
+		std::string l_sFilenameSound;
 
 		//use to deep copy string
 		std::string l_sBufferString;
 
-		assert(l_oScene["Reward"]["FilenameSpriteBackground"].IsString());
+		assert(l_oScene[l_sRewardTag]["FilenameSpriteBackground"].IsString());
 		l_sBufferString =
-				l_oScene["Reward"]["FilenameSpriteBackground"].GetString();
+				l_oScene[l_sRewardTag]["FilenameSpriteBackground"].GetString();
 		l_sFilenameSpriteBackground = l_sBufferString.c_str();
 
-		assert(l_oScene["Reward"]["FilenameSpriteReward"].IsString());
+		assert(l_oScene[l_sRewardTag]["FilenameSpriteReward"].IsString());
 		l_sBufferString =
-				l_oScene["Reward"]["FilenameSpriteReward"].GetString();
+				l_oScene[l_sRewardTag]["FilenameSpriteReward"].GetString();
 		l_sFilenameSpriteReward = l_sBufferString.c_str();
 
-		assert(l_oScene["Reward"]["RewardScore"].IsInt());
-		l_iRewardScore = l_oScene["Reward"]["RewardScore"].GetInt();
+		assert(l_oScene[l_sRewardTag]["RewardScore"].IsInt());
+		l_iRewardScore = l_oScene[l_sRewardTag]["RewardScore"].GetInt();
 
-		l_pInteractionScene->setPLmReward(new LmReward(l_sFilenameSpriteBackground,l_sFilenameSpriteReward,l_iRewardScore));
+		assert(l_oScene[l_sRewardTag]["FilenameSound"].IsString());
+		l_sBufferString =
+				l_oScene[l_sRewardTag]["FilenameSound"].GetString();
+		l_sFilenameSound = l_sBufferString.c_str();
+
+		l_pInteractionScene->setPLmReward(
+				new LmReward(l_sFilenameSpriteBackground,
+						l_sFilenameSpriteReward, l_iRewardScore,l_sFilenameSound));
 	}
 }
 
@@ -214,6 +235,15 @@ LmSetPoint* LmJsonParser::getLmSetPoint(const rapidjson::Value& l_oScene,
 			l_sBuffer =
 					l_oScene[l_sNameSetPoint][i]["img"][j]["imgURL"].GetString();
 			l_sImgURLBuffer = l_sBuffer.c_str();
+
+			/*
+			 * CENTER = 0
+			 * TOP LEFT = 1
+			 * TOP RIGHT = 2
+			 * BOTTOM LEFT = 3
+			 * BOTTOM RIGHT = 4
+			 */
+
 			l_iAnchorPointBuffer =
 					l_oScene[l_sNameSetPoint][i]["img"][j]["anchorPoint"].GetInt();
 			l_aImgBuffer.push_back(

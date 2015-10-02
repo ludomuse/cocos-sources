@@ -20,8 +20,10 @@ LmInteractionScene::LmInteractionScene()
 	m_bBackPressed = false;
 	m_iNumberOfGameComponent = 0;
 	m_bFinishGameButtonSync = true;
+	m_bReplayButtonSync = true;
 	m_bSetPointBegin = true;
 	m_bSetPointFinished = false;
+	m_bWin = false;
 
 	//pointer
 	m_pBackDashboardButton = nullptr;
@@ -30,11 +32,10 @@ LmInteractionScene::LmInteractionScene()
 	m_pMoveLayerButton = nullptr;
 	m_pLayerGame = nullptr;
 	m_pLabelScore = nullptr;
-	m_pLayerUserChild = nullptr;
 	m_pLabelUserName = nullptr;
-	m_pLayerUserParent = nullptr;
 	m_pSpriteDashboardBand = nullptr;
 	m_pFinishGameButton = nullptr;
+	m_pReplayButton = nullptr;
 	m_pSendingArea = nullptr;
 	m_pNextButton = nullptr;
 	m_pPreviousButton = nullptr;
@@ -105,7 +106,7 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	//create the game layer
 	m_pLayerGame = Layer::create();
 	m_pLayerGame->retain();
-	CCLOG("0");
+
 	//finish button
 	m_pFinishGameButton = ui::Button::create("nextButtonNormal.png",
 			"nextButtonPressed.png");
@@ -113,7 +114,6 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	//if there is a reward we init the button with the appropriate sprite
 	if (m_pLmReward)
 	{
-		CCLOG("1");
 		//init sprite reward
 		m_pLmReward->init();
 		//init background button
@@ -122,18 +122,33 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 				m_pLmReward->getSFilenameSpriteBackground(),
 				m_pLmReward->getSFilenameSpriteBackground());
 		//add the sprite to the button
-		m_pLmReward->getPSpriteReward()->setPosition(Vec2(l_oVisibleSize.width * 0.5+l_oOrigin.x, l_oVisibleSize.height * 0.5+l_oOrigin.y));
+		m_pLmReward->getPSpriteReward()->setPosition(
+				Vec2(l_oVisibleSize.width * 0.5 + l_oOrigin.x,
+						l_oVisibleSize.height * 0.5 + l_oOrigin.y));
 		m_pFinishGameButton->addChild(m_pLmReward->getPSpriteReward());
 	}
 
-	CCLOG("2");
 	m_pFinishGameButton->setTouchEnabled(true);
 	m_pFinishGameButton->setPosition(
-			Vect(l_oVisibleSize.width * 0.5+l_oOrigin.x, l_oVisibleSize.height * 0.5+l_oOrigin.y));
+			Vect(l_oVisibleSize.width * 0.5 + l_oOrigin.x,
+					l_oVisibleSize.height * 0.5 + l_oOrigin.y));
 	m_pFinishGameButton->addTouchEventListener(
 			CC_CALLBACK_0(LmInteractionScene::endGame, this));
 	m_pFinishGameButton->setVisible(false);
 	m_pLayerGame->addChild(m_pFinishGameButton, 1);
+
+	//replay button
+	m_pReplayButton = ui::Button::create("answerBackground.png",
+			"answerBackgroundSelected.png");
+
+	m_pReplayButton->setTouchEnabled(true);
+	m_pReplayButton->setPosition(
+			Vect(l_oVisibleSize.width * 0.5 + l_oOrigin.x,
+					l_oVisibleSize.height * 0.3 + l_oOrigin.y));
+	m_pReplayButton->addTouchEventListener(
+			CC_CALLBACK_0(LmInteractionScene::resetScene, this));
+	m_pReplayButton->setVisible(false);
+	m_pLayerGame->addChild(m_pReplayButton, 1);
 
 	return true;
 }
@@ -375,7 +390,7 @@ void LmInteractionScene::endGame()
 		m_bFinishGameButtonSync = false;
 
 		//if there is a reward we add score reward to the score of the user
-		if (m_pLmReward)
+		if (m_pLmReward && m_bWin)
 		{
 			m_pUser->addToScore(m_pLmReward->getIRewardScore());
 		}

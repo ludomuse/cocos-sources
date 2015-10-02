@@ -25,6 +25,14 @@ bool LmLayer::init()
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
+	/*
+	 * CENTER = 0
+	 * TOP LEFT = 1
+	 * TOP RIGHT = 2
+	 * BOTTOM LEFT = 3
+	 * BOTTOM RIGHT = 4
+	 */
+
 	//we add sprites
 	for (std::vector<std::pair<std::string, int>>::iterator it =
 			m_aImagesURL.begin(); it != m_aImagesURL.end(); ++it)

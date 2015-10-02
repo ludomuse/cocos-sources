@@ -49,6 +49,9 @@ public:
 	//restart
 	void restart();
 
+	//to reset the game
+	void resetScene();
+
 private:
 
 	//ATTRIBUTES
@@ -94,8 +97,6 @@ private:
 	bool m_bSpriteSelected;
 	//to know if the buffer fill an hole
 	bool m_bBufferSpriteFillHole;
-
-	bool m_bWin;
 
 	//METHODS
 

@@ -10,10 +10,10 @@
 #include "LmMenu.h"
 
 //Different resolution
-static const cocos2d::Size s_DesignResolutionSize = cocos2d::Size(480, 300);
-static const cocos2d::Size s_SmallResolutionSize = cocos2d::Size(480, 300);
-static const cocos2d::Size s_MediumResolutionSize = cocos2d::Size(1280, 800);
-static const cocos2d::Size s_LargeResolutionSize = cocos2d::Size(1900, 1200);
+static const cocos2d::Size s_DesignResolutionSize = cocos2d::Size(1280, 800);
+static const cocos2d::Size s_SmallResolutionSize = cocos2d::Size(1280, 800);
+static const cocos2d::Size s_MediumResolutionSize = cocos2d::Size(1440, 900);
+static const cocos2d::Size s_LargeResolutionSize = cocos2d::Size(1680, 1050);
 
 /**
 @brief    The cocos2d Application.

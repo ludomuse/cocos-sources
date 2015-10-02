@@ -77,9 +77,46 @@ void LmQuizz_v1Scene::restart()
 	}
 }
 
+void LmQuizz_v1Scene::resetScene()
+{
+	if (m_bReplayButtonSync)
+	{
+		m_bReplayButtonSync = false;
+		m_iIndexQuestion = -1;	//so when we init the next question index = 0
+		//reset checkbox
+		m_pCheckBoxAnswer1->setSelected(false);
+		m_pCheckBoxAnswer2->setSelected(false);
+		m_pCheckBoxAnswer3->setSelected(false);
+		m_pCheckBoxAnswer4->setSelected(false);
+
+		m_iNumberOfAttempt = m_iAttemptByQuestion;
+
+		if (m_bTimerEnbaled)
+		{
+			//reset timer
+			m_pTimer->setPercent(0);
+			m_iCounter = 0;
+			schedule(schedule_selector(LmQuizz_v1Scene::updateLoadingBar),
+					m_fTimerDuration);
+		}
+
+		//disable answer selected
+		m_iAnswerSelected = -1;
+
+		//next layer
+		initNextQuestion();
+
+		//reset replay button
+		m_pReplayButton->setVisible(false);
+		m_bReplayButtonSync = true;
+
+	}
+}
+
 void LmQuizz_v1Scene::runGame()
 {
 	initGame();
+
 	//we preload the sound
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(
 			"audio/son.mp3");
@@ -96,14 +133,15 @@ bool LmQuizz_v1Scene::initGame()
 	this->addChild(m_pLayerGame, 0);
 
 	//init the background
+	CCLOG("genre ici");
 	m_pSpriteBackground = Sprite::create(m_sFilenameSpriteBackground);
+	CCLOG("et pas la");
 	m_pSpriteBackground->setPosition(l_oVisibleSize.width * 0.5f + l_oOrigin.x,
 			l_oVisibleSize.height * 0.5f + l_oOrigin.y);
 	m_pLayerGame->addChild(m_pSpriteBackground);
 
 	//init timer
 	m_pTimer = LoadingBar::create();
-	m_pTimer->setName("LoadingBar");
 	m_pTimer->loadTexture("bandMid.png");
 	m_pTimer->setPercent(0);
 	m_pTimer->setPosition(
@@ -234,7 +272,6 @@ bool LmQuizz_v1Scene::initGame()
 	m_pNextQuestionButton->setVisible(false);
 	m_pLayerGame->addChild(m_pNextQuestionButton);
 
-	//one layer per question
 	m_iIndexQuestion = -1;	//so when we init the next question index = 0
 	beginQuestion();
 
@@ -270,6 +307,9 @@ void LmQuizz_v1Scene::beginQuestion()
 		if ((int) m_iIndexQuestion >= (int) (m_aQuestions.size() - 1))
 		{
 			m_pFinishGameButton->setVisible(true);
+			 m_pLmReward->playRewardSound();
+
+			m_pReplayButton->setVisible(true);
 		}
 		else
 		{
@@ -478,8 +518,8 @@ void LmQuizz_v1Scene::select(int l_iIdCheckBoxPressed, bool selected)
 void LmQuizz_v1Scene::checkBoxTouchEnabled(bool enabled)
 {
 	m_pCheckBoxAnswer1->setEnabled(enabled);
-	 m_pCheckBoxAnswer2->setEnabled(enabled);
-	 m_pCheckBoxAnswer3->setEnabled(enabled);
-	 m_pCheckBoxAnswer4->setEnabled(enabled);
+	m_pCheckBoxAnswer2->setEnabled(enabled);
+	m_pCheckBoxAnswer3->setEnabled(enabled);
+	m_pCheckBoxAnswer4->setEnabled(enabled);
 }
 

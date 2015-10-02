@@ -32,7 +32,6 @@ LmRightSpotScene::LmRightSpotScene(std::string l_sFilenameSpriteBackground,
 	m_iHoleTouchedIndex = -1;
 	m_fHeightRect = 0;
 	m_fWidthRect = 0;
-	m_bWin = false;
 	m_bSendingAreaElementTouched = false;
 
 	//pointer
@@ -62,6 +61,105 @@ void LmRightSpotScene::restart()
 
 }
 
+void LmRightSpotScene::resetScene()
+{
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
+	Size l_oPlayableScreenSize = Size(
+			l_oOrigin.x - s_fMarginLeft
+					+ (l_oVisibleSize.width
+							- m_pSendingArea->getContentSize().width),
+			l_oVisibleSize.height);
+
+	if (m_bReplayButtonSync)
+	{
+		m_bReplayButtonSync = false;
+
+		//all pieces go invisible then we replace it
+		for (it_type it = m_aIdTable.begin(); it != m_aIdTable.end(); ++it)
+		{
+			it->second->setVisible(false);
+		}
+
+		m_pSendingArea->setVisible(true);
+
+		if (m_pUser->isBParent())
+		{
+			//parent view
+
+			//use to place elements
+			auto l_fWidthImage = m_fWidthRect + s_fMarginBetweenImage;
+			auto l_fHeightImage = m_fHeightRect + s_fMarginBetweenImage;
+
+			//check height of piece to know how many to display in a row
+			int numberOfImageInLine = (int) l_oPlayableScreenSize.height
+					/ l_fHeightImage;
+
+			//shuffle the vector
+			std::random_device rd;
+			std::mt19937 g(rd());
+			std::shuffle(m_aDynamicGameComponents.begin(),
+					m_aDynamicGameComponents.end(), g);
+
+			int l_iIndex = 0;
+
+			int l_iLineIndex = 1;
+
+			//reset vector of hole
+			m_aHolesLayerParent.clear();
+
+			for (std::vector<LmGameComponent*>::iterator it =
+					m_aDynamicGameComponents.begin();
+					it != m_aDynamicGameComponents.end(); ++it)
+			{
+				(*it)->setAnchorPoint(Vec2(0, 0.5));
+
+				(*it)->setPosition(
+						Vec2((l_iIndex) * (l_fWidthImage) + s_fMarginLeft,
+								l_oPlayableScreenSize.height
+										* ((float) l_iLineIndex
+												/ (float) (numberOfImageInLine
+														+ 1))));
+
+				//create hole associated
+				m_aHolesLayerParent.push_back(
+						{ Rect((*it)->getPosition().x,
+								(*it)->getPosition().y - m_fHeightRect * 0.5,
+								m_fWidthRect, m_fHeightRect), (*it)->getIId() });
+
+				(*it)->setVisible(true);
+
+				l_iLineIndex++;
+
+				//last line
+				if (l_iLineIndex == numberOfImageInLine + 1)
+				{
+					l_iLineIndex = 1;
+					l_iIndex++;
+				}
+			}
+		}
+		else
+		{
+			//child view
+
+			//set visible all the static element
+			for (std::vector<LmGameComponent*>::iterator it =
+					m_aStaticGameComponents.begin();
+					it != m_aStaticGameComponents.end(); ++it)
+			{
+
+				(*it)->setVisible(true);
+
+			}
+		}
+
+		m_pReplayButton->setVisible(false);
+		m_bReplayButtonSync = false;
+
+	}
+}
 
 void LmRightSpotScene::runGame()
 {
@@ -83,10 +181,6 @@ bool LmRightSpotScene::initGame()
 
 	//add the layer game
 	this->addChild(m_pLayerGame, 0);
-
-	//init the two other layer
-	m_pLayerUserParent = Layer::create();
-	m_pLayerUserChild = Layer::create();
 
 	//init the background
 	m_pSpriteBackground = Sprite::create(m_sFilenameSpriteBackground);
@@ -127,7 +221,8 @@ bool LmRightSpotScene::initGame()
 
 	//test
 	int id;
-	m_pFinishGameButton->setVisible(true);
+	m_pFinishGameButton->setVisible(false);
+	m_pReplayButton->setVisible(true);
 
 	//init vector of the right image
 	Point l_oPointToPlaceRightImage = Point(
@@ -183,9 +278,15 @@ bool LmRightSpotScene::initGame()
 				//we set position and add it to layer child
 				GameComponentCreated->setAnchorPoint(Vec2(0, 0));
 				GameComponentCreated->setPosition(l_oVectorPosition);
-				GameComponentCreated->addTo(m_pLayerUserChild);
 
 			}
+
+			//all the game component are not visible initiated next
+			GameComponentCreated->setVisible(false);
+
+			//add to the both layer
+			GameComponentCreated->addTo(m_pLayerGame);
+
 		}
 	}
 
@@ -226,10 +327,11 @@ bool LmRightSpotScene::initGame()
 
 			//create hole associated
 			m_aHolesLayerParent.push_back(
-					{	Rect((*it)->getPosition().x,(*it)->getPosition().y-m_fHeightRect*0.5,m_fWidthRect,m_fHeightRect),(*it)->getIId()});
+					{ Rect((*it)->getPosition().x,
+							(*it)->getPosition().y - m_fHeightRect * 0.5,
+							m_fWidthRect, m_fHeightRect), (*it)->getIId() });
 
-
-			(*it)->addTo(m_pLayerUserParent);
+			(*it)->setVisible(true);
 
 			l_iLineIndex++;
 
@@ -250,17 +352,23 @@ bool LmRightSpotScene::initGame()
 		m_pListener->onTouchEnded = CC_CALLBACK_2(
 				LmRightSpotScene::onTouchEndedParent, this);
 		Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
-				m_pListener, m_pLayerUserParent);
-
-		//add the layer to the game
-		m_pLayerGame->addChild(m_pLayerUserParent);
-
+				m_pListener, m_pLayerGame);
 	}
 	else
 	{
 		//child view
 
 		layerChildReceive(id);
+
+		//set visible all the static element
+		for (std::vector<LmGameComponent*>::iterator it =
+				m_aStaticGameComponents.begin();
+				it != m_aStaticGameComponents.end(); ++it)
+		{
+
+			(*it)->setVisible(true);
+
+		}
 
 		//init listener
 		m_pListener = EventListenerTouchOneByOne::create();
@@ -271,10 +379,17 @@ bool LmRightSpotScene::initGame()
 		m_pListener->onTouchEnded = CC_CALLBACK_2(
 				LmRightSpotScene::onTouchEndedChild, this);
 		Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(
-				m_pListener, m_pLayerUserChild);
+				m_pListener, m_pLayerGame);
 
-		//add the layer to the game
-		m_pLayerGame->addChild(m_pLayerUserChild);
+		//set visible all the static element
+		for (std::vector<LmGameComponent*>::iterator it =
+				m_aStaticGameComponents.begin();
+				it != m_aStaticGameComponents.end(); ++it)
+		{
+
+			(*it)->setVisible(true);
+
+		}
 	}
 
 	return true;
@@ -302,8 +417,8 @@ bool LmRightSpotScene::onTouchBeganParent(Touch* touch, Event* event)
 
 		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
 		initBufferSprite(m_iBufferId);
+		m_pLayerGame->addChild(m_pBufferSprite);
 		moveBufferSprite(touch);
-		m_pLayerUserParent->addChild(m_pBufferSprite);
 	}
 	else
 	{
@@ -330,17 +445,29 @@ void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
 		//no sprite selected anymore
 		m_bSpriteSelected = false;
 
+		//if the move end on the sending area and it's not the sending area element
 		if (bufferCollideSendingArea() && !m_bSendingAreaElementTouched)
 		{
 			//we send the id to the other tablet test
 			CCLOG("we send the %d gamecomponent",
 					m_aIdTable.find(m_iBufferId)->first);
 
-			//create an hole
-			m_aIdTable.find(m_iBufferId)->second->setAnchorPoint(Vec2(0, 0)); // get good position
-
 			//move gamecomponent
 			setPositionInSendingArea(m_iBufferId);
+
+			//if there was already an element in the sending area
+			if (m_pSendingAreaElement)
+			{
+				//place to his last position the current m_psending area element
+				auto m_oHoleToFill = holeOfThisDynamicElement(m_pSendingAreaElement->getIId());
+				m_pSendingAreaElement->setAnchorPoint(Vec2(0, 0));
+				m_pSendingAreaElement->setPosition(
+						Vec2(m_oHoleToFill.origin.x, m_oHoleToFill.origin.y));
+
+				//remove the element of the sending area
+				m_pSendingAreaElement = nullptr;
+			}
+
 			m_pSendingAreaElement = m_aIdTable.find(m_iBufferId)->second;
 
 		}
@@ -364,7 +491,7 @@ void LmRightSpotScene::onTouchEndedParent(cocos2d::Touch*, cocos2d::Event*)
 
 		m_bSendingAreaElementTouched = false;
 		//remove the buffer sprite froim the layer
-		m_pLayerUserParent->removeChild(m_pBufferSprite);
+		m_pLayerGame->removeChild(m_pBufferSprite);
 		//we put the gamecomponent visible again
 		m_aIdTable.find(m_iBufferId)->second->setVisible(true);
 	}
@@ -381,7 +508,7 @@ bool LmRightSpotScene::onTouchBeganChild(Touch* touch, Event* event)
 		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
 		initBufferSprite(m_iBufferId);
 		moveBufferSprite(touch);
-		m_pLayerUserChild->addChild(m_pBufferSprite);
+		m_pLayerGame->addChild(m_pBufferSprite);
 	}
 	else
 	{
@@ -456,7 +583,7 @@ void LmRightSpotScene::onTouchEndedChild(Touch* touch, Event* event)
 		}
 
 		//remove the buffer sprite froim the layer
-		m_pLayerUserChild->removeChild(m_pBufferSprite);
+		m_pLayerGame->removeChild(m_pBufferSprite);
 		//we put the gamecomponent visible again
 		m_aIdTable.find(m_iBufferId)->second->setVisible(true);
 
@@ -542,6 +669,8 @@ void LmRightSpotScene::moveBufferSprite(Touch* touch)
 
 void LmRightSpotScene::initBufferSprite(int l_iIdGameComponent)
 {
+	CCLOG("initBuffer");
+
 	//the sprite is selected
 	m_bSpriteSelected = true;
 	//the gamecomponent selected is copy in the buffer
@@ -563,9 +692,6 @@ bool LmRightSpotScene::imageWellPlaced(int l_iIndexHole,
 
 void LmRightSpotScene::layerChildReceive(int l_iIdLmGameComponent)
 {
-	//use to place elements
-	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
-	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
 	//we get the gamecomponent with id
 	auto l_pGameComponentReceived =
@@ -574,7 +700,7 @@ void LmRightSpotScene::layerChildReceive(int l_iIdLmGameComponent)
 	//put it approximatly in the sending area(
 	setPositionInSendingArea(l_iIdLmGameComponent);
 	m_pSendingAreaElement = l_pGameComponentReceived;
-	l_pGameComponentReceived->addTo(m_pLayerUserChild);
+	l_pGameComponentReceived->setVisible(true);
 
 }
 

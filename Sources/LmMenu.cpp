@@ -80,7 +80,7 @@ bool LmMenu::logScreen()
 	m_pLogLayer->removeChild(m_pSpriteSplashScreen);
 
 	//add a background img for the log layer
-	m_pSpriteLogBackground = Sprite::create("log.png");
+	m_pSpriteLogBackground = Sprite::create(s_sFilenameSpriteBackground);
 	m_pSpriteLogBackground->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
 	m_pLogLayer->addChild(m_pSpriteLogBackground);
 
@@ -137,7 +137,7 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 		m_pLmMenuScene->addChild(m_pWifiLayer);
 
 		//add a background img for the wifi layer
-		m_pSpriteWifiBackground = Sprite::create("log.png");
+		m_pSpriteWifiBackground = Sprite::create(s_sFilenameSpriteBackground);
 		m_pSpriteWifiBackground->setPosition(l_oVisibleSize.width/2,l_oVisibleSize.height/2+l_oOrigin.y);
 		m_pWifiLayer->addChild(m_pSpriteWifiBackground);
 
