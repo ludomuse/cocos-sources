@@ -43,9 +43,10 @@ static int register_all_packages()
 
 bool AppDelegate::applicationDidFinishLaunching()
 {
+	//init our application
 	init();
 
-	//display a splashscreen then a log screen then a wifidirect screen and get info
+	//display a splashscreen of Ludomuse
 	m_pLmMenu->splashScreen();
 
 	return true;
@@ -156,6 +157,7 @@ bool AppDelegate::init()
 		//LmGameManager get users from the LmMenu
 			m_pLmGameManager->setPUser1(m_pLmMenu->getPUser1());
 			m_pLmGameManager->setPUser2(m_pLmMenu->getPUser2());
+			//then run the game
 			m_pLmGameManager->runGame();
 		};
 

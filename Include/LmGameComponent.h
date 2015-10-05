@@ -25,45 +25,39 @@ public:
 
 	//return the size of the sprite component
 	cocos2d::Size getContentSize() const;
-
 	//return the id of this gamecomponent
 	int getIId() const
 	{
 		return m_iId;
 	}
-
 	//return the sprite component
 	cocos2d::Sprite* getPSpriteComponent() const
 	{
 		return m_pSpriteComponent;
 	}
-
 	//to handle add/remove of a layer
-	void addTo(cocos2d::Layer*);
-	void addTo(cocos2d::Layer*, int);
-	void removeFrom(cocos2d::Layer*);
+	cocos2d::Rect getBoundingBoxInWorldSpace(cocos2d::Node*);
+	//return the bounding in the UIWindow space
+	cocos2d::Vec2 getPositionInWorldSpace(cocos2d::Node*) const;
+	cocos2d::Vec2 getPosition() const;
 
 	//handle position
 	void setPosition(cocos2d::Vec2);
 	void setAnchorPoint(cocos2d::Vec2);
-
 	//change the texture of the sprite component
 	void setTexture(std::string);
-
-	//return the bounding in the UIWindow space
-	cocos2d::Rect getBoundingBoxInWorldSpace(cocos2d::Node*);
-
 	//visible or not on the screen
 	void setVisible(bool);
-
+	void setTexture(cocos2d::Texture2D*);
 	void setSize(const cocos2d::Size& oSize)
 	{
 		m_oSize = oSize;
 	}
 
-	cocos2d::Vec2 getPositionInWorldSpace(cocos2d::Node*) const;
-	cocos2d::Vec2 getPosition() const;
-	void setTexture(cocos2d::Texture2D*);
+	//add/remove element of a node
+	void addTo(cocos2d::Layer*);
+	void addTo(cocos2d::Layer*, int);
+	void removeFrom(cocos2d::Layer*);
 
 	//sorting function on x and y
 	static bool sortFromTopLeftToRightBottom(LmGameComponent*,
@@ -81,6 +75,8 @@ private:
 
 	//unique id
 	int m_iId;
+
+	//METHODS
 
 };
 

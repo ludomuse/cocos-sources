@@ -13,13 +13,6 @@
 class LmUser
 {
 
-private:
-
-	const char* m_pUserName;
-	const char* m_pUserTabletName;
-	int m_iScore;
-	bool m_bParent;
-
 public:
 
 	LmUser();
@@ -66,6 +59,14 @@ public:
 	}
 
 	void addToScore(int);
+
+private:
+
+	const char* m_pUserName;
+	const char* m_pUserTabletName;
+	int m_iScore;
+	bool m_bParent;
+
 };
 
 #endif /* CLASSES_SOURCES_LMUSER_H_ */

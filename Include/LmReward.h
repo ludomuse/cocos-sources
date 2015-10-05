@@ -13,7 +13,6 @@
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
 
-
 class LmReward
 {
 public:
@@ -60,7 +59,6 @@ private:
 	std::string m_sFilenameSound;
 
 	//sprite to add to the button
-
 	cocos2d::Sprite* m_pSpriteReward;
 
 	//METHODS

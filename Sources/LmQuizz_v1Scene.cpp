@@ -10,28 +10,20 @@
 using namespace cocos2d;
 using namespace cocos2d::ui;
 
-LmQuizz_v1Scene::LmQuizz_v1Scene(std::string l_sFilenameSpriteBackground,
-		std::string l_sFilenameSpriteBandTop,
-		std::string l_sFilenameSpriteAnswerBackground,
-		std::string l_sFilenameSpriteAnswerCross,
-		std::string l_sFilenameSpriteGoodAnswerButton,
-		std::string l_sFilenameSpriteBadAnswerButton,
-		std::vector<LmQuestion*> l_aQuestions, int l_iAttemptByQuestion,
-		float l_fTimerDuration, bool l_bTimerEnbaled) :
-		LmInteractionScene()
+LmQuizz_v1Scene::LmQuizz_v1Scene(const LmQuizz_v1SceneSeed &l_Seed ) : LmInteractionScene()
 {
 
 	//json
-	m_sFilenameSpriteBackground = l_sFilenameSpriteBackground;
-	m_sFilenameSpriteBandTop = l_sFilenameSpriteBandTop;
-	m_sFilenameSpriteAnswerBackground = l_sFilenameSpriteAnswerBackground;
-	m_sFilenameSpriteAnswerCross = l_sFilenameSpriteAnswerCross;
-	m_aQuestions = l_aQuestions;
-	m_iAttemptByQuestion = l_iAttemptByQuestion;
-	m_fTimerDuration = l_fTimerDuration;
-	m_bTimerEnbaled = l_bTimerEnbaled;
-	m_sFilenameSpriteGoodAnswerButton = l_sFilenameSpriteGoodAnswerButton;
-	m_sFilenameSpriteBadAnswerButton = l_sFilenameSpriteBadAnswerButton;
+	m_sFilenameSpriteBackground = l_Seed.FilenameSpriteBackground;
+	m_sFilenameSpriteBandTop = l_Seed.FilenameSpriteBandTop;
+	m_sFilenameSpriteAnswerBackground = l_Seed.FilenameSpriteAnswerBackground;
+	m_sFilenameSpriteAnswerCross = l_Seed.FilenameSpriteAnswerCross;
+	m_aQuestions = l_Seed.Questions;
+	m_iAttemptByQuestion = l_Seed.AttemptByQuestion;
+	m_fTimerDuration = l_Seed.TimerDuration;
+	m_bTimerEnbaled = l_Seed.TimerEnbaled;
+	m_sFilenameSpriteGoodAnswerButton = l_Seed.FilenameSpriteGoodAnswerButton;
+	m_sFilenameSpriteBadAnswerButton = l_Seed.FilenameSpriteBadAnswerButton;
 
 	//pointer
 	m_pSpriteBackground = nullptr;
@@ -133,16 +125,14 @@ bool LmQuizz_v1Scene::initGame()
 	this->addChild(m_pLayerGame, 0);
 
 	//init the background
-	CCLOG("genre ici");
 	m_pSpriteBackground = Sprite::create(m_sFilenameSpriteBackground);
-	CCLOG("et pas la");
 	m_pSpriteBackground->setPosition(l_oVisibleSize.width * 0.5f + l_oOrigin.x,
 			l_oVisibleSize.height * 0.5f + l_oOrigin.y);
 	m_pLayerGame->addChild(m_pSpriteBackground);
 
 	//init timer
 	m_pTimer = LoadingBar::create();
-	m_pTimer->loadTexture("bandMid.png");
+	m_pTimer->loadTexture("GUIElements/bandMid.png");
 	m_pTimer->setPercent(0);
 	m_pTimer->setPosition(
 			Point(l_oVisibleSize.width * 0.5f + l_oOrigin.x,
@@ -211,7 +201,7 @@ bool LmQuizz_v1Scene::initGame()
 
 	//init label question
 	m_pQuestionLabel = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
-			20);
+			l_oVisibleSize.width * 0.02);
 	m_pBandTopSprite->addChild(m_pQuestionLabel);
 	m_pQuestionLabel->setPosition(
 			Vec2(m_pBandTopSprite->getContentSize().width * 0.5,
@@ -222,7 +212,7 @@ bool LmQuizz_v1Scene::initGame()
 	//init label answer and add them to their menuitemiamge
 	//1
 	m_pAnswerLabel1 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
-			20);
+			l_oVisibleSize.width * 0.02);
 	m_pCheckBoxAnswer1->addChild(m_pAnswerLabel1);
 	m_pAnswerLabel1->setPosition(
 			Vec2(m_pCheckBoxAnswer1->getContentSize().width * 0.5,
@@ -232,7 +222,7 @@ bool LmQuizz_v1Scene::initGame()
 			m_pCheckBoxAnswer1->getContentSize().width * 0.9);
 	//2
 	m_pAnswerLabel2 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
-			20);
+			l_oVisibleSize.width * 0.02);
 	m_pCheckBoxAnswer2->addChild(m_pAnswerLabel2);
 	m_pAnswerLabel2->setPosition(
 			Vec2(m_pCheckBoxAnswer2->getContentSize().width * 0.5,
@@ -242,7 +232,7 @@ bool LmQuizz_v1Scene::initGame()
 			m_pCheckBoxAnswer2->getContentSize().width * 0.9);
 	//3
 	m_pAnswerLabel3 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
-			20);
+			l_oVisibleSize.width * 0.02);
 	m_pCheckBoxAnswer3->addChild(m_pAnswerLabel3);
 	m_pAnswerLabel3->setPosition(
 			Vec2(m_pCheckBoxAnswer3->getContentSize().width * 0.5,
@@ -252,7 +242,7 @@ bool LmQuizz_v1Scene::initGame()
 			m_pCheckBoxAnswer3->getContentSize().width * 0.9);
 	//4
 	m_pAnswerLabel4 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
-			20);
+			l_oVisibleSize.width * 0.02);
 	m_pCheckBoxAnswer4->addChild(m_pAnswerLabel4);
 	m_pAnswerLabel4->setPosition(
 			Vec2(m_pCheckBoxAnswer4->getContentSize().width * 0.5,
@@ -262,8 +252,8 @@ bool LmQuizz_v1Scene::initGame()
 			m_pCheckBoxAnswer4->getContentSize().width * 0.9);
 
 	//init next question button
-	m_pNextQuestionButton = ui::Button::create("nextButtonNormal.png",
-			"nextButtonPressed.png");
+	m_pNextQuestionButton = ui::Button::create("GUIElements/nextButtonNormal.png",
+			"GUIElements/nextButtonPressed.png");
 	m_pNextQuestionButton->setTouchEnabled(true);
 	m_pNextQuestionButton->setPosition(
 			Vec2(l_oVisibleSize.width * 0.5, l_oVisibleSize.height * 0.5));
@@ -307,7 +297,7 @@ void LmQuizz_v1Scene::beginQuestion()
 		if ((int) m_iIndexQuestion >= (int) (m_aQuestions.size() - 1))
 		{
 			m_pFinishGameButton->setVisible(true);
-			 m_pLmReward->playRewardSound();
+			m_pLmReward->playRewardSound();
 
 			m_pReplayButton->setVisible(true);
 		}

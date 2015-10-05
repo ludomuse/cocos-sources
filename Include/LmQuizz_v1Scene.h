@@ -12,13 +12,8 @@
 #include "ui/CocosGUI.h"
 #include "LmQuestion.h"
 
-class LmQuizz_v1Scene: public LmInteractionScene
+struct LmQuizz_v1SceneSeed
 {
-public:
-
-	//id of this scene
-	static const int s_iId = 1;
-
 	/*
 	 * 8 parameters
 	 * FilenameSpriteBackground
@@ -32,9 +27,28 @@ public:
 	 * TimerDuration
 	 * TimerEnbaled
 	 */
-	LmQuizz_v1Scene(std::string, std::string, std::string, std::string,
-			std::string, std::string, std::vector<LmQuestion*>, int, float,
-			bool);
+
+	std::string FilenameSpriteBackground;
+	std::string FilenameSpriteBandTop;
+	std::string FilenameSpriteAnswerBackground;
+	std::string FilenameSpriteAnswerCross;
+	std::string FilenameSpriteGoodAnswerButton;
+	std::string FilenameSpriteBadAnswerButton;
+	std::vector<LmQuestion*> Questions;
+	int AttemptByQuestion;
+	float TimerDuration;
+	bool TimerEnbaled;
+
+};
+
+class LmQuizz_v1Scene: public LmInteractionScene
+{
+public:
+
+	//id of this scene
+	static const int s_iId = 1;
+
+	LmQuizz_v1Scene(const LmQuizz_v1SceneSeed &);
 	~LmQuizz_v1Scene();
 
 	//restart

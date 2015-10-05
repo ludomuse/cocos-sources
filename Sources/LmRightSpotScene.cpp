@@ -9,21 +9,17 @@
 
 using namespace cocos2d;
 
-LmRightSpotScene::LmRightSpotScene(std::string l_sFilenameSpriteBackground,
-		std::string l_sFilenameSpriteCollideZone,
-		std::string l_sFilenameRightImage, int l_iHoleOnX, int l_iHoleOnY,
-		std::vector<std::pair<int, int>> l_aLocationOfHole) :
+LmRightSpotScene::LmRightSpotScene(const LmRightSpotSceneSeed &l_Seed ) :
 		LmInteractionScene()
 {
 
 	//json parameters we need to make deep copy
-	m_sFilenameSpriteBackground = l_sFilenameSpriteBackground.c_str();
-	m_sFilenameSpriteCollideZone = l_sFilenameSpriteCollideZone.c_str();
-
-	m_sFilenameRightImage = l_sFilenameRightImage.c_str();
-	m_iHoleOnX = l_iHoleOnX;
-	m_iHoleOnY = l_iHoleOnY;
-	m_aLocationOfHole = l_aLocationOfHole;
+	m_sFilenameSpriteBackground = l_Seed.FilenameSpriteBackground;
+	m_sFilenameSpriteCollideZone = l_Seed.FilenameSpriteCollideZone;
+	m_sFilenameRightImage = l_Seed.FilenameRightImage;
+	m_iHoleOnX = l_Seed.HoleOnX;
+	m_iHoleOnY = l_Seed.HoleOnY;
+	m_aLocationOfHole = l_Seed.LocationOfHole;
 
 	//primitive type
 	m_iBufferId = -1;
@@ -38,6 +34,8 @@ LmRightSpotScene::LmRightSpotScene(std::string l_sFilenameSpriteBackground,
 	m_pBufferSprite = nullptr;
 	m_pListener = nullptr;
 	m_pSpriteBackground = nullptr;
+	m_pSendingArea=nullptr;
+	m_pSendingAreaElement=nullptr;
 
 }
 

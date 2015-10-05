@@ -59,7 +59,7 @@ void LmMenu::splashScreen()
 	m_pLmMenuScene->addChild(m_pLogLayer);
 
 	//init splash screen and display it for a while
-	m_pSpriteSplashScreen = Sprite::create("splash.png");
+	m_pSpriteSplashScreen = Sprite::create(s_sFilenameSplash);
 	m_pSpriteSplashScreen->setPosition(l_oVisibleSize.width/2+l_oOrigin.x,l_oVisibleSize.height/2+l_oOrigin.y);
 	m_pLogLayer->addChild(m_pSpriteSplashScreen);
 
@@ -85,15 +85,15 @@ bool LmMenu::logScreen()
 	m_pLogLayer->addChild(m_pSpriteLogBackground);
 
 	//log button
-	auto l_oLogButton = MenuItemImage::create("logNormal.png","logPressed.png",CC_CALLBACK_1(LmMenu::wifiDirectScreen, this));
+	auto l_oLogButton = MenuItemImage::create("GUIElements/logNormal.png","GUIElements/logPressed.png",CC_CALLBACK_1(LmMenu::wifiDirectScreen, this));
 	l_oLogButton->setAnchorPoint(Point(0.5, 0));
 	l_oLogButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.2f));
 
 	// Create the textfield
-	m_pLogEditBox = EditBox::create(Size(300,50),Scale9Sprite::create("textfieldBackground.png"));
+	m_pLogEditBox = EditBox::create(Size(l_oVisibleSize.width*0.6,l_oVisibleSize.height*0.2),Scale9Sprite::create("GUIElements/textfieldBackground.png"));
 	m_pLogEditBox->setPosition(Point(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.5f));
-	m_pLogEditBox->setPlaceHolder(" Name");
-	m_pLogEditBox->setFontSize(20);
+	m_pLogEditBox->setPlaceHolder("Name");
+	m_pLogEditBox->setFontSize(l_oVisibleSize.width*0.04);
 	m_pLogEditBox->setFontName("fonts/JosefinSans-Regular.ttf");
 	m_pLogEditBox->setFontColor(Color3B::BLACK);
 	m_pLogEditBox->setMaxLength(s_iMaxLenghtUserName);
@@ -142,7 +142,7 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 		m_pWifiLayer->addChild(m_pSpriteWifiBackground);
 
 		//Play button
-		auto l_oPlayButton = MenuItemImage::create("playNormal.png","playPressed.png",CC_CALLBACK_1(LmMenu::menuIsFinished, this));
+		auto l_oPlayButton = MenuItemImage::create("GUIElements/playNormal.png","GUIElements/playPressed.png",CC_CALLBACK_1(LmMenu::menuIsFinished, this));
 		l_oPlayButton->setAnchorPoint(Point(0.5, 0));
 		l_oPlayButton -> setPosition(Vect(l_oVisibleSize.width*0.5f,l_oVisibleSize.height*0.2f));
 

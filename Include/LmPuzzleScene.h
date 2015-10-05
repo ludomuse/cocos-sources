@@ -8,6 +8,11 @@
 
 class LmPuzzleScene: public LmInteractionScene
 {
+public:
+
+	LmPuzzleScene(int);
+	~LmPuzzleScene();
+
 private:
 
 	void runGame();
@@ -18,11 +23,6 @@ private:
 	bool sync;
 
 	cocos2d::Label* label;
-
-public:
-
-	LmPuzzleScene(int);
-	~LmPuzzleScene();
 
 };
 

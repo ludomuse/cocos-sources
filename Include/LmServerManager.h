@@ -9,12 +9,6 @@
 
 class LmServerManager
 {
-
-private:
-
-	//JsonParser to read our Json File couple with a factory to instanciate InteractionScene and GameComponent
-	LmJsonParser* m_pLmJsonparser;
-
 public:
 
 	LmServerManager();
@@ -30,6 +24,12 @@ public:
 	std::string getSTitleApplication();
 
 	std::string getSFilenameSpriteSplashScreen();
+
+private:
+
+	//JsonParser to read our Json File & to instanciate InteractionScene
+	LmJsonParser* m_pLmJsonparser;
+
 };
 
 #endif // LMSERVERMANAGER_H__

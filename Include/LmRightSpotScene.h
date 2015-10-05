@@ -22,7 +22,28 @@
 #include <utility>
 
 //margiin between image in the scrollview
-static const float s_fMarginBetweenImage = 10.0f;
+static const float s_fMarginBetweenImage = 30.0f;
+
+struct LmRightSpotSceneSeed
+{
+	/*
+	 * 6 parameters =>
+	 *  FilenameSpriteBackground
+	 *  FilenameSpriteCollideZone
+	 *  FilenameRightImage
+	 *  HoleOnX
+	 *  HoleOnY
+	 *  LocationOfHole
+	 */
+
+	std::string FilenameSpriteBackground;
+	std::string FilenameSpriteCollideZone;
+	std::string FilenameRightImage;
+	int HoleOnX;
+	int HoleOnY;
+	std::vector<std::pair<int, int>> LocationOfHole;
+
+};
 
 class LmRightSpotScene: public LmInteractionScene
 {
@@ -32,15 +53,7 @@ public:
 	//id of this scene
 	static const int s_iId = 0;
 
-	/*6 parameters =>
-	 *  FilenameSpriteBackground
-	 *  FilenameSpriteCollideZone
-	 *  FilenameRightImage
-	 *  HoleOnX
-	 *  HoleOnY
-	 *  LocationOfHole*/
-	LmRightSpotScene(std::string, std::string, std::string, int, int,
-			std::vector<std::pair<int, int>>);
+	LmRightSpotScene(const LmRightSpotSceneSeed&);
 	~LmRightSpotScene();
 
 	//methods to call from gamemanager to indicate that a gameobject appear in the sending area
@@ -135,8 +148,10 @@ private:
 	//set position of the gamecomponent id in the  sending area
 	void setPositionInSendingArea(int);
 
+	//id hole + id element to know if it's well placed
 	bool imageWellPlaced(int, int);
 
+	//get the hole of this id dynamic element
 	cocos2d::Rect holeOfThisDynamicElement(int);
 
 };

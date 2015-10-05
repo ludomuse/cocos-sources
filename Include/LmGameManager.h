@@ -10,12 +10,31 @@
 #include "LmUser.h"
 #include "LmInteractionScene.h"
 
-static const float s_fMagingOfSpriteBackgroundUser2Profile = 0.4f;
+static const float s_fMagingRatioOfSpriteBackgroundUser2Profile = 0.4f;
 static const float s_fTimeCompareAction = 0.5f;
-static const float s_fMarginBetweenInteraction = 100.0f;
+static const float s_fMarginBetweenInteraction = 260.0f;
 
 class LmGameManager
 {
+
+public:
+
+	LmGameManager();
+	~LmGameManager();
+
+	//call different method of gamemanager, init launch scene and handle layers of interactions
+	void runGame();
+
+	void setPUser1(LmUser* pUser1)
+	{
+		m_pUser1 = pUser1;
+	}
+
+	void setPUser2(LmUser* pUser2)
+	{
+		m_pUser2 = pUser2;
+	}
+
 private:
 
 	//ATTRIBUTES
@@ -110,24 +129,6 @@ private:
 
 	//callback method for the layer splash
 	bool onTouchBeganSplashScreen(cocos2d::Touch*, cocos2d::Event*);
-
-public:
-
-	LmGameManager();
-	~LmGameManager();
-
-	//call different method of gamemanager, init launch scene and handle layers of interactions
-	void runGame();
-
-	void setPUser1(LmUser* pUser1)
-	{
-		m_pUser1 = pUser1;
-	}
-
-	void setPUser2(LmUser* pUser2)
-	{
-		m_pUser2 = pUser2;
-	}
 
 };
 

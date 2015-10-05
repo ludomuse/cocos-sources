@@ -13,6 +13,7 @@
 class LmQuestion
 {
 public:
+
 	/*
 	 * answer1
 	 * answer2
@@ -57,6 +58,8 @@ public:
 
 private:
 
+	//ATTRIBUTES
+
 	std::string m_sQuestion;
 	std::string m_sAnswer1;
 	std::string m_sAnswer2;
@@ -64,6 +67,8 @@ private:
 	std::string m_sAnswer4;
 
 	int m_iNumberGoodAnswer;
+
+	//METHODS
 };
 
 #endif /* CLASSES_INCLUDE_LMQUESTION_H_ */

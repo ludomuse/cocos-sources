@@ -197,13 +197,13 @@ void LmJsonParser::initReward(const rapidjson::Value& l_oScene,
 		l_iRewardScore = l_oScene[l_sRewardTag]["RewardScore"].GetInt();
 
 		assert(l_oScene[l_sRewardTag]["FilenameSound"].IsString());
-		l_sBufferString =
-				l_oScene[l_sRewardTag]["FilenameSound"].GetString();
+		l_sBufferString = l_oScene[l_sRewardTag]["FilenameSound"].GetString();
 		l_sFilenameSound = l_sBufferString.c_str();
 
 		l_pInteractionScene->setPLmReward(
 				new LmReward(l_sFilenameSpriteBackground,
-						l_sFilenameSpriteReward, l_iRewardScore,l_sFilenameSound));
+						l_sFilenameSpriteReward, l_iRewardScore,
+						l_sFilenameSound));
 	}
 }
 
@@ -265,38 +265,30 @@ LmSetPoint* LmJsonParser::getLmSetPoint(const rapidjson::Value& l_oScene,
 
 void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 {
-	/*6 parameters =>
-	 *  FilenameSpriteBackground
-	 *  FilenameSpriteCollideZone
-	 *  FilenameRightImage
-	 *  HoleOnX
-	 *  HoleOnY
-	 *  LocationOfHole*/
+	LmRightSpotSceneSeed l_SeedBuffer;
 
-	//buffers
-	std::string l_sFilenameSpriteBackgroundBuffer;
-	std::string l_sFilenameSpriteCollideZoneBuffer;
-	std::string l_sFilenameRightImageBuffer;
-	int l_iHoleOnXBuffer;
-	int l_iHoleOnYBuffer;
-	std::vector<std::pair<int, int>> l_aLocationOfHoleBuffer;
+	//use to make deep copy
+	std::string l_sBuffer;
 
 	assert(l_oScene["FilenameSpriteBackground"].IsString());
-	l_sFilenameSpriteBackgroundBuffer =
-			l_oScene["FilenameSpriteBackground"].GetString();
+	l_sBuffer = l_oScene["FilenameSpriteBackground"].GetString();
+	l_SeedBuffer.FilenameSpriteBackground = l_sBuffer.c_str();
 
 	assert(l_oScene["FilenameSpriteCollideZone"].IsString());
-	l_sFilenameSpriteCollideZoneBuffer =
+	l_sBuffer =
 			l_oScene["FilenameSpriteCollideZone"].GetString();
+	l_SeedBuffer.FilenameSpriteCollideZone = l_sBuffer.c_str();
+
 
 	assert(l_oScene["FilenameRightImage"].IsString());
-	l_sFilenameRightImageBuffer = l_oScene["FilenameRightImage"].GetString();
+	l_sBuffer = l_oScene["FilenameRightImage"].GetString();
+	l_SeedBuffer.FilenameRightImage = l_sBuffer.c_str();
 
 	assert(l_oScene["HoleOnX"].IsInt());
-	l_iHoleOnXBuffer = l_oScene["HoleOnX"].GetInt();
+	l_SeedBuffer.HoleOnX = l_oScene["HoleOnX"].GetInt();
 
 	assert(l_oScene["HoleOnY"].IsInt());
-	l_iHoleOnYBuffer = l_oScene["HoleOnY"].GetInt();
+	l_SeedBuffer.HoleOnY = l_oScene["HoleOnY"].GetInt();
 
 	int x = 0;
 	int y = 0;
@@ -310,16 +302,13 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 		x = l_oScene["LocationOfHole"][i]["x"].GetInt();
 		y = l_oScene["LocationOfHole"][i]["y"].GetInt();
 
-		l_aLocationOfHoleBuffer.push_back(
+		l_SeedBuffer.LocationOfHole.push_back(
 		{ x, y });
 	}
 
 	//create the scene delete in the game manager
 	m_aInteractionSceneOfTheGame.push_back(
-			new LmRightSpotScene(l_sFilenameSpriteBackgroundBuffer,
-					l_sFilenameSpriteCollideZoneBuffer,
-					l_sFilenameRightImageBuffer, l_iHoleOnXBuffer,
-					l_iHoleOnYBuffer, l_aLocationOfHoleBuffer));
+			new LmRightSpotScene(l_SeedBuffer));
 
 	//get the element we just push to set the introduction
 	initSetPoint(l_oScene,
@@ -333,58 +322,36 @@ void LmJsonParser::makeLmRightSpotScene(const rapidjson::Value& l_oScene)
 
 void LmJsonParser::makeLmQuizz_v1Scene(const rapidjson::Value& l_oScene)
 {
-	/*
-	 * 8 parameters
-	 * FilenameSpriteBackground
-	 * FilenameSpriteBandTop
-	 * FilenameSpriteAnswerBackground
-	 * FilenameSpriteAnswerCross
-	 * FilenameSpriteGoodAnswerButton
-	 * FilenameSpriteBadAnswerButton
-	 * Questions
-	 * AttemptByQuestion
-	 * TimerDuration
-	 * TimerEnbaled
-	 */
 
-	//buffers
-	std::string l_sFilenameSpriteBackgroundBuffer;
-	std::string l_sFilenameSpriteBandTopBuffer;
-	std::string l_sFilenameSpriteAnswerBackgroundBuffer;
-	std::string l_sFilenameSpriteAnswerCrossBuffer;
-	std::string l_sFilenameSpriteGoodAnswerButton;
-	std::string l_sFilenameSpriteBadAnswerButton;
-	std::vector<LmQuestion*> l_aQuestionsBuffer;
-	int l_iAttemptByQuestionBuffer;
-	float l_fTimerDurationBuffer;
-	bool l_bTimerEnbaledBuffer;
+	//buffer seed
+	LmQuizz_v1SceneSeed l_SeedBuffer;
 
 	//use to deep copy string
 	std::string l_sBufferString;
 
 	assert(l_oScene["FilenameSpriteBackground"].IsString());
 	l_sBufferString = l_oScene["FilenameSpriteBackground"].GetString();
-	l_sFilenameSpriteBackgroundBuffer = l_sBufferString.c_str();
+	l_SeedBuffer.FilenameSpriteBackground = l_sBufferString.c_str();
 
 	assert(l_oScene["FilenameSpriteBandTop"].IsString());
 	l_sBufferString = l_oScene["FilenameSpriteBandTop"].GetString();
-	l_sFilenameSpriteBandTopBuffer = l_sBufferString.c_str();
+	l_SeedBuffer.FilenameSpriteBandTop = l_sBufferString.c_str();
 
 	assert(l_oScene["FilenameSpriteAnswerBackground"].IsString());
 	l_sBufferString = l_oScene["FilenameSpriteAnswerBackground"].GetString();
-	l_sFilenameSpriteAnswerBackgroundBuffer = l_sBufferString.c_str();
+	l_SeedBuffer.FilenameSpriteAnswerBackground = l_sBufferString.c_str();
 
 	assert(l_oScene["FilenameSpriteAnswerCross"].IsString());
 	l_sBufferString = l_oScene["FilenameSpriteAnswerCross"].GetString();
-	l_sFilenameSpriteAnswerCrossBuffer = l_sBufferString.c_str();
+	l_SeedBuffer.FilenameSpriteAnswerCross = l_sBufferString.c_str();
 
 	assert(l_oScene["FilenameSpriteGoodAnswerButton"].IsString());
 	l_sBufferString = l_oScene["FilenameSpriteGoodAnswerButton"].GetString();
-	l_sFilenameSpriteGoodAnswerButton = l_sBufferString.c_str();
+	l_SeedBuffer.FilenameSpriteGoodAnswerButton = l_sBufferString.c_str();
 
 	assert(l_oScene["FilenameSpriteBadAnswerButton"].IsString());
 	l_sBufferString = l_oScene["FilenameSpriteBadAnswerButton"].GetString();
-	l_sFilenameSpriteBadAnswerButton = l_sBufferString.c_str();
+	l_SeedBuffer.FilenameSpriteBadAnswerButton = l_sBufferString.c_str();
 
 	assert(l_oScene["Questions"].IsArray());
 	std::string l_sAnswer1Buffer;
@@ -431,30 +398,23 @@ void LmJsonParser::makeLmQuizz_v1Scene(const rapidjson::Value& l_oScene)
 		 * question
 		 */
 
-		l_aQuestionsBuffer.push_back(
+		l_SeedBuffer.Questions.push_back(
 				new LmQuestion(l_sAnswer1Buffer, l_sAnswer2Buffer,
 						l_sAnswer3Buffer, l_sAnswer4Buffer,
 						l_iNumberGoodAnswerBuffer, l_sQuestionBuffer));
 	}
 
 	assert(l_oScene["AttemptByQuestion"].IsInt());
-	l_iAttemptByQuestionBuffer = l_oScene["AttemptByQuestion"].GetInt();
+	l_SeedBuffer.AttemptByQuestion = l_oScene["AttemptByQuestion"].GetInt();
 
 	assert(l_oScene["TimerDuration"].IsInt());
-	l_fTimerDurationBuffer = (float) l_oScene["TimerDuration"].GetInt();
+	l_SeedBuffer.TimerDuration = (float) l_oScene["TimerDuration"].GetInt();
 
 	assert(l_oScene["TimerEnbaled"].IsBool());
-	l_bTimerEnbaledBuffer = l_oScene["TimerEnbaled"].GetBool();
+	l_SeedBuffer.TimerEnbaled = l_oScene["TimerEnbaled"].GetBool();
 
-	m_aInteractionSceneOfTheGame.push_back(
-			new LmQuizz_v1Scene(l_sFilenameSpriteBackgroundBuffer,
-					l_sFilenameSpriteBandTopBuffer,
-					l_sFilenameSpriteAnswerBackgroundBuffer,
-					l_sFilenameSpriteAnswerCrossBuffer,
-					l_sFilenameSpriteGoodAnswerButton,
-					l_sFilenameSpriteBadAnswerButton, l_aQuestionsBuffer,
-					l_iAttemptByQuestionBuffer, l_fTimerDurationBuffer,
-					l_bTimerEnbaledBuffer));
+	m_aInteractionSceneOfTheGame.push_back(new LmQuizz_v1Scene(l_SeedBuffer));
+
 	initSetPoint(l_oScene,
 			m_aInteractionSceneOfTheGame.at(
 					m_aInteractionSceneOfTheGame.size() - 1));

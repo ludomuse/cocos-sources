@@ -16,7 +16,7 @@ typedef std::map<int, LmGameComponent*>::iterator it_type;
 
 static const float s_fDashboardRatioHidden = 0.95f;
 static const float s_fTimeMovingDashboard = 0.4f;
-static const float s_fMarginLeft = 80.0f;
+static const float s_fMarginLeft = 210.0f;
 
 class LmInteractionScene: public cocos2d::Scene
 {
@@ -88,8 +88,6 @@ protected:
 	//finish button
 	cocos2d::ui::Button* m_pFinishGameButton;
 	bool m_bFinishGameButtonSync;
-	//call when the finishgamebutton is pressed
-	void endGame();
 
 	//replay button
 	cocos2d::ui::Button* m_pReplayButton;
@@ -123,6 +121,8 @@ protected:
 
 	int m_iNumberOfGameComponent;
 
+	bool m_bDashboardIsHidden;
+
 	//METHODS
 
 	//callback
@@ -136,14 +136,16 @@ protected:
 	void initDashboardLayer();
 
 	void moveDashboardLayer();
-	bool m_bDashboardIsHidden;
 	void moveRightDone();
 	void moveLeftDone();
 
 	void backToDashboard();
 
-	//set an id to the gamecomponent and return a pointer to it
+	//register the gamecomponent and return a pointer to it
 	LmGameComponent* makeGameComponent();
+
+	//call when the finishgamebutton is pressed
+	void endGame();
 
 };
 

@@ -10,23 +10,26 @@
 
 class LmLayer: public cocos2d::Layer
 {
-
-private:
-
-	//url of the img
-	std::vector<std::pair<std::string, int>> m_aImagesURL;
-	std::string m_sSoundURL;
-	std::string m_sText;
-
 public:
 
-	//use to init img, sound, text
+	/*
+	 * 3 parameters
+	 * images URL/Anchor
+	 * Sound URL
+	 * Text
+	 */
 	LmLayer(std::vector<std::pair<std::string, int>>, std::string, std::string);
 	~LmLayer();
 
 	bool init();
 	void playSound();
 	void pauseSound();
+
+private:
+
+	std::vector<std::pair<std::string, int>> m_aImagesURL;
+	std::string m_sSoundURL;
+	std::string m_sText;
 
 };
 

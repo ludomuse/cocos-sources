@@ -45,9 +45,14 @@ public:
 
 private:
 
+	//ATTRIBUTES
+
+	//his parent
 	cocos2d::Scene* m_pInteractionScene;
 
+	//vector of layers
 	std::vector<LmLayer*> m_aLayers;
+	//the current one
 	LmLayer* m_pCurrentLayer;
 
 	//use to make transition between Lmlayer
@@ -57,12 +62,14 @@ private:
 	int m_iIndex;
 	int m_iSize;
 
+	//bool to sync
+	bool m_bActionDone;
+
+	//METHODS
+
 	//callback function signature important
 	void moveLeftDone();
 	void moveRightDone();
-
-	//bool to sync
-	bool m_bActionDone;
 };
 
 #endif // LMSETPOINT_H
