@@ -353,6 +353,10 @@ void LmJsonParser::makeLmQuizz_v1Scene(const rapidjson::Value& l_oScene)
 	l_sBufferString = l_oScene["FilenameSpriteBadAnswerButton"].GetString();
 	l_SeedBuffer.FilenameSpriteBadAnswerButton = l_sBufferString.c_str();
 
+	assert(l_oScene["FilenameAudioAnswerSelected"].IsString());
+	l_sBufferString = l_oScene["FilenameAudioAnswerSelected"].GetString();
+	l_SeedBuffer.FilenameAudioAnswerSelected = l_sBufferString.c_str();
+
 	assert(l_oScene["Questions"].IsArray());
 	std::string l_sAnswer1Buffer;
 	std::string l_sAnswer2Buffer;

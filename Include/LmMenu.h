@@ -67,6 +67,13 @@ private:
 	//bool to be sure to click one time the play button
 	bool m_bPlayButtonClicked;
 
+	//to know gender
+
+	cocos2d::ui::CheckBox* m_pCheckBoxMale;
+	cocos2d::ui::CheckBox* m_pCheckBoxFemale;
+
+	bool m_bNoGenderSelected;
+
 	//METHODS
 
 	//callback button methods
@@ -77,6 +84,11 @@ private:
 
 	//callback method of splashscreen
 	bool logScreen();
+
+	//callback method of answer box
+	void maleSelected(cocos2d::Ref*, cocos2d::ui::CheckBox::EventType);
+	void femaleSelected(cocos2d::Ref*, cocos2d::ui::CheckBox::EventType);
+
 
 };
 

@@ -23,11 +23,8 @@
 
 //use to make each scene
 #include "LmInteractionScene.h"
-#include "LmPuzzleScene.h"
 #include "LmRightSpotScene.h"
 #include "LmQuizz_v1Scene.h"
-#include "LmSetPoint.h"
-#include "LmReward.h"
 
 class LmJsonParser
 {

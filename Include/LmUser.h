@@ -60,12 +60,18 @@ public:
 
 	void addToScore(int);
 
+	void setBMale(bool bMale)
+	{
+		m_bMale = bMale;
+	}
+
 private:
 
 	const char* m_pUserName;
 	const char* m_pUserTabletName;
 	int m_iScore;
 	bool m_bParent;
+	bool m_bMale;
 
 };
 

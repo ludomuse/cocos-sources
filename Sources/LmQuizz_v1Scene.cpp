@@ -24,6 +24,7 @@ LmQuizz_v1Scene::LmQuizz_v1Scene(const LmQuizz_v1SceneSeed &l_Seed ) : LmInterac
 	m_bTimerEnbaled = l_Seed.TimerEnbaled;
 	m_sFilenameSpriteGoodAnswerButton = l_Seed.FilenameSpriteGoodAnswerButton;
 	m_sFilenameSpriteBadAnswerButton = l_Seed.FilenameSpriteBadAnswerButton;
+	m_sFilenameAudioAnswerSelected = l_Seed.FilenameAudioAnswerSelected;
 
 	//pointer
 	m_pSpriteBackground = nullptr;
@@ -57,6 +58,14 @@ LmQuizz_v1Scene::~LmQuizz_v1Scene()
 	{
 		delete (*it);
 	}
+}
+
+void LmQuizz_v1Scene::runGame()
+{
+	initGame();
+
+	//we preload the sound
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(m_sFilenameAudioAnswerSelected.c_str());
 }
 
 void LmQuizz_v1Scene::restart()
@@ -105,18 +114,10 @@ void LmQuizz_v1Scene::resetScene()
 	}
 }
 
-void LmQuizz_v1Scene::runGame()
-{
-	initGame();
-
-	//we preload the sound
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(
-			"audio/son.mp3");
-}
-
 bool LmQuizz_v1Scene::initGame()
 {
 
+	CCLOG("test");
 	//use to place elements
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
@@ -362,8 +363,7 @@ void LmQuizz_v1Scene::checkAnswer()
 	else
 	{
 
-		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(
-				"audio/son.mp3", false);
+		CCLOG("bad answer");
 
 		//still have attempt
 		if (m_iNumberOfAttempt > 0)
@@ -433,6 +433,8 @@ void LmQuizz_v1Scene::answerSelected(Ref* pSender, CheckBox::EventType type)
 		switch (type)
 		{
 		case CheckBox::EventType::SELECTED:
+			//play a sound from the json
+			CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(m_sFilenameAudioAnswerSelected.c_str(),false);
 			select(l_iIdCheckBox, true);
 			break;
 

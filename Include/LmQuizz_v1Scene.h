@@ -14,19 +14,6 @@
 
 struct LmQuizz_v1SceneSeed
 {
-	/*
-	 * 8 parameters
-	 * FilenameSpriteBackground
-	 * FilenameSpriteBandTop
-	 * FilenameSpriteAnswerBackground
-	 * FilenameSpriteAnswerCross
-	 * FilenameSpriteGoodAnswerButton
-	 * FilenameSpriteBadAnswerButton
-	 * Questions
-	 * AttemptByQuestion
-	 * TimerDuration
-	 * TimerEnbaled
-	 */
 
 	std::string FilenameSpriteBackground;
 	std::string FilenameSpriteBandTop;
@@ -34,6 +21,7 @@ struct LmQuizz_v1SceneSeed
 	std::string FilenameSpriteAnswerCross;
 	std::string FilenameSpriteGoodAnswerButton;
 	std::string FilenameSpriteBadAnswerButton;
+	std::string FilenameAudioAnswerSelected;
 	std::vector<LmQuestion*> Questions;
 	int AttemptByQuestion;
 	float TimerDuration;
@@ -68,6 +56,7 @@ private:
 	std::string m_sFilenameSpriteAnswerCross;
 	std::string m_sFilenameSpriteGoodAnswerButton;
 	std::string m_sFilenameSpriteBadAnswerButton;
+	std::string m_sFilenameAudioAnswerSelected;
 
 	std::vector<LmQuestion*> m_aQuestions;
 	int m_iAttemptByQuestion;

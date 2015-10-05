@@ -12,10 +12,13 @@ LmUser::LmUser()
 
 	//primitive type
 	m_iScore = 0;
+	m_bMale = true;
 
 	//pointer
 	m_pUserName = nullptr;
 	m_pUserTabletName = nullptr;
+	m_bParent=nullptr;
+
 
 }
 
