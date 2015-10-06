@@ -15,7 +15,7 @@ LmRightSpotScene::LmRightSpotScene(const LmRightSpotSceneSeed &l_Seed ) :
 
 	//json parameters we need to make deep copy
 	m_sFilenameSpriteBackground = l_Seed.FilenameSpriteBackground;
-	m_sFilenameSpriteCollideZone = l_Seed.FilenameSpriteCollideZone;
+	m_sFilenameSpriteSendingArea = l_Seed.FilenameSpriteSendingArea;
 	m_sFilenameRightImage = l_Seed.FilenameRightImage;
 	m_iHoleOnX = l_Seed.HoleOnX;
 	m_iHoleOnY = l_Seed.HoleOnY;
@@ -31,27 +31,19 @@ LmRightSpotScene::LmRightSpotScene(const LmRightSpotSceneSeed &l_Seed ) :
 	m_bSendingAreaElementTouched = false;
 
 	//pointer
+	m_pSendingAreaElement=nullptr;
 	m_pBufferSprite = nullptr;
 	m_pListener = nullptr;
 	m_pSpriteBackground = nullptr;
 	m_pSendingArea=nullptr;
-	m_pSendingAreaElement=nullptr;
 
 }
 
 LmRightSpotScene::~LmRightSpotScene()
 {
-	//destroy all gamecomponent
-
-	for (it_type it = m_aIdTable.begin(); it != m_aIdTable.end(); ++it)
-	{
-		//destroy the pointer on the LmGameComponent
-		delete it->second;
-	}
 
 	Director::getInstance()->getEventDispatcher()->removeEventListener(
 			m_pListener);
-
 }
 
 void LmRightSpotScene::restart()
@@ -168,7 +160,7 @@ void LmRightSpotScene::runGame()
 
 	//we preload the sound
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(
-			"audio/son.mp3");
+			"Audio/Ludomuse/son.mp3");
 }
 
 bool LmRightSpotScene::initGame()
@@ -188,7 +180,7 @@ bool LmRightSpotScene::initGame()
 
 	//init Sending Area
 	m_pSendingArea = makeGameComponent();
-	m_pSendingArea->initSpriteComponent(m_sFilenameSpriteCollideZone);
+	m_pSendingArea->initSpriteComponent(m_sFilenameSpriteSendingArea);
 	m_pSendingArea->setPosition(
 			Vec2(
 					l_oVisibleSize.width
@@ -655,7 +647,7 @@ void LmRightSpotScene::setPositionInSendingArea(int id)
 
 	m_aIdTable.find(id)->second->setAnchorPoint(Vec2(0, 0.5));
 	m_aIdTable.find(id)->second->setPosition(
-			Vec2(l_oVisibleSize.width - m_pSendingArea->getContentSize().width,
+			Vec2(l_oVisibleSize.width - (m_fWidthRect+m_pSendingArea->getContentSize().width)*0.5,
 					l_oVisibleSize.height * 0.5));
 }
 

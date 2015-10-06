@@ -91,8 +91,8 @@ bool LmMenu::logScreen()
 	m_pLogLayer->addChild(m_pSpriteLogBackground);
 
 	//log button
-	auto l_oLogButton = MenuItemImage::create("GUIElements/logNormal.png",
-			"GUIElements/logPressed.png",
+	auto l_oLogButton = MenuItemImage::create("Ludomuse/GUIElements/logNormal.png",
+			"Ludomuse/GUIElements/logPressed.png",
 			CC_CALLBACK_1(LmMenu::wifiDirectScreen, this));
 	l_oLogButton->setAnchorPoint(Point(0.5, 0));
 	l_oLogButton->setPosition(
@@ -101,15 +101,19 @@ bool LmMenu::logScreen()
 	// Create the textfield
 	m_pLogEditBox = EditBox::create(
 			Size(l_oVisibleSize.width * 0.6, l_oVisibleSize.height * 0.2),
-			Scale9Sprite::create("GUIElements/textfieldBackground.png"));
+			Scale9Sprite::create("Ludomuse/GUIElements/textfieldBackground.png"));
 	m_pLogEditBox->setPosition(
 			Point(l_oVisibleSize.width * 0.5f, l_oVisibleSize.height * 0.8f));
 	m_pLogEditBox->setPlaceHolder("Name");
 	m_pLogEditBox->setFontSize(l_oVisibleSize.width * 0.04);
-	m_pLogEditBox->setFontName("fonts/JosefinSans-Regular.ttf");
+	m_pLogEditBox->setFontName("Fonts/JosefinSans-Regular.ttf");
 	m_pLogEditBox->setFontColor(Color3B::BLACK);
 	m_pLogEditBox->setMaxLength(s_iMaxLenghtUserName);
 	m_pLogEditBox->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
+
+	//test
+	m_pLogEditBox->setText("P");
+
 	m_pLogLayer->addChild(m_pLogEditBox, 1);
 
 	//the string which contain the user name is contain is an autorelease object editbox and will disapear when use in the gamemanager
@@ -122,8 +126,8 @@ bool LmMenu::logScreen()
 	m_pLogLayer->addChild(l_oMenu, 1);
 
 	//init checkbox male
-	m_pCheckBoxMale = CheckBox::create("GUIElements/logNormal.png",
-			"GUIElements/answerSelected.png");
+	m_pCheckBoxMale = CheckBox::create("Ludomuse/GUIElements/logNormal.png",
+			"Ludomuse/GUIElements/logPressed.png");
 	m_pCheckBoxMale->setTouchEnabled(true);
 	m_pCheckBoxMale->setSwallowTouches(false);
 	m_pCheckBoxMale->setPosition(
@@ -133,8 +137,8 @@ bool LmMenu::logScreen()
 	m_pLogLayer->addChild(m_pCheckBoxMale);
 
 	//init checkbox female
-	m_pCheckBoxFemale = CheckBox::create("GUIElements/answerBackgroundSelected.png",
-			"GUIElements/answerSelected.png");
+	m_pCheckBoxFemale = CheckBox::create("Ludomuse/GUIElements/playNormal.png",
+			"Ludomuse/GUIElements/playPressed.png");
 	m_pCheckBoxFemale->setTouchEnabled(true);
 	m_pCheckBoxFemale->setSwallowTouches(false);
 	m_pCheckBoxFemale->setPosition(
@@ -177,8 +181,8 @@ bool LmMenu::wifiDirectScreen(cocos2d::Ref* l_oSender)
 		m_pWifiLayer->addChild(m_pSpriteWifiBackground);
 
 		//Play button
-		auto l_oPlayButton = MenuItemImage::create("GUIElements/playNormal.png",
-				"GUIElements/playPressed.png",
+		auto l_oPlayButton = MenuItemImage::create("Ludomuse/GUIElements/playNormal.png",
+				"Ludomuse/GUIElements/playPressed.png",
 				CC_CALLBACK_1(LmMenu::menuIsFinished, this));
 		l_oPlayButton->setAnchorPoint(Point(0.5, 0));
 		l_oPlayButton->setPosition(

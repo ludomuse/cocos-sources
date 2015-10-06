@@ -30,16 +30,16 @@ LmQuizz_v1Scene::LmQuizz_v1Scene(const LmQuizz_v1SceneSeed &l_Seed ) : LmInterac
 	m_pSpriteBackground = nullptr;
 	m_pTimer = nullptr;
 	m_pNextQuestionButton = nullptr;
-	m_pAnswerLabel1 = nullptr;
-	m_pAnswerLabel2 = nullptr;
-	m_pAnswerLabel3 = nullptr;
-	m_pAnswerLabel4 = nullptr;
+	m_pAnswerLabel[0] = nullptr;
+	m_pAnswerLabel[1] = nullptr;
+	m_pAnswerLabel[2] = nullptr;
+	m_pAnswerLabel[3] = nullptr;
 	m_pQuestionLabel = nullptr;
 	m_pBandTopSprite = nullptr;
-	m_pCheckBoxAnswer1 = nullptr;
-	m_pCheckBoxAnswer2 = nullptr;
-	m_pCheckBoxAnswer3 = nullptr;
-	m_pCheckBoxAnswer4 = nullptr;
+	m_pCheckBoxAnswer[0] = nullptr;
+	m_pCheckBoxAnswer[1] = nullptr;
+	m_pCheckBoxAnswer[2] = nullptr;
+	m_pCheckBoxAnswer[3] = nullptr;
 
 	//primitive type
 	m_iCounter = 0;
@@ -85,10 +85,10 @@ void LmQuizz_v1Scene::resetScene()
 		m_bReplayButtonSync = false;
 		m_iIndexQuestion = -1;	//so when we init the next question index = 0
 		//reset checkbox
-		m_pCheckBoxAnswer1->setSelected(false);
-		m_pCheckBoxAnswer2->setSelected(false);
-		m_pCheckBoxAnswer3->setSelected(false);
-		m_pCheckBoxAnswer4->setSelected(false);
+		m_pCheckBoxAnswer[0]->setSelected(false);
+		m_pCheckBoxAnswer[1]->setSelected(false);
+		m_pCheckBoxAnswer[2]->setSelected(false);
+		m_pCheckBoxAnswer[3]->setSelected(false);
 
 		m_iNumberOfAttempt = m_iAttemptByQuestion;
 
@@ -117,7 +117,6 @@ void LmQuizz_v1Scene::resetScene()
 bool LmQuizz_v1Scene::initGame()
 {
 
-	CCLOG("test");
 	//use to place elements
 	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
 	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
@@ -133,7 +132,7 @@ bool LmQuizz_v1Scene::initGame()
 
 	//init timer
 	m_pTimer = LoadingBar::create();
-	m_pTimer->loadTexture("GUIElements/bandMid.png");
+	m_pTimer->loadTexture("Ludomuse/GUIElements/bandMid.png");
 	m_pTimer->setPercent(0);
 	m_pTimer->setPosition(
 			Point(l_oVisibleSize.width * 0.5f + l_oOrigin.x,
@@ -156,52 +155,52 @@ bool LmQuizz_v1Scene::initGame()
 
 	//menuitem answer create + set position
 	//1
-	m_pCheckBoxAnswer1 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+	m_pCheckBoxAnswer[0] = CheckBox::create(m_sFilenameSpriteAnswerBackground,
 			m_sFilenameSpriteAnswerCross);
-	m_pCheckBoxAnswer1->setTouchEnabled(true);
-	m_pCheckBoxAnswer1->setSwallowTouches(false);
-	m_pCheckBoxAnswer1->setPosition(
+	m_pCheckBoxAnswer[0]->setTouchEnabled(true);
+	m_pCheckBoxAnswer[0]->setSwallowTouches(false);
+	m_pCheckBoxAnswer[0]->setPosition(
 			Vec2(l_oVisibleSize.width * 0.25,
 					m_fHeight * 0.75f + m_pTimer->getContentSize().height));
-	m_pCheckBoxAnswer1->addEventListener(
+	m_pCheckBoxAnswer[0]->addEventListener(
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
-	m_pLayerGame->addChild(m_pCheckBoxAnswer1);
+	m_pLayerGame->addChild(m_pCheckBoxAnswer[0]);
 	//2
-	m_pCheckBoxAnswer2 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+	m_pCheckBoxAnswer[1] = CheckBox::create(m_sFilenameSpriteAnswerBackground,
 			m_sFilenameSpriteAnswerCross);
-	m_pCheckBoxAnswer2->setTouchEnabled(true);
-	m_pCheckBoxAnswer2->setSwallowTouches(false);
-	m_pCheckBoxAnswer2->setPosition(
+	m_pCheckBoxAnswer[1]->setTouchEnabled(true);
+	m_pCheckBoxAnswer[1]->setSwallowTouches(false);
+	m_pCheckBoxAnswer[1]->setPosition(
 			Vec2(l_oVisibleSize.width * 0.75,
 					m_fHeight * 0.75f + m_pTimer->getContentSize().height));
-	m_pCheckBoxAnswer2->addEventListener(
+	m_pCheckBoxAnswer[1]->addEventListener(
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
-	m_pLayerGame->addChild(m_pCheckBoxAnswer2);
+	m_pLayerGame->addChild(m_pCheckBoxAnswer[1]);
 	//3
-	m_pCheckBoxAnswer3 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+	m_pCheckBoxAnswer[2] = CheckBox::create(m_sFilenameSpriteAnswerBackground,
 			m_sFilenameSpriteAnswerCross);
-	m_pCheckBoxAnswer3->setTouchEnabled(true);
-	m_pCheckBoxAnswer3->setSwallowTouches(false);
-	m_pCheckBoxAnswer3->setPosition(
+	m_pCheckBoxAnswer[2]->setTouchEnabled(true);
+	m_pCheckBoxAnswer[2]->setSwallowTouches(false);
+	m_pCheckBoxAnswer[2]->setPosition(
 			Vec2(l_oVisibleSize.width * 0.25,
 					m_fHeight * 0.25f + m_pTimer->getContentSize().height));
-	m_pCheckBoxAnswer3->addEventListener(
+	m_pCheckBoxAnswer[2]->addEventListener(
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
-	m_pLayerGame->addChild(m_pCheckBoxAnswer3);
+	m_pLayerGame->addChild(m_pCheckBoxAnswer[2]);
 	//4
-	m_pCheckBoxAnswer4 = CheckBox::create(m_sFilenameSpriteAnswerBackground,
+	m_pCheckBoxAnswer[3] = CheckBox::create(m_sFilenameSpriteAnswerBackground,
 			m_sFilenameSpriteAnswerCross);
-	m_pCheckBoxAnswer4->setTouchEnabled(true);
-	m_pCheckBoxAnswer4->setSwallowTouches(false);
-	m_pCheckBoxAnswer4->setPosition(
+	m_pCheckBoxAnswer[3]->setTouchEnabled(true);
+	m_pCheckBoxAnswer[3]->setSwallowTouches(false);
+	m_pCheckBoxAnswer[3]->setPosition(
 			Vec2(l_oVisibleSize.width * 0.75,
 					m_fHeight * 0.25f + m_pTimer->getContentSize().height));
-	m_pCheckBoxAnswer4->addEventListener(
+	m_pCheckBoxAnswer[3]->addEventListener(
 			CC_CALLBACK_2(LmQuizz_v1Scene::answerSelected, this));
-	m_pLayerGame->addChild(m_pCheckBoxAnswer4);
+	m_pLayerGame->addChild(m_pCheckBoxAnswer[3]);
 
 	//init label question
-	m_pQuestionLabel = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
+	m_pQuestionLabel = Label::createWithTTF("", "Fonts/JosefinSans-Regular.ttf",
 			l_oVisibleSize.width * 0.02);
 	m_pBandTopSprite->addChild(m_pQuestionLabel);
 	m_pQuestionLabel->setPosition(
@@ -212,49 +211,49 @@ bool LmQuizz_v1Scene::initGame()
 
 	//init label answer and add them to their menuitemiamge
 	//1
-	m_pAnswerLabel1 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
+	m_pAnswerLabel[0] = Label::createWithTTF("", "Fonts/JosefinSans-Regular.ttf",
 			l_oVisibleSize.width * 0.02);
-	m_pCheckBoxAnswer1->addChild(m_pAnswerLabel1);
-	m_pAnswerLabel1->setPosition(
-			Vec2(m_pCheckBoxAnswer1->getContentSize().width * 0.5,
-					m_pCheckBoxAnswer1->getContentSize().height * 0.5));
-	m_pAnswerLabel1->setColor(Color3B::BLACK);
-	m_pAnswerLabel1->setMaxLineWidth(
-			m_pCheckBoxAnswer1->getContentSize().width * 0.9);
+	m_pCheckBoxAnswer[0]->addChild(m_pAnswerLabel[0]);
+	m_pAnswerLabel[0]->setPosition(
+			Vec2(m_pCheckBoxAnswer[0]->getContentSize().width * 0.5,
+					m_pCheckBoxAnswer[0]->getContentSize().height * 0.5));
+	m_pAnswerLabel[0]->setColor(Color3B::BLACK);
+	m_pAnswerLabel[0]->setMaxLineWidth(
+			m_pCheckBoxAnswer[0]->getContentSize().width * 0.9);
 	//2
-	m_pAnswerLabel2 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
+	m_pAnswerLabel[1] = Label::createWithTTF("", "Fonts/JosefinSans-Regular.ttf",
 			l_oVisibleSize.width * 0.02);
-	m_pCheckBoxAnswer2->addChild(m_pAnswerLabel2);
-	m_pAnswerLabel2->setPosition(
-			Vec2(m_pCheckBoxAnswer2->getContentSize().width * 0.5,
-					m_pCheckBoxAnswer2->getContentSize().height * 0.5));
-	m_pAnswerLabel2->setColor(Color3B::BLACK);
-	m_pAnswerLabel2->setMaxLineWidth(
-			m_pCheckBoxAnswer2->getContentSize().width * 0.9);
+	m_pCheckBoxAnswer[1]->addChild(m_pAnswerLabel[1]);
+	m_pAnswerLabel[1]->setPosition(
+			Vec2(m_pCheckBoxAnswer[1]->getContentSize().width * 0.5,
+					m_pCheckBoxAnswer[1]->getContentSize().height * 0.5));
+	m_pAnswerLabel[1]->setColor(Color3B::BLACK);
+	m_pAnswerLabel[1]->setMaxLineWidth(
+			m_pCheckBoxAnswer[1]->getContentSize().width * 0.9);
 	//3
-	m_pAnswerLabel3 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
+	m_pAnswerLabel[2] = Label::createWithTTF("", "Fonts/JosefinSans-Regular.ttf",
 			l_oVisibleSize.width * 0.02);
-	m_pCheckBoxAnswer3->addChild(m_pAnswerLabel3);
-	m_pAnswerLabel3->setPosition(
-			Vec2(m_pCheckBoxAnswer3->getContentSize().width * 0.5,
-					m_pCheckBoxAnswer3->getContentSize().height * 0.5));
-	m_pAnswerLabel3->setColor(Color3B::BLACK);
-	m_pAnswerLabel3->setMaxLineWidth(
-			m_pCheckBoxAnswer3->getContentSize().width * 0.9);
+	m_pCheckBoxAnswer[2]->addChild(m_pAnswerLabel[2]);
+	m_pAnswerLabel[2]->setPosition(
+			Vec2(m_pCheckBoxAnswer[2]->getContentSize().width * 0.5,
+					m_pCheckBoxAnswer[2]->getContentSize().height * 0.5));
+	m_pAnswerLabel[2]->setColor(Color3B::BLACK);
+	m_pAnswerLabel[2]->setMaxLineWidth(
+			m_pCheckBoxAnswer[2]->getContentSize().width * 0.9);
 	//4
-	m_pAnswerLabel4 = Label::createWithTTF("", "fonts/JosefinSans-Regular.ttf",
+	m_pAnswerLabel[3] = Label::createWithTTF("", "Fonts/JosefinSans-Regular.ttf",
 			l_oVisibleSize.width * 0.02);
-	m_pCheckBoxAnswer4->addChild(m_pAnswerLabel4);
-	m_pAnswerLabel4->setPosition(
-			Vec2(m_pCheckBoxAnswer4->getContentSize().width * 0.5,
-					m_pCheckBoxAnswer4->getContentSize().height * 0.5));
-	m_pAnswerLabel4->setColor(Color3B::BLACK);
-	m_pAnswerLabel4->setMaxLineWidth(
-			m_pCheckBoxAnswer4->getContentSize().width * 0.9);
+	m_pCheckBoxAnswer[3]->addChild(m_pAnswerLabel[3]);
+	m_pAnswerLabel[3]->setPosition(
+			Vec2(m_pCheckBoxAnswer[3]->getContentSize().width * 0.5,
+					m_pCheckBoxAnswer[3]->getContentSize().height * 0.5));
+	m_pAnswerLabel[3]->setColor(Color3B::BLACK);
+	m_pAnswerLabel[3]->setMaxLineWidth(
+			m_pCheckBoxAnswer[3]->getContentSize().width * 0.9);
 
 	//init next question button
-	m_pNextQuestionButton = ui::Button::create("GUIElements/nextButtonNormal.png",
-			"GUIElements/nextButtonPressed.png");
+	m_pNextQuestionButton = ui::Button::create("Ludomuse/GUIElements/nextButtonNormal.png",
+			"Ludomuse/GUIElements/nextButtonPressed.png");
 	m_pNextQuestionButton->setTouchEnabled(true);
 	m_pNextQuestionButton->setPosition(
 			Vec2(l_oVisibleSize.width * 0.5, l_oVisibleSize.height * 0.5));
@@ -305,10 +304,10 @@ void LmQuizz_v1Scene::beginQuestion()
 		else
 		{
 			//reset checkbox
-			m_pCheckBoxAnswer1->setSelected(false);
-			m_pCheckBoxAnswer2->setSelected(false);
-			m_pCheckBoxAnswer3->setSelected(false);
-			m_pCheckBoxAnswer4->setSelected(false);
+			m_pCheckBoxAnswer[0]->setSelected(false);
+			m_pCheckBoxAnswer[1]->setSelected(false);
+			m_pCheckBoxAnswer[2]->setSelected(false);
+			m_pCheckBoxAnswer[3]->setSelected(false);
 
 			m_iNumberOfAttempt = m_iAttemptByQuestion;
 
@@ -340,10 +339,10 @@ void LmQuizz_v1Scene::initNextQuestion()
 
 	//set label string
 	m_pQuestionLabel->setString(l_pQuestion->getSQuestion());
-	m_pAnswerLabel1->setString(l_pQuestion->getSAnswer1());
-	m_pAnswerLabel2->setString(l_pQuestion->getSAnswer2());
-	m_pAnswerLabel3->setString(l_pQuestion->getSAnswer3());
-	m_pAnswerLabel4->setString(l_pQuestion->getSAnswer4());
+	m_pAnswerLabel[0]->setString(l_pQuestion->getSAnswer1());
+	m_pAnswerLabel[1]->setString(l_pQuestion->getSAnswer2());
+	m_pAnswerLabel[2]->setString(l_pQuestion->getSAnswer3());
+	m_pAnswerLabel[3]->setString(l_pQuestion->getSAnswer4());
 
 }
 
@@ -409,19 +408,19 @@ void LmQuizz_v1Scene::answerSelected(Ref* pSender, CheckBox::EventType type)
 		int l_iIdCheckBox = 0;
 
 		//register the sender
-		if (l_pCheckBoxPressed == m_pCheckBoxAnswer1)
+		if (l_pCheckBoxPressed == m_pCheckBoxAnswer[0])
 		{
 			l_iIdCheckBox = 1;
 		}
-		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer2)
+		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer[1])
 		{
 			l_iIdCheckBox = 2;
 		}
-		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer3)
+		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer[2])
 		{
 			l_iIdCheckBox = 3;
 		}
-		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer4)
+		else if (l_pCheckBoxPressed == m_pCheckBoxAnswer[3])
 		{
 			l_iIdCheckBox = 4;
 		}
@@ -476,24 +475,24 @@ void LmQuizz_v1Scene::select(int l_iIdCheckBoxPressed, bool selected)
 		switch (l_iIdCheckBoxPressed)
 		{
 		case 1:
-			m_pCheckBoxAnswer2->setSelected(false);
-			m_pCheckBoxAnswer3->setSelected(false);
-			m_pCheckBoxAnswer4->setSelected(false);
+			m_pCheckBoxAnswer[1]->setSelected(false);
+			m_pCheckBoxAnswer[2]->setSelected(false);
+			m_pCheckBoxAnswer[3]->setSelected(false);
 			break;
 		case 2:
-			m_pCheckBoxAnswer1->setSelected(false);
-			m_pCheckBoxAnswer3->setSelected(false);
-			m_pCheckBoxAnswer4->setSelected(false);
+			m_pCheckBoxAnswer[0]->setSelected(false);
+			m_pCheckBoxAnswer[2]->setSelected(false);
+			m_pCheckBoxAnswer[3]->setSelected(false);
 			break;
 		case 3:
-			m_pCheckBoxAnswer1->setSelected(false);
-			m_pCheckBoxAnswer2->setSelected(false);
-			m_pCheckBoxAnswer4->setSelected(false);
+			m_pCheckBoxAnswer[0]->setSelected(false);
+			m_pCheckBoxAnswer[1]->setSelected(false);
+			m_pCheckBoxAnswer[3]->setSelected(false);
 			break;
 		case 4:
-			m_pCheckBoxAnswer1->setSelected(false);
-			m_pCheckBoxAnswer2->setSelected(false);
-			m_pCheckBoxAnswer3->setSelected(false);
+			m_pCheckBoxAnswer[0]->setSelected(false);
+			m_pCheckBoxAnswer[1]->setSelected(false);
+			m_pCheckBoxAnswer[2]->setSelected(false);
 			break;
 		default:
 			break;
@@ -509,9 +508,9 @@ void LmQuizz_v1Scene::select(int l_iIdCheckBoxPressed, bool selected)
 
 void LmQuizz_v1Scene::checkBoxTouchEnabled(bool enabled)
 {
-	m_pCheckBoxAnswer1->setEnabled(enabled);
-	m_pCheckBoxAnswer2->setEnabled(enabled);
-	m_pCheckBoxAnswer3->setEnabled(enabled);
-	m_pCheckBoxAnswer4->setEnabled(enabled);
+	m_pCheckBoxAnswer[0]->setEnabled(enabled);
+	m_pCheckBoxAnswer[1]->setEnabled(enabled);
+	m_pCheckBoxAnswer[2]->setEnabled(enabled);
+	m_pCheckBoxAnswer[3]->setEnabled(enabled);
 }
 

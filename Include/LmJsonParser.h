@@ -25,6 +25,7 @@
 #include "LmInteractionScene.h"
 #include "LmRightSpotScene.h"
 #include "LmQuizz_v1Scene.h"
+#include "LmFindGoodCategoryScene.h"
 
 class LmJsonParser
 {
@@ -79,6 +80,8 @@ private:
 	//our function which make scene
 	void makeLmRightSpotScene(const rapidjson::Value&);
 	void makeLmQuizz_v1Scene(const rapidjson::Value&);
+	void makeLmFindGoodCategoryScene(const rapidjson::Value&);
+
 };
 
 #endif /* CLASSES_LMJSONPARSER_H_ */

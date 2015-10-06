@@ -50,9 +50,13 @@ LmInteractionScene::~LmInteractionScene()
 		delete m_pLmReward;
 	}
 
-	m_pLayerGame->release();
-	m_pNextButton->release();
-	m_pPreviousButton->release();
+	//destroy all gamecomponent
+
+	for (it_type it = m_aIdTable.begin(); it != m_aIdTable.end(); ++it)
+	{
+		//destroy the pointer on the LmGameComponent
+		delete it->second;
+	}
 
 	delete m_pLmSetPointBegin;
 	delete m_pLmSetPointEnd;
@@ -77,8 +81,8 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
 	//next button
-	m_pNextButton = ui::Button::create("GUIElements/nextButtonNormal.png",
-			"GUIElements/nextButtonPressed.png");
+	m_pNextButton = ui::Button::create("Ludomuse/GUIElements/nextButtonNormal.png",
+			"Ludomuse/GUIElements/nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
 	m_pNextButton->setPosition(
 			Vect(
@@ -91,8 +95,9 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	addChild(m_pNextButton, 1);
 
 	//previous button
-	m_pPreviousButton = ui::Button::create("GUIElements/previousButtonNormal.png",
-			"GUIElements/previousButtonPressed.png");
+	m_pPreviousButton = ui::Button::create(
+			"Ludomuse/GUIElements/previousButtonNormal.png",
+			"Ludomuse/GUIElements/previousButtonPressed.png");
 	m_pPreviousButton->setTouchEnabled(true);
 	m_pPreviousButton->setPosition(
 			Vect(m_pPreviousButton->getContentSize().width * 0.8,
@@ -107,9 +112,9 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pLayerGame = Layer::create();
 	m_pLayerGame->retain();
 
-	//finish button
-	m_pFinishGameButton = ui::Button::create("GUIElements/nextButtonNormal.png",
-			"GUIElements/nextButtonPressed.png");
+	//finish button default one
+	m_pFinishGameButton = ui::Button::create("Ludomuse/GUIElements/nextButtonNormal.png",
+			"Ludomuse/GUIElements/nextButtonPressed.png");
 
 	//if there is a reward we init the button with the appropriate sprite
 	if (m_pLmReward)
@@ -137,9 +142,9 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pFinishGameButton->setVisible(false);
 	m_pLayerGame->addChild(m_pFinishGameButton, 1);
 
-	//replay button
-	m_pReplayButton = ui::Button::create("GUIElements/answerBackground.png",
-			"GUIElements/answerBackgroundSelected.png");
+	//replay button default one
+	m_pReplayButton = ui::Button::create("Ludomuse/GUIElements/playNormal.png",
+			"Ludomuse/GUIElements/playPressed.png");
 
 	m_pReplayButton->setTouchEnabled(true);
 	m_pReplayButton->setPosition(
@@ -240,13 +245,14 @@ void LmInteractionScene::initDashboardLayer()
 
 	//spritebackground
 	m_pSpriteDashboardBand = LmSprite::create(
-			"GUIElements/spriteBackgroundUser1Profile.png");
+			"Ludomuse/GUIElements/spriteBackgroundUser1Profile.png");
 	m_pSpriteDashboardBand->setAnchorPoint(Vec2(0, 0));
 	m_pSpriteDashboardBand->setPosition(Vec2(0, 0));
 	m_pDashboardBandLayer->addChild(m_pSpriteDashboardBand, 0);
 
 	//button to move the layer
-	m_pMoveLayerButton = ui::Button::create("GUIElements/moveDashboardLayer.png");
+	m_pMoveLayerButton = ui::Button::create(
+			"Ludomuse/GUIElements/moveDashboardLayer.png");
 	m_pMoveLayerButton->setTouchEnabled(true);
 	m_pMoveLayerButton->setPosition(
 			Vec2(m_pSpriteDashboardBand->getContentSize().width,
@@ -257,7 +263,7 @@ void LmInteractionScene::initDashboardLayer()
 
 	//user1 name
 	m_pLabelUserName = Label::createWithTTF(m_pUser->getPUserName(),
-			"fonts/JosefinSans-Regular.ttf", l_oVisibleSize.width*0.04);
+			"Fonts/JosefinSans-Regular.ttf", l_oVisibleSize.width * 0.04);
 	m_pLabelUserName->setPosition(
 			m_pSpriteDashboardBand->getContentSize().width * (0.5f),
 			m_pSpriteDashboardBand->getContentSize().height * 0.7f);
@@ -267,13 +273,14 @@ void LmInteractionScene::initDashboardLayer()
 	char l_aScoreString[10];
 	sprintf(l_aScoreString, "%d pts", m_pUser->getPScore());
 	m_pLabelScore = Label::createWithTTF(l_aScoreString,
-			"fonts/JosefinSans-Regular.ttf", l_oVisibleSize.width*0.04);
+			"Fonts/JosefinSans-Regular.ttf", l_oVisibleSize.width * 0.04);
 	m_pLabelScore->setPosition(
 			m_pSpriteDashboardBand->getContentSize().width * (0.5f),
 			m_pSpriteDashboardBand->getContentSize().height * 0.5f);
 	m_pDashboardBandLayer->addChild(m_pLabelScore);
 
-	m_pBackDashboardButton = ui::Button::create("GUIElements/backToDashboard.png");
+	m_pBackDashboardButton = ui::Button::create(
+			"Ludomuse/GUIElements/backToDashboard.png");
 	m_pBackDashboardButton->setTouchEnabled(true);
 	m_pBackDashboardButton->setPosition(
 			Vec2(m_pSpriteDashboardBand->getContentSize().width * (0.5f),
@@ -405,6 +412,11 @@ void LmInteractionScene::endGame()
 
 		m_pNextButton->setVisible(true);
 		m_pPreviousButton->setVisible(false);
+
+		//its a linear progression so for now it can be release here
+		m_pLayerGame->release();
+		m_pNextButton->release();
+		m_pPreviousButton->release();
 
 		//init the end set point
 		if (!m_pLmSetPointEnd->init(this))

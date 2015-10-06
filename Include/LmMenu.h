@@ -17,8 +17,8 @@
 static const float s_fSplashScreenDuration = 0.5f;
 static const int s_iMaxLenghtUserName = 10;
 //filename sprite
-static const std::string s_sFilenameSpriteBackground = "Background/splash.png";
-static const std::string s_sFilenameSplash = "Background/splash.png";
+static const std::string s_sFilenameSpriteBackground = "Ludomuse/Background/splash.png";
+static const std::string s_sFilenameSplash = "Ludomuse/Background/splash.png";
 
 class LmMenu
 {

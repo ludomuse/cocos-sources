@@ -16,7 +16,11 @@ typedef std::map<int, LmGameComponent*>::iterator it_type;
 
 static const float s_fDashboardRatioHidden = 0.95f;
 static const float s_fTimeMovingDashboard = 0.4f;
-static const float s_fMarginLeft = 210.0f;
+static const float s_fMarginLeft = 150.0f;
+static const float s_fMarginBot = 20.0f;
+
+//margiin between image when images has to be display
+static const float s_fMarginBetweenImage = 20.0f;
 
 class LmInteractionScene: public cocos2d::Scene
 {
@@ -131,6 +135,9 @@ protected:
 
 	//interface for all games where we init our games and so on
 	virtual void runGame()=0;
+
+	//init the game
+	virtual bool initGame()=0;
 
 	//add the dashboard layer
 	void initDashboardLayer();

@@ -104,9 +104,9 @@ void AppDelegate::initPathsForResolution()
 	if (l_frameSize.height > s_MediumResolutionSize.height)
 	{
 		//we are going to get ressources in the large ressources directorie then in the  medium and finally in the small
-		l_resDirOrders.push_back("largeResolutionSize");
-		l_resDirOrders.push_back("mediumResolutionSize");
-		l_resDirOrders.push_back("smallResolutionSize");
+		l_resDirOrders.push_back("LargeResolutionSize");
+		l_resDirOrders.push_back("MediumResolutionSize");
+		l_resDirOrders.push_back("SmallResolutionSize");
 		l_director->setContentScaleFactor(
 				MIN(
 						s_LargeResolutionSize.height
@@ -117,8 +117,8 @@ void AppDelegate::initPathsForResolution()
 	// if the frame's height is larger than the height of small size.
 	else if (l_frameSize.height > s_SmallResolutionSize.height)
 	{
-		l_resDirOrders.push_back("mediumResolutionSize");
-		l_resDirOrders.push_back("smallResolutionSize");
+		l_resDirOrders.push_back("MediumResolutionSize");
+		l_resDirOrders.push_back("SmallResolutionSize");
 		l_director->setContentScaleFactor(
 				MIN(
 						s_MediumResolutionSize.height
@@ -129,7 +129,7 @@ void AppDelegate::initPathsForResolution()
 	// if the frame's height is smaller than the height of medium size.
 	else
 	{
-		l_resDirOrders.push_back("smallResolutionSize");
+		l_resDirOrders.push_back("SmallResolutionSize");
 		l_director->setContentScaleFactor(
 				MIN(
 						s_SmallResolutionSize.height

@@ -74,16 +74,10 @@ private:
 	cocos2d::Label* m_pQuestionLabel;
 
 	//answer
-	cocos2d::Label* m_pAnswerLabel1;
-	cocos2d::Label* m_pAnswerLabel2;
-	cocos2d::Label* m_pAnswerLabel3;
-	cocos2d::Label* m_pAnswerLabel4;
+	cocos2d::Label* m_pAnswerLabel[4];
 
 	//menu item image & menu
-	cocos2d::ui::CheckBox* m_pCheckBoxAnswer1;
-	cocos2d::ui::CheckBox* m_pCheckBoxAnswer2;
-	cocos2d::ui::CheckBox* m_pCheckBoxAnswer3;
-	cocos2d::ui::CheckBox* m_pCheckBoxAnswer4;
+	cocos2d::ui::CheckBox* m_pCheckBoxAnswer[4];
 
 	cocos2d::Sprite* m_pSpriteBackground;
 

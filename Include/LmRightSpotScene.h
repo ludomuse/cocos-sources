@@ -21,23 +21,10 @@
 #include <vector>       // std::vector
 #include <utility>
 
-//margiin between image in the scrollview
-static const float s_fMarginBetweenImage = 30.0f;
-
 struct LmRightSpotSceneSeed
 {
-	/*
-	 * 6 parameters =>
-	 *  FilenameSpriteBackground
-	 *  FilenameSpriteCollideZone
-	 *  FilenameRightImage
-	 *  HoleOnX
-	 *  HoleOnY
-	 *  LocationOfHole
-	 */
-
 	std::string FilenameSpriteBackground;
-	std::string FilenameSpriteCollideZone;
+	std::string FilenameSpriteSendingArea;
 	std::string FilenameRightImage;
 	int HoleOnX;
 	int HoleOnY;
@@ -71,7 +58,7 @@ private:
 
 	//what we need to get from the json file
 	std::string m_sFilenameSpriteBackground;
-	std::string m_sFilenameSpriteCollideZone;
+	std::string m_sFilenameSpriteSendingArea;
 	std::string m_sFilenameRightImage;
 	int m_iHoleOnX;
 	int m_iHoleOnY;
@@ -82,7 +69,7 @@ private:
 	std::vector<LmGameComponent*> m_aDynamicGameComponents;
 	//element fix child game
 	std::vector<LmGameComponent*> m_aStaticGameComponents;
-	//holes in  image the int is to know the ifd of the gamecomponent
+	//holes in  image the int is to know the id of the gamecomponent
 	std::vector<std::pair<cocos2d::Rect, int>> m_aHolesImageChild;
 	//hole in  view parent
 	std::vector<std::pair<cocos2d::Rect, int>> m_aHolesLayerParent;

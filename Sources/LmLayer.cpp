@@ -86,7 +86,7 @@ bool LmLayer::init()
 
 	//we add text to the center of the screen
 	auto l_oLabel = Label::createWithTTF(m_sText,
-			"fonts/JosefinSans-Regular.ttf", 50);
+			"Fonts/JosefinSans-Regular.ttf", 50);
 	l_oLabel->setPosition(l_oVisibleSize.width / 2 + l_oOrigin.x,
 			l_oVisibleSize.height / 2 + l_oOrigin.y);
 	addChild(l_oLabel, 1);

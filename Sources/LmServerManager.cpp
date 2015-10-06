@@ -17,7 +17,7 @@ bool LmServerManager::init()
 {
 	bool l_bInit;
 
-	if (m_pLmJsonparser->initJsonDocument("json/document.json"))
+	if (m_pLmJsonparser->initJsonDocument("Json/document.json"))
 	{
 		l_bInit = true;
 	}
