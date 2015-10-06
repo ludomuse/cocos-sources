@@ -46,7 +46,60 @@ void LmFindGoodCategoryScene::restart()
 
 void LmFindGoodCategoryScene::resetScene()
 {
+	//use to place elements
+	Size l_oVisibleSize = Director::getInstance()->getVisibleSize();
+	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
+	for(std::vector<LmGameComponent*>::iterator it=m_aGameComponentImages.begin();it!=m_aGameComponentImages.end();++it)
+	{
+		(*it)->setVisible(false);
+	}
+
+	if (m_pUser->isBParent())
+	{
+		//parent view
+
+		int l_iIndex = 0;
+
+		int numberOfImageInLine = (int) l_oVisibleSize.height
+				/ (m_fSquareDimension + s_fMarginBetweenImage);
+
+		int l_iLineIndex = 1;
+
+		//place images
+		for (std::vector<LmGameComponent*>::iterator it =
+				m_aGameComponentImages.begin();
+				it != m_aGameComponentImages.end(); ++it)
+		{
+			(*it)->setAnchorPoint(Vec2(0, 0));
+			(*it)->setVisible(true);
+			(*it)->setPosition(
+					Vec2(
+							l_iIndex
+									* ((*it)->getContentSize().width
+											+ s_fMarginBetweenImage)
+									+ s_fMarginLeft,
+							(s_fMarginBetweenImage - m_fSquareDimension)
+									+ l_oVisibleSize.height
+											* ((float) l_iLineIndex
+													/ (float) (numberOfImageInLine))));
+
+			l_iLineIndex++;
+
+			//last line
+			if (l_iLineIndex == numberOfImageInLine + 1)
+			{
+				l_iLineIndex = 1;
+				l_iIndex++;
+			}
+
+		}
+	}
+	else
+	{
+		//child view
+
+	}
 }
 
 void LmFindGoodCategoryScene::runGame()
@@ -184,7 +237,6 @@ bool LmFindGoodCategoryScene::initGame()
 				l_iLineIndex = 1;
 				l_iIndex++;
 			}
-
 
 		}
 
