@@ -104,7 +104,10 @@ void LmFindGoodCategoryScene::resetScene()
 
 void LmFindGoodCategoryScene::runGame()
 {
-	initGame();
+	if (!initGame())
+	{
+		CCLOG("initGame failed");
+	}
 }
 
 bool LmFindGoodCategoryScene::initGame()
@@ -131,6 +134,10 @@ bool LmFindGoodCategoryScene::initGame()
 							- m_pSendingArea->getContentSize().width * 0.5f
 							+ l_oOrigin.x, l_oVisibleSize.height * 0.5));
 	m_pSendingArea->addTo(m_pLayerGame);
+
+	//init buffer sprite
+	m_pBufferSprite = Sprite::create();
+	m_pLayerGame->addChild(m_pBufferSprite,1);
 
 	//usefull variable
 	Size l_oPlayableScreenSize = Size(
@@ -317,6 +324,16 @@ bool LmFindGoodCategoryScene::initGame()
 bool LmFindGoodCategoryScene::onTouchBeganParent(cocos2d::Touch* touch,
 		cocos2d::Event* event)
 {
+	//to avoid to bein a touch when the previous is not finish
+	if(m_bUserIsTouchingScreen)
+	{
+		return false;
+	}
+	else
+	{
+		m_bUserIsTouchingScreen=true;
+	}
+
 	m_iBufferId = idImage(touch);
 
 	//if something is touched
@@ -337,7 +354,6 @@ bool LmFindGoodCategoryScene::onTouchBeganParent(cocos2d::Touch* touch,
 
 		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
 		initBufferSprite(m_iBufferId);
-		m_pLayerGame->addChild(m_pBufferSprite);
 		moveBufferSprite(touch);
 	}
 	else
@@ -397,6 +413,7 @@ void LmFindGoodCategoryScene::onTouchEndedParent(cocos2d::Touch* touch,
 
 			//place to his last position
 			auto m_oHoleToFill = holeOfThisImage(m_iBufferId);
+			m_pSendingAreaElement->setAnchorPoint(Vec2(0, 0));
 			m_pSendingAreaElement->setPosition(
 					Vec2(m_oHoleToFill.origin.x, m_oHoleToFill.origin.y));
 
@@ -404,22 +421,33 @@ void LmFindGoodCategoryScene::onTouchEndedParent(cocos2d::Touch* touch,
 			m_pSendingAreaElement = nullptr;
 		}
 
-		if (m_pSendingAreaElement)
-		{
-			CCLOG("there is an element in the sending area");
-		}
-
 		m_bSendingAreaElementTouched = false;
-		//remove the buffer sprite froim the layer
-		m_pLayerGame->removeChild(m_pBufferSprite);
+
+		//put it invisible
+		m_pBufferSprite->setVisible(false);
+
 		//we put the gamecomponent visible again
 		m_aIdTable.find(m_iBufferId)->second->setVisible(true);
+
+
 	}
+	m_bUserIsTouchingScreen=false;
 }
 
 bool LmFindGoodCategoryScene::onTouchBeganChild(cocos2d::Touch* touch,
 		cocos2d::Event* event)
 {
+	//to avoid to bein a touch when the previous is not finish
+	if(m_bUserIsTouchingScreen)
+	{
+		return false;
+	}
+	else
+	{
+		m_bUserIsTouchingScreen=true;
+	}
+
+
 	m_iBufferId = idImage(touch);
 
 	//if something is touched
@@ -428,7 +456,6 @@ bool LmFindGoodCategoryScene::onTouchBeganChild(cocos2d::Touch* touch,
 		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
 		initBufferSprite(m_iBufferId);
 		moveBufferSprite(touch);
-		m_pLayerGame->addChild(m_pBufferSprite);
 	}
 	else
 	{
@@ -477,10 +504,13 @@ void LmFindGoodCategoryScene::onTouchEndedChild(cocos2d::Touch* touch,
 			m_aIdTable.find(m_iBufferId)->second->setVisible(true);
 		}
 
-		//remove the buffer sprite froim the layer
-		m_pLayerGame->removeChild(m_pBufferSprite);
+		//put it invisible
+		m_pBufferSprite->setVisible(false);
 
 	}
+
+	m_bUserIsTouchingScreen=false;
+
 }
 
 int LmFindGoodCategoryScene::idImage(cocos2d::Touch* touch)
@@ -507,13 +537,12 @@ void LmFindGoodCategoryScene::initBufferSprite(int l_iIdGameComponent)
 	m_bSpriteSelected = true;
 	//the gamecomponent selected is copy in the buffer
 
-	m_pBufferSprite =
-			Sprite::createWithSpriteFrame(
-					m_aIdTable.find(l_iIdGameComponent)->second->getPSpriteComponent()->getSpriteFrame());
+	m_pBufferSprite->setSpriteFrame(m_aIdTable.find(l_iIdGameComponent)->second->getPSpriteComponent()->getSpriteFrame());
 	m_pBufferSprite->setAnchorPoint(Vec2(0.5, 0.5));
 	m_pBufferSprite->setPosition(
 			m_aIdTable.find(l_iIdGameComponent)->second->getPosition());
 	m_aIdTable.find(l_iIdGameComponent)->second->setVisible(false);
+	m_pBufferSprite->setVisible(true);
 }
 
 void LmFindGoodCategoryScene::moveBufferSprite(Touch* touch)

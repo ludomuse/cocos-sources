@@ -62,10 +62,13 @@ LmQuizz_v1Scene::~LmQuizz_v1Scene()
 
 void LmQuizz_v1Scene::runGame()
 {
-	initGame();
+	if (!initGame())
+	{
+		CCLOG("initGame failed");
+	}
 
 	//we preload the sound
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(m_sFilenameAudioAnswerSelected.c_str());
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(m_sFilenameAudioAnswerSelected.c_str());
 }
 
 void LmQuizz_v1Scene::restart()
@@ -433,7 +436,7 @@ void LmQuizz_v1Scene::answerSelected(Ref* pSender, CheckBox::EventType type)
 		{
 		case CheckBox::EventType::SELECTED:
 			//play a sound from the json
-			CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(m_sFilenameAudioAnswerSelected.c_str(),false);
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(m_sFilenameAudioAnswerSelected.c_str(),false);
 			select(l_iIdCheckBox, true);
 			break;
 

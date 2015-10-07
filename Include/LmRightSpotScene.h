@@ -25,7 +25,7 @@ struct LmRightSpotSceneSeed
 {
 	std::string FilenameSpriteBackground;
 	std::string FilenameSpriteSendingArea;
-	std::string FilenameRightImage;
+	std::string FilenameMainImage;
 	int HoleOnX;
 	int HoleOnY;
 	std::vector<std::pair<int, int>> LocationOfHole;
@@ -59,7 +59,7 @@ private:
 	//what we need to get from the json file
 	std::string m_sFilenameSpriteBackground;
 	std::string m_sFilenameSpriteSendingArea;
-	std::string m_sFilenameRightImage;
+	std::string m_sFilenameMainImage;
 	int m_iHoleOnX;
 	int m_iHoleOnY;
 	std::vector<std::pair<int, int>> m_aLocationOfHole;
@@ -76,6 +76,9 @@ private:
 
 	//element in sending area
 	LmGameComponent* m_pSendingAreaElement;
+
+	//sending area
+	LmGameComponent* m_pSendingArea;
 
 	//rect stencil dimension
 	float m_fHeightRect;

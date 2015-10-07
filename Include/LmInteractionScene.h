@@ -68,14 +68,14 @@ protected:
 
 	//ATTRIBUTES
 
+	//use to sync movement
+	bool m_bUserIsTouchingScreen;
+
 	//to know if this has been win
 	bool m_bWin;
 
 	//reward
 	LmReward* m_pLmReward;
-
-	//sending area
-	LmGameComponent* m_pSendingArea;
 
 	//autorelease object it's the first layer of the scene
 	cocos2d::Layer* m_pLayerGame;

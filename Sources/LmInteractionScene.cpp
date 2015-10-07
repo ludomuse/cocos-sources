@@ -24,6 +24,7 @@ LmInteractionScene::LmInteractionScene()
 	m_bSetPointBegin = true;
 	m_bSetPointFinished = false;
 	m_bWin = false;
+	m_bUserIsTouchingScreen=false;
 
 	//pointer
 	m_pBackDashboardButton = nullptr;
@@ -36,7 +37,6 @@ LmInteractionScene::LmInteractionScene()
 	m_pSpriteDashboardBand = nullptr;
 	m_pFinishGameButton = nullptr;
 	m_pReplayButton = nullptr;
-	m_pSendingArea = nullptr;
 	m_pNextButton = nullptr;
 	m_pPreviousButton = nullptr;
 

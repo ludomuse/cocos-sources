@@ -103,7 +103,6 @@ private:
 	//move buffer sprite with touch
 	void moveBufferSprite(cocos2d::Touch* );
 
-
 	//init the buffer sprite to begin a movement with an image according the id of the gamecomponent
 	void initBufferSprite(int);
 	//set the position of the gamecomponent with this id into the sending area
