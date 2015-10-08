@@ -7,6 +7,7 @@ USING_NS_CC;
 
 AppDelegate::AppDelegate()
 {
+	CCLOG("in appdelegate constructor");
 	//object
 	m_pLmGameManager = new LmGameManager; //need to be delete
 	m_pLmMenu = new LmMenu; //need to be delete
