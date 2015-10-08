@@ -127,6 +127,9 @@ protected:
 
 	bool m_bDashboardIsHidden;
 
+	//listener
+	cocos2d::EventListenerTouchOneByOne* m_pListener;
+
 	//METHODS
 
 	//callback

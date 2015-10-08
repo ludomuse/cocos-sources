@@ -47,8 +47,7 @@ LmRightSpotScene::LmRightSpotScene(const LmRightSpotSceneSeed &l_Seed ) :
 LmRightSpotScene::~LmRightSpotScene()
 {
 
-	Director::getInstance()->getEventDispatcher()->removeEventListener(
-			m_pListener);
+
 }
 
 void LmRightSpotScene::restart()

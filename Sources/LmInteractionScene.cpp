@@ -24,7 +24,7 @@ LmInteractionScene::LmInteractionScene()
 	m_bSetPointBegin = true;
 	m_bSetPointFinished = false;
 	m_bWin = false;
-	m_bUserIsTouchingScreen=false;
+	m_bUserIsTouchingScreen = false;
 
 	//pointer
 	m_pBackDashboardButton = nullptr;
@@ -61,6 +61,12 @@ LmInteractionScene::~LmInteractionScene()
 	delete m_pLmSetPointBegin;
 	delete m_pLmSetPointEnd;
 
+	if (m_pListener)
+	{
+		Director::getInstance()->getEventDispatcher()->removeEventListener(
+				m_pListener);
+	}
+
 }
 
 bool LmInteractionScene::init(LmUser* l_pUser)
@@ -81,7 +87,8 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	Point l_oOrigin = Director::getInstance()->getVisibleOrigin();
 
 	//next button
-	m_pNextButton = ui::Button::create("Ludomuse/GUIElements/nextButtonNormal.png",
+	m_pNextButton = ui::Button::create(
+			"Ludomuse/GUIElements/nextButtonNormal.png",
 			"Ludomuse/GUIElements/nextButtonPressed.png");
 	m_pNextButton->setTouchEnabled(true);
 	m_pNextButton->setPosition(
@@ -113,7 +120,8 @@ bool LmInteractionScene::init(LmUser* l_pUser)
 	m_pLayerGame->retain();
 
 	//finish button default one
-	m_pFinishGameButton = ui::Button::create("Ludomuse/GUIElements/nextButtonNormal.png",
+	m_pFinishGameButton = ui::Button::create(
+			"Ludomuse/GUIElements/nextButtonNormal.png",
 			"Ludomuse/GUIElements/nextButtonPressed.png");
 
 	//if there is a reward we init the button with the appropriate sprite

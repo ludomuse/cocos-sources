@@ -55,8 +55,10 @@ private:
 	//hole in  view parent
 	std::vector<std::pair<cocos2d::Rect, int>> m_aHolesLayerParent;
 
-	//listener
-	cocos2d::EventListenerTouchOneByOne* m_pListener;
+	//to know if a sprite has been selected
+	bool m_bSpriteSelected;
+	//buffer sprite use to simulmlate a move
+	cocos2d::Sprite* m_pBufferSprite;
 	//the id of the element touched
 	int m_iBufferId;
 	//index category touched
@@ -65,10 +67,7 @@ private:
 	LmGameComponent* m_pSendingAreaElement;
 	//to know if we touched the sending area element
 	bool m_bSendingAreaElementTouched;
-	//to know if a sprite has been selected
-	bool m_bSpriteSelected;
-	//buffer sprite use to simulmlate a move
-	cocos2d::Sprite* m_pBufferSprite;
+
 
 	//square diemnsion
 	float m_fSquareDimension;

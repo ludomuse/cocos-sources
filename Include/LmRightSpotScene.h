@@ -87,9 +87,6 @@ private:
 	//attributes gui
 	cocos2d::Sprite* m_pSpriteBackground;
 
-	//listener
-	cocos2d::EventListenerTouchOneByOne* m_pListener;
-
 	//use to handle touch event
 	int m_iBufferId;
 	int m_iHoleTouchedIndex;
