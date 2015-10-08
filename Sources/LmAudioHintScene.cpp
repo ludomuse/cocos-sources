@@ -159,6 +159,9 @@ bool LmAudioHintScene::initGame()
 								l_pGameComponentCreated->getContentSize().width,
 								l_pGameComponentCreated->getContentSize().height) });
 
+		//init id label well place to check victory
+		m_aIdLabelWellPlaced.insert({it->first,false});
+
 		l_iIndex++;
 	}
 
@@ -201,14 +204,14 @@ bool LmAudioHintScene::initGame()
 bool LmAudioHintScene::menuItemImagePressed(cocos2d::Ref* pSender)
 {
 
-	CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+	CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 
 	auto l_pMenuItemPressed = dynamic_cast<MenuItemImage*>(pSender);
 
 	int l_iIdLabel = m_aLabelsMenuItemImage.find(l_pMenuItemPressed)->second;
 
 	//play sound
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(
 			m_aLabelsFilenameAudio.find(l_iIdLabel)->second.c_str(), false);
 
 	return true;
@@ -234,9 +237,7 @@ bool LmAudioHintScene::onTouchBeganParent(cocos2d::Touch* touch,
 	{
 		//init buffer gamecomponent set buffer sprite with his attributes and go invisible
 		initBufferSprite(m_iBufferId);
-		CCLOG("after init");
 		moveBufferSprite(touch);
-		CCLOG("afetr move");
 	}
 	else
 	{
@@ -301,15 +302,27 @@ void LmAudioHintScene::onTouchEndedParent(cocos2d::Touch* touch,
 								m_aLabelsHole.find(m_iHoleTouchedIndex)->second.origin.x,
 								m_aLabelsHole.find(m_iHoleTouchedIndex)->second.origin.y));
 
-				//test
-				m_pFinishGameButton->setVisible(true);
 
-			}
-			else
-			{
+				m_aIdLabelWellPlaced.find(m_iBufferId)->second = true;
 
-				//send back to the void
-				CCLOG("not well placed");
+				int l_iCounterBuffer=0;
+				//check win
+				for(std::map<int,bool>::iterator it=m_aIdLabelWellPlaced.begin();it!=m_aIdLabelWellPlaced.end();++it)
+				{
+					//for each well placed label increment counter
+					if(it->second)
+					{
+						l_iCounterBuffer++;
+					}
+				}
+
+				if(l_iCounterBuffer==s_iNumberLabel)
+				{
+					//win
+					m_pFinishGameButton->setVisible(true);
+				}
+
+
 			}
 
 		}
@@ -346,15 +359,12 @@ void LmAudioHintScene::initBufferSprite(int l_iIdGameComponent)
 	//the sprite is selected
 	m_bSpriteSelected = true;
 	//the gamecomponent selected is copy in the buffer
-	CCLOG("0");
 	m_pBufferSprite->setSpriteFrame(
 			m_aLabelsGameComponent.find(l_iIdGameComponent)->second->getPSpriteComponent()->getSpriteFrame());
-	CCLOG("1");
 	m_pBufferSprite->setAnchorPoint(Vec2(0.5, 0.5));
 	m_pBufferSprite->setPosition(
 			m_aLabelsGameComponent.find(l_iIdGameComponent)->second->getPosition());
 	m_aLabelsGameComponent.find(l_iIdGameComponent)->second->setVisible(false);
-	CCLOG("2");
 	m_pBufferSprite->setVisible(true);
 }
 

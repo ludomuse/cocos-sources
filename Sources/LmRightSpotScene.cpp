@@ -22,7 +22,7 @@ LmRightSpotScene::LmRightSpotScene(const LmRightSpotSceneSeed &l_Seed ) :
 	m_aLocationOfHole = l_Seed.LocationOfHole;
 	if(m_aLocationOfHole.size()==0)
 	{
-		CCLOG("No Hole");
+		CCLOG("No Hole in LmRightSpot");
 	}
 
 	//primitive type

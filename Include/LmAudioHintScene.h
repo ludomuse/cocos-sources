@@ -53,6 +53,9 @@ private:
 	cocos2d::Sprite* m_pSpriteBackground;
 	cocos2d::Sprite* m_pSpriteMainImage;
 
+	//counter to know victory
+	std::map<int,bool> m_aIdLabelWellPlaced;
+
 	//gamecomponents
 	std::map<int, cocos2d::Rect> m_aLabelsHole;
 
